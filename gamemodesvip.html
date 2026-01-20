@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div><strong>TCADMIN:</strong> ${statusSpan(!!gm.works?.tcadmin)}</div>
             <div><strong>VPS:</strong> ${statusSpan(!!gm.works?.vps)}</div>
           </div>
-          <a href="${href}">${gm.linkText || "Download"}</a>
+          <a href="${gm.link}" target="_blank" rel="noopener noreferrer">${gm.linkText || "Download"}</a>
         </div>
       `
     }).join("")

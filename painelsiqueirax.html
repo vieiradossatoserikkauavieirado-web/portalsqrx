@@ -280,7 +280,6 @@ body::before{
 <script type="module">
 const loading = document.getElementById('loading')
 const panel = document.getElementById('panel')
-const userPill = document.getElementById('userPill')
 
 // valida sessão pelo cookie e pega username
 let me
@@ -293,31 +292,41 @@ try {
   throw new Error("no-session")
 }
 
-document.getElementById('userText').textContent = '@' + (me?.username || 'usuario')
+const userText = document.getElementById('userText')
+const vipIcon = document.getElementById('vipIcon')
+const vipBadge = document.getElementById('vipBadge')
 
-if (me?.vip) {
-  document.getElementById('vipIcon').style.display = 'inline-block'
-  document.getElementById('vipBadge').style.display = 'inline-block'
+
+if (userText) {
+  userText.textContent = '@' + (me?.username || 'usuario')
+} else {
+  const userPill = document.getElementById('userPill')
+  if (userPill) userPill.textContent = '@' + (me?.username || 'usuario')
 }
 
-loading.style.display = 'none'
-panel.style.display = 'block'
+s
+if (me?.vip) {
+  if (vipIcon) vipIcon.style.display = 'inline-block'
+  if (vipBadge) vipBadge.style.display = 'inline-block'
+}
 
-// navegações
-document.getElementById('goGamemodes').addEventListener('click', () => {
+if (loading) loading.style.display = 'none'
+if (panel) panel.style.display = 'block'
+
+
+document.getElementById('goGamemodes')?.addEventListener('click', () => {
   window.location.href = 'gamemodes.html'
 })
 
-document.getElementById('goPremium').addEventListener('click', () => {
+document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'loginvip.html'
 })
 
-// logout (por enquanto simples)
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  // aqui depois a gente cria uma function /logout pra limpar cookie
+document.getElementById('logoutBtn')?.addEventListener('click', () => {
   window.location.href = 'login.html'
 })
 </script>
+
 
 </body>
 </html>

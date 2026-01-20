@@ -140,9 +140,11 @@ button:hover{
     que estão em atividade.
   </p>
 
-  <form id="loginForm">
+  <form id="loginForm" autocomplete="on">
     <div class="field">
-      <input type="text" id="username" placeholder="Usuário" required>
+      <!-- Mantive "Usuário" no visual, mas aqui você pode colocar EMAIL do Auth.
+           Se quiser username, veja comentário no JS. -->
+      <input type="text" id="username" placeholder="Usuário (email)" required>
     </div>
     <div class="field">
       <input type="password" id="password" placeholder="Senha" required>
@@ -162,44 +164,65 @@ button:hover{
 import { createClient } from 'https://esm.sh/@supabase/supabase-js'
 
 const supabase = createClient(
- 'https://srgoshlhsgflszwviwcp.supabase.co',
- 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxMDAzNTQsImV4cCI6MjA3NzQ2MDM1NH0.ge8ziu8qhxJiTd-Th8HWiN-L3S515g0y0WyDBt7T8lA'
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
-const form=document.getElementById('loginForm')
-const overlay=document.getElementById('alertOverlay')
-const message=document.getElementById('alertMessage')
-
-form.addEventListener('submit',async e=>{
- e.preventDefault()
-
- const username=document.getElementById('username').value.trim()
- const password=document.getElementById('password').value.trim()
-
- try{
-  const { data:user } = await supabase
-   .from('usuarios')
-   .select('*')
-   .eq('username',username)
-   .eq('password',password)
-   .maybeSingle()
-
-  if(!user) return show('Usuário ou senha incorretos.')
-  if(user.acesso_gamemodes!=='permitido') return show('Conta sem permissão.')
-
-  sessionStorage.setItem('nomedeusuario',user.username)
-  window.location.href='progamdores.html'
-
- }catch{
-  show('Erro ao conectar ao servidor.')
- }
-})
+const form = document.getElementById('loginForm')
+const overlay = document.getElementById('alertOverlay')
+const message = document.getElementById('alertMessage')
 
 function show(text){
- message.textContent=text
- overlay.style.display='flex'
- overlay.onclick=()=>overlay.style.display='none'
+  message.textContent = text
+  overlay.style.display = 'flex'
+  overlay.onclick = () => overlay.style.display = 'none'
 }
+
+(async () => {
+  // Se já estiver logado, vai direto
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) window.location.href = 'progamdores.html'
+})()
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+
+  const login = document.getElementById('username').value.trim()
+  const password = document.getElementById('password').value.trim()
+
+  try {
+    // ✅ Login real (sessão assinada). Não depende de sessionStorage.
+    // Aqui "login" está como email. Se você quer username, o jeito seguro é:
+    // - user entra com email
+    // - username fica em user.user_metadata.username
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: login,
+      password
+    })
+
+    if (error) return show('Usuário ou senha incorretos.')
+
+    // ✅ (Opcional) Checar permissão numa tabela "usuarios_permissoes" com RLS
+    // Exemplo: buscar se acesso_gamemodes é permitido.
+    // IMPORTANTE: isso só funciona bem se sua tabela tiver RLS e policy correta.
+    const { data: perm, error: perr } = await supabase
+      .from('usuarios')
+      .select('acesso_gamemodes')
+      .eq('auth_uid', data.user.id)
+      .maybeSingle()
+
+    if (perr) return show('Erro ao verificar permissão.')
+    if (!perm || perm.acesso_gamemodes !== 'permitido') {
+      await supabase.auth.signOut()
+      return show('Conta sem permissão.')
+    }
+
+    // Não guardar username em sessionStorage
+    window.location.href = 'progamdores.html'
+  } catch {
+    show('Erro ao conectar ao servidor.')
+  }
+})
 </script>
 
 </body>

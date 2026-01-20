@@ -278,22 +278,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function render(list){
-    gmContainer.innerHTML = list.map(gm => `
-      <div class="gm-card ${gm.vip ? "vip" : ""}">
-        ${gm.vip ? `<div class="ribbon">VIP</div>` : ``}
-        <img src="${gm.image}" alt="${gm.title}" />
-        <h3>${gm.title}</h3>
-        <div class="gm-info">
-          <div>Gamemode funciona:</div>
-          <div><strong>optlink:</strong> ${statusSpan(!!gm.works?.optlink)}</div>
-          <div><strong>lemehost:</strong> ${statusSpan(!!gm.works?.lemehost)}</div>
-          <div><strong>TCADMIN:</strong> ${statusSpan(!!gm.works?.tcadmin)}</div>
-          <div><strong>VPS:</strong> ${statusSpan(!!gm.works?.vps)}</div>
+    gmContainer.innerHTML = list.map(gm => {
+      // se vier link direto, usa; se vier downloadId, monta link interno
+      const href = gm.link ? gm.link : `menuvip.html?id=${encodeURIComponent(gm.downloadId || "")}`
+
+      return `
+        <div class="gm-card ${gm.vip ? "vip" : ""}">
+          ${gm.vip ? `<div class="ribbon">VIP</div>` : ``}
+          <img src="${gm.image}" alt="${gm.title}" />
+          <h3>${gm.title}</h3>
+          <div class="gm-info">
+            <div>Gamemode funciona:</div>
+            <div><strong>optlink:</strong> ${statusSpan(!!gm.works?.optlink)}</div>
+            <div><strong>lemehost:</strong> ${statusSpan(!!gm.works?.lemehost)}</div>
+            <div><strong>TCADMIN:</strong> ${statusSpan(!!gm.works?.tcadmin)}</div>
+            <div><strong>VPS:</strong> ${statusSpan(!!gm.works?.vps)}</div>
+          </div>
+          <a href="${href}">${gm.linkText || "Download"}</a>
         </div>
-        <a href="${gm.link}" target="_blank" rel="noopener noreferrer">${gm.linkText || "Download"}</a>
-      </div>
-    `).join("")
+      `
+    }).join("")
   }
+
 
   const res = await fetch("gamemodesvip.json", { cache: "no-store" })
   const all = await res.json()

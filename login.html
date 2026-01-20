@@ -192,73 +192,50 @@ button.enabled:hover{
 </div>
 
 <script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+const form = document.getElementById('loginForm')
+const overlay = document.getElementById('alertOverlay')
+const message = document.getElementById('alertMessage')
+const checkbox = document.getElementById('acceptTerms')
+const button = document.getElementById('loginBtn')
 
+button.disabled = true
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
-
-const form=document.getElementById('loginForm')
-const overlay=document.getElementById('alertOverlay')
-const message=document.getElementById('alertMessage')
-const checkbox=document.getElementById('acceptTerms')
-const button=document.getElementById('loginBtn')
-
-checkbox.addEventListener('change',()=>{
- if(checkbox.checked){
-  button.classList.add('enabled')
-  button.disabled=false
- }else{
-  button.classList.remove('enabled')
-  button.disabled=true
- }
+checkbox.addEventListener('change', () => {
+  const ok = checkbox.checked
+  button.disabled = !ok
+  button.classList.toggle('enabled', ok)
 })
 
-button.disabled=true
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  if (button.disabled) return
 
-form.addEventListener('submit',async e=>{
- e.preventDefault()
- if(!checkbox.checked) return
+  const username = document.getElementById('username').value.trim()
+  const password = document.getElementById('password').value.trim()
 
- const username=document.getElementById('username').value.trim()
- const password=document.getElementById('password').value.trim()
+  try {
+    const res = await fetch('.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ username, password })
+    })
 
- try{
-  const res = await fetch('test', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username, password })
+    if (!res.ok) return show(await res.text())
+
+    window.location.href = 'gamemodes.html'
+  } catch {
+    show('Erro ao conectar ao servidor.')
+  }
 })
 
-if (!res.ok) {
-  const text = await res.text()
-  return show(text)
-}
-
-const data = await res.json()
-sessionStorage.setItem('nomedeusuario', data.username)
-window.location.href = 'gamemodes.html'
-
-
-  if(!user) return show('Usuário ou senha incorretos.')
-  if(user.acesso_gamemodes!=='permitido') return show('Conta sem permissão.')
-
-  sessionStorage.setItem('nomedeusuario',user.username)
-  window.location.href='gamemodes.html'
-
- }catch{
-  show('Erro ao conectar ao servidor.')
- }
-})
-
-function show(text){
- message.textContent=text
- overlay.style.display='flex'
- overlay.onclick=()=>overlay.style.display='none'
+function show(text) {
+  message.textContent = text
+  overlay.style.display = 'flex'
+  overlay.onclick = () => overlay.style.display = 'none'
 }
 </script>
+
 
 </body>
 </html>

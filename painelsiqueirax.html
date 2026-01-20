@@ -293,8 +293,13 @@ try {
   throw new Error("no-session")
 }
 
-// mostra painel
-userPill.textContent = '@' + (me?.username || 'usuario')
+document.getElementById('userText').textContent = '@' + (me?.username || 'usuario')
+
+if (me?.vip) {
+  document.getElementById('vipIcon').style.display = 'inline-block'
+  document.getElementById('vipBadge').style.display = 'inline-block'
+}
+
 loading.style.display = 'none'
 panel.style.display = 'block'
 

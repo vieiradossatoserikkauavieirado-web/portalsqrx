@@ -168,9 +168,21 @@ button:hover{
   <p id="vipErrorMessage" class="error-message"></p>
 </div>
 
-<script>
+<script type="module">
 const formVip = document.getElementById('loginVipForm')
 const vipError = document.getElementById('vipErrorMessage')
+
+// ✅ garante que o usuário está logado no painel (tem sx_session)
+try {
+  const r = await fetch("/.netlify/functions/me", {
+    credentials: "include",
+    cache: "no-store"
+  })
+  if (!r.ok) throw new Error()
+} catch {
+  window.location.href = "login.html"
+  throw new Error("no-normal-session")
+}
 
 formVip.addEventListener('submit', async (e) => {
   e.preventDefault()
@@ -193,13 +205,13 @@ formVip.addEventListener('submit', async (e) => {
       return
     }
 
-    // sucesso: manda pra página vip
     window.location.href = 'gamemodesvip.html'
   } catch {
     vipError.textContent = 'Erro ao conectar ao servidor.'
   }
 })
 </script>
+
 
 </body>
 </html>

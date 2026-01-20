@@ -1,0 +1,18 @@
+[
+  {
+    "title": "GM BRASIL PLAY FLOW COM VOIP!",
+    "image": "https://i.imgur.com/hjcUVHF.png",
+    "link": "https://dimagratis.online/playflow",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "WONDER RPG ® OFICIAL ...",
+    "image": "https://i.imgur.com/VEZmOgO.png",
+    "link": "loginvip.html",
+    "linkText": "Disponível na página VIP!",
+    "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
+    "vip": true
+  }
+]

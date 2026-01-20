@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js')
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -9,12 +9,15 @@ function setCookie(token) {
   return `sx_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=3600`
 }
 
-export async function handler(event) {
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Método não permitido' }
   }
 
-  const { username, password } = JSON.parse(event.body || {})
+  const body = JSON.parse(event.body || '{}')
+  const username = (body.username || '').trim()
+  const password = (body.password || '').trim()
+
   if (!username || !password) {
     return { statusCode: 400, body: 'Dados inválidos' }
   }
@@ -22,10 +25,10 @@ export async function handler(event) {
   const { data: user } = await supabase
     .from('usuarios')
     .select('username, password, acesso_gamemodes')
-    .eq('username', username.trim())
+    .eq('username', username)
     .maybeSingle()
 
-  if (!user || user.password !== password.trim()) {
+  if (!user || (user.password || '').trim() !== password) {
     return { statusCode: 401, body: 'Usuário ou senha incorretos' }
   }
 

@@ -6,8 +6,15 @@ const supabase = createClient(
 )
 
 export async function handler() {
-  const { data } = await supabase.from('totalusuarios').select('total')
-  const total = (data || []).reduce((a, b) => a + (b.total || 0), 0)
+  const { data, error } = await supabase
+    .from('totalusuarios')
+    .select('total')
+
+  if (error) {
+    return { statusCode: 500, body: 'Erro ao buscar dados' }
+  }
+
+  const total = (data || []).reduce((s, r) => s + (r.total || 0), 0)
 
   return {
     statusCode: 200,

@@ -251,7 +251,7 @@ header h1{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
- 
+  // valida sessão pelo cookie e pega username + vip
   let me
   try {
     const r = await fetch("/.netlify/functions/me", { credentials: "include" })

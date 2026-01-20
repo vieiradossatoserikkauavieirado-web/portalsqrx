@@ -214,12 +214,16 @@ form.addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value.trim()
 
   try {
-    const res = await fetch('login.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ username, password })
-    })
+    const res = await fetch('/.netlify/functions/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ username, password })
+  })
+
+  if (!res.ok) return show(await res.text())
+  window.location.href = 'gamemodes.html'
+
 
     if (!res.ok) return show(await res.text())
 

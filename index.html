@@ -252,9 +252,9 @@ footer{
 </footer>
 
 <script>
-const supabaseUrlVip="https://srgoshlhsgflszwviwcp.supabase.co";
-const supabaseKeyVip="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxMDAzNTQsImV4cCI6MjA3NzQ2MDM1NH0.ge8ziu8qhxJiTd-Th8HWiN-L3S515g0y0WyDBt7T8lA";
-const supabaseClient=supabase.createClient(supabaseUrlVip,supabaseKeyVip);
+ process.env.SUPABASE_URL,
+ process.env.SUPABASE_SERVICE_ROLE_KEY
+ const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY);
 
 async function fetchUserCount(){
  const el=document.querySelector("#userCount strong");

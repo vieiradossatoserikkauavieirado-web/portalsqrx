@@ -201,15 +201,24 @@ header h1{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-  const user = sessionStorage.getItem("nomedeusuario");
-  if (!user) { window.location.href = "login.html"; return; }
-  document.getElementById("userName").textContent = user;
+  // valida sessão pelo cookie e pega username
+  let me
+  try {
+    const r = await fetch("/.netlify/functions/me", { credentials: "include" })
+    if (!r.ok) throw new Error()
+    me = await r.json()
+  } catch {
+    window.location.href = "login.html"
+    return
+  }
 
-  const gmContainer = document.getElementById("gmContainer");
-  const search = document.getElementById("search");
+  document.getElementById("userName").textContent = me.username
+
+  const gmContainer = document.getElementById("gmContainer")
+  const search = document.getElementById("search")
 
   function statusSpan(ok){
-    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`;
+    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`
   }
 
   function render(list){
@@ -226,19 +235,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
         <a href="${gm.link}" target="_blank" rel="noopener noreferrer">${gm.linkText || "Download"}</a>
       </div>
-    `).join("");
+    `).join("")
   }
 
-  const res = await fetch("data/gamemodes.json", { cache: "no-store" });
-  const all = await res.json();
-  render(all);
+  const res = await fetch("gamemodes.json", { cache: "no-store" })
+  const all = await res.json()
+  render(all)
 
   search.addEventListener("input", () => {
-    const v = search.value.toLowerCase();
-    render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)));
-  });
-});
+    const v = search.value.toLowerCase()
+    render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)))
+  })
+})
 </script>
+
 
 
 </body>

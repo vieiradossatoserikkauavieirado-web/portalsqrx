@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Área VIP • Portal SiqueiraX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root{
+ --gold:#f5d742;
+ --red:#ff0033;
+ --blue:#00cfff;
+ --glass:rgba(15,15,20,.88);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+ font-family:'Inter',sans-serif;
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ color:#fff;
+ background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+}
+
+body::before{
+ content:"";
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.75);
+ backdrop-filter:blur(14px);
+ z-index:-1;
+}
+
+/* CARD */
+.vip-card{
+ width:100%;
+ max-width:460px;
+ background:var(--glass);
+ border-radius:26px;
+ padding:38px 34px;
+ text-align:center;
+ border:1px solid rgba(255,255,255,.12);
+ box-shadow:0 0 40px rgba(255,0,60,.35);
+ position:relative;
+}
+
+/* TITULO */
+.vip-card h1{
+ font-size:2rem;
+ margin-bottom:.6rem;
+ color:var(--gold);
+}
+
+.vip-card p{
+ font-size:.95rem;
+ color:#ccc;
+ margin-bottom:1.8rem;
+}
+
+/* BOTÕES */
+.vip-btn{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:10px;
+ width:100%;
+ padding:14px;
+ margin-bottom:14px;
+ font-size:1rem;
+ font-weight:600;
+ border-radius:16px;
+ border:none;
+ cursor:pointer;
+ color:#fff;
+ background:linear-gradient(135deg,var(--red),var(--blue));
+ transition:.25s ease;
+}
+
+.vip-btn.secondary{
+ background:rgba(0,0,0,.45);
+ border:1px solid rgba(255,255,255,.15);
+}
+
+.vip-btn:hover{
+ transform:scale(1.05);
+}
+
+.vip-btn svg{
+ width:20px;
+ height:20px;
+}
+
+/* MODAL */
+.modal{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.7);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ z-index:99;
+}
+
+.modal.active{
+ display:flex;
+}
+
+.modal-content{
+ background:rgba(15,15,20,.95);
+ max-width:520px;
+ width:90%;
+ border-radius:22px;
+ padding:28px 26px;
+ border:1px solid rgba(255,255,255,.15);
+ box-shadow:0 0 40px rgba(255,215,66,.4);
+}
+
+.modal-content h2{
+ text-align:center;
+ color:var(--gold);
+ margin-bottom:1.2rem;
+}
+
+.benefits{
+ text-align:left;
+ font-size:.95rem;
+ color:#ddd;
+ line-height:1.6;
+}
+
+.benefits div{
+ margin-bottom:.7rem;
+ display:flex;
+ gap:8px;
+}
+
+.benefits span{
+ color:var(--gold);
+}
+
+.close{
+ margin-top:1.5rem;
+ width:100%;
+ padding:12px;
+ border-radius:14px;
+ border:none;
+ font-weight:600;
+ cursor:pointer;
+ background:rgba(255,255,255,.1);
+ color:#fff;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+ .vip-card{padding:30px 22px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="vip-card">
+ <h1>Área VIP</h1>
+ <p>Conteúdos exclusivos e acesso antecipado do Portal SiqueiraX.</p>
+
+ <button class="vip-btn" onclick="openModal()">
+   <i data-lucide="star"></i>
+   Ver Benefícios VIP
+ </button>
+
+ <button class="vip-btn" onclick="location.href='https://discord.com/channels/1180192351432482947/1401362314644557960'">
+   <i data-lucide="gamepad-2"></i>
+   GameModes VIP
+ </button>
+
+ <button class="vip-btn secondary"
+   onclick="location.href='https://discord.com/channels/1180192351432482947/1232059329818136576'">
+   <i data-lucide="shopping-cart"></i>
+   Comprar Acesso VIP
+ </button>
+
+ <button class="vip-btn secondary" onclick="location.href='index.html'">
+   <i data-lucide="home"></i>
+   Voltar ao Início
+ </button>
+</div>
+
+<!-- MODAL BENEFÍCIOS -->
+<div class="modal" id="vipModal">
+ <div class="modal-content">
+  <h2>✨ Benefícios VIP ✨</h2>
+
+  <div class="benefits">
+   <div><span>📢</span> Marcar <strong>@everyone</strong> no canal de divulgação, garantindo máximo alcance.</div>
+   <div><span>🌐</span> Acesso VIP ao site com todas as GMs e links diretos.</div>
+   <div><span>⏳</span> GMs disponíveis de <strong>1 a 2 meses antes</strong> do lançamento público.</div>
+   <div><span>🚀</span> Acesso antecipado a novas GMs com link direto.</div>
+   <div><span>🏷️</span> Tag VIP exclusiva no Discord.</div>
+   <div><span>🛠️</span> Suporte priorizado e atendimento mais rápido.</div>
+  </div>
+
+  <button class="close" onclick="closeModal()">Fechar</button>
+ </div>
+</div>
+
+<script>
+function openModal(){
+ document.getElementById('vipModal').classList.add('active');
+}
+function closeModal(){
+ document.getElementById('vipModal').classList.remove('active');
+}
+lucide.createIcons();
+</script>
+
+</body>
+</html>

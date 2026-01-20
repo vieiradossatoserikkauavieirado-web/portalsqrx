@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profissionais do SAMP</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  color:#fff;
+  padding:40px 16px;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(14px);
+  z-index:-1;
+}
+
+.container{
+  width:100%;
+  max-width:1200px;
+  margin:auto;
+}
+
+h1{
+  font-family:'Orbitron',sans-serif;
+  text-align:center;
+  margin-bottom:2.5rem;
+  font-size:clamp(2rem,5vw,3.5rem);
+  background:linear-gradient(90deg,#ffcc00,#ff0044,#00bfff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* GRID MAIS COMPACTO */
+#profissionais{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:18px;
+}
+
+/* CARD MENOR */
+.prof-card{
+  background:rgba(255,255,255,.05);
+  border-radius:16px;
+  padding:16px;
+  border:1px solid rgba(255,255,255,.08);
+  transition:.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+.prof-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 0 20px rgba(255,204,0,.25);
+}
+
+/* TEXTO */
+.nome{
+  font-size:1.25rem;
+  font-weight:700;
+  color:#ffcc00;
+}
+
+.tipo{
+  font-size:.9rem;
+  color:#00bfff;
+}
+
+.tempo{
+  font-size:.85rem;
+  color:#ccc;
+  margin-bottom:6px;
+}
+
+/* AVALIAÇÃO */
+.avaliacoes{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin-bottom:4px;
+}
+
+.estrela{color:gold;font-size:1rem}
+
+.info-avaliacao{
+  font-size:.85rem;
+  color:#ffcc00;
+  margin-bottom:6px;
+}
+
+.comentario{
+  font-size:.8rem;
+  color:#bbb;
+  font-style:italic;
+}
+
+/* BOTÃO */
+.contato{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 12px;
+  border-radius:8px;
+  font-size:.85rem;
+  font-weight:600;
+  text-decoration:none;
+  color:#fff;
+  background:linear-gradient(90deg,#ffcc00,#ff0044,#00bfff);
+}
+
+/* FORM AVALIAÇÃO */
+.avaliar-form{
+  margin-top:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.avaliar-form select,
+.avaliar-form input{
+  padding:6px;
+  border-radius:6px;
+  border:none;
+  font-size:.85rem;
+}
+
+.avaliar-form button{
+  padding:6px;
+  border:none;
+  border-radius:6px;
+  background:linear-gradient(90deg,#ffcc00,#ff0044);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.disabled-note{
+  font-size:.85rem;
+  color:#ff9999;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  #profissionais{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Profissionais do SAMP</h1>
+  <div id="profissionais">Carregando...</div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+
+const supabase = createClient(
+  'https://srgoshlhsgflszwviwcp.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxMDAzNTQsImV4cCI6MjA3NzQ2MDM1NH0.ge8ziu8qhxJiTd-Th8HWiN-L3S515g0y0WyDBt7T8lA'
+)
+
+const container=document.getElementById('profissionais')
+const usuarioLogado=sessionStorage.getItem('nomedeusuario')
+
+if(!usuarioLogado){
+  alert('Você precisa estar logado!')
+  window.location.href='logins.html'
+}
+
+async function carregarProfissionais(){
+ const {data,error}=await supabase.from('profissionais').select('*').order('id',{ascending:false})
+ if(error){container.innerHTML='Erro';return}
+
+ data.forEach(p=>{
+  try{p.avaliacoes=JSON.parse(p.avaliacoes)||[]}catch{p.avaliacoes=[]}
+  p.totalEstrelas=p.avaliacoes.reduce((s,a)=>s+Number(a.estrelas||0),0)
+  p.qtd=p.avaliacoes.length
+  p.media=p.qtd?p.totalEstrelas/p.qtd:0
+ })
+
+ data.sort((a,b)=>b.media-a.media||b.totalEstrelas-a.totalEstrelas)
+
+ container.innerHTML=''
+
+ data.forEach(p=>{
+  const estrelas=Array.from({length:5},(_,i)=>`<span class="estrela">${i<Math.round(p.media)?'★':'☆'}</span>`).join('')
+  const card=document.createElement('div')
+  card.className='prof-card'
+  card.innerHTML=`
+    <div class="nome">${p.nome}</div>
+    <div class="tipo">${p.tipo_servico}</div>
+    <div class="tempo">${p.tempo_profissao} meses</div>
+    <div class="avaliacoes">${estrelas}</div>
+    <div class="info-avaliacao">Média ${p.media.toFixed(1)} • ${p.qtd} avaliações</div>
+    ${p.avaliacoes.map(a=>`<div class="comentario">"${a.comentario}" — ${a.usuario}</div>`).join('')}
+    ${p.contato?`<a href="${p.contato}" target="_blank" class="contato">Contato</a>`:''}
+    <div class="avaliar-wrapper"></div>
+  `
+
+  const w=card.querySelector('.avaliar-wrapper')
+  if(usuarioLogado===p.nome){
+    w.innerHTML='<div class="disabled-note">Você não pode se avaliar.</div>'
+  }else{
+    w.innerHTML=`
+      <form class="avaliar-form">
+        <select name="estrelas">
+          <option value="5">5 ⭐</option>
+          <option value="4">4 ⭐</option>
+          <option value="3">3 ⭐</option>
+          <option value="2">2 ⭐</option>
+          <option value="1">1 ⭐</option>
+        </select>
+        <input name="comentario" placeholder="Comentário" required>
+        <button>Enviar</button>
+      </form>
+    `
+    w.querySelector('form').onsubmit=async e=>{
+      e.preventDefault()
+      const nova={usuario:usuarioLogado,estrelas:e.target.estrelas.value,comentario:e.target.comentario.value}
+      const novas=[...p.avaliacoes,nova]
+      await supabase.from('profissionais').update({avaliacoes:JSON.stringify(novas)}).eq('id',p.id)
+      carregarProfissionais()
+    }
+  }
+
+  container.appendChild(card)
+ })
+}
+
+carregarProfissionais()
+</script>
+</body>
+</html>

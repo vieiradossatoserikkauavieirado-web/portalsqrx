@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Portal Social - Portal SiqueiraX</title>
+<style>
+  :root{
+    --primary:#1877F2;
+    --danger:#E53935;
+    --bg: rgba(0,0,0,0.65);
+    --card: rgba(255,255,255,0.08);
+    --text:#fff;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin:0; padding:0; min-height:100vh; color:var(--text);
+    background:url('https://i.imgur.com/eKjFtd1.png') no-repeat center center fixed;
+    background-size:cover;
+    backdrop-filter: blur(0px);
+  }
+  header{
+    width:100%; padding:12px 16px; position:sticky; top:0; z-index:10;
+    background:rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+    display:flex; align-items:center; gap:12px; justify-content:space-between;
+  }
+  .brand{font-size:20px; color:#78aaff; text-shadow:0 0 10px rgba(120,170,255,0.5)}
+  .search{
+    display:flex; align-items:center; gap:8px; background:var(--card); padding:6px 10px; border-radius:10px;
+  }
+  .search input{ background:transparent; border:none; outline:none; color:var(--text); width:220px}
+  main{ width:100%; max-width:900px; margin:0 auto; padding:18px}
+  .section-title{ margin:22px 0 10px; font-size:18px; color:#ffd080; }
+
+  .list{ display:flex; flex-direction:column; gap:10px}
+  .user-card{
+    background:var(--bg); border:1px solid rgba(255,255,255,0.08);
+    padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .user-info{ display:flex; align-items:center; gap:10px; cursor:default}
+  .avatar{
+    width:36px; height:36px; border-radius:50%;
+    background:linear-gradient(135deg,#6ea8ff,#b388ff);
+    display:flex; align-items:center; justify-content:center; font-weight:600;
+  }
+  .muted{ color:#ddd; font-size:12px}
+  .btn{ padding:6px 12px; border:none; border-radius:8px; cursor:pointer; font-size:14px}
+  .btn.follow{ background:var(--primary); color:#fff}
+  .btn.unfollow{ background:var(--danger); color:#fff}
+  .row{ display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap}
+
+  /* Ranking */
+  #ranking{ flex:1 1 280px; background:var(--bg); border:1px solid rgba(255,255,255,0.08);
+    padding:12px; border-radius:12px}
+  #ranking ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px}
+  #ranking li{ display:flex; align-items:center; justify-content:space-between; background:var(--card); padding:8px 10px; border-radius:10px}
+  .medal{ width:20px; text-align:center}
+
+  /* Perfil bolinha */
+  #profileBubble{
+    position:fixed; right:20px; bottom:20px; width:60px; height:60px; border-radius:50%;
+    background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:28px; box-shadow:0 6px 18px rgba(0,0,0,0.45); cursor:pointer; z-index:1000;
+  }
+  #profilePanel{
+    position:fixed; right:20px; bottom:90px; width:340px; max-height:480px; display:none; flex-direction:column;
+    background:rgba(0,0,0,0.82); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:14px; overflow:auto; z-index:1000;
+  }
+  #profilePanel h3{ margin:0 0 6px 0}
+  #profilePanel .closeBtn{ align-self:flex-end; cursor:pointer; color:#ffb3b3; margin-bottom:6px}
+  #profilePanel ul{ list-style:none; padding:0; margin:0}
+  #profilePanel li{ padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.08)}
+  #profilePanel li:last-child{ border:none}
+
+  /* Posts */
+  .posts-header{ display:flex; align-items:center; justify-content:space-between; }
+  .btn-outline{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.25)}
+  .post-card{
+    background:var(--bg); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:12px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .post-head{ display:flex; align-items:center; gap:10px}
+  .post-img{ width:100%; border-radius:12px; border:1px solid rgba(255,255,255,0.08); max-height:520px; object-fit:cover}
+  .empty{ color:#ddd; font-style:italic}
+  /* Modal */
+  .modal{ position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:1100}
+  .modal .box{ width:95%; max-width:520px; background:rgba(0,0,0,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px}
+  .modal h3{ margin:0 0 10px 0}
+  .form-group{ display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
+  .input, textarea{
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+    color:#fff; border-radius:10px; padding:10px; outline:none; resize:vertical;
+  }
+  .actions{ display:flex; gap:10px; justify-content:flex-end}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">🌐 Portal Social</div>
+  <div class="search">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="Pesquisar usuários...">
+  </div>
+  <button id="openPosts" class="btn btn-outline">📝 Posts</button>
+</header>
+
+<main>
+  <div class="row">
+    <div style="flex:2 1 520px">
+      <h3 class="section-title">Sugestões de membros</h3>
+      <div id="randomUsers" class="list"></div>
+
+      <h3 class="section-title">Você está seguindo</h3>
+      <div id="followingList" class="list"></div>
+
+      <h3 class="section-title posts-header">Feed (você e quem você segue)</h3>
+      <div id="postsList" class="list"></div>
+    </div>
+
+    <div id="ranking">
+      <h3 style="margin:0 0 10px">🏆 Ranking de usuários</h3>
+      <ul id="rankingList"></ul>
+    </div>
+  </div>
+</main>
+
+<!-- Perfil bolinha -->
+<div id="profileBubble">👤</div>
+
+<!-- Painel do SEU perfil -->
+<div id="profilePanel">
+  <span class="closeBtn">✖</span>
+  <h3 id="profileName"></h3>
+  <div class="muted" style="margin-bottom:8px">@<span id="profileHandle"></span></div>
+  <div style="display:flex; gap:12px; margin-bottom:10px">
+    <div>Seguidores: <strong id="profileFollowersCount">0</strong></div>
+    <div>Seguindo: <strong id="profileFollowingCount">0</strong></div>
+  </div>
+  <div><strong>Seguidores</strong></div>
+  <ul id="followersList"></ul>
+  <div style="margin-top:10px"><strong>Seguindo</strong></div>
+  <ul id="followingListPanel"></ul>
+</div>
+
+<!-- Modal de criar post -->
+<div id="postModal" class="modal">
+  <div class="box">
+    <h3>✍️ Novo Post</h3>
+    <div class="form-group">
+      <label for="postText">Texto</label>
+      <textarea id="postText" rows="4" placeholder="O que você quer compartilhar?"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="postImage">URL da imagem (opcional)</label>
+      <input id="postImage" class="input" type="url" placeholder="https://...">
+      <small class="muted">Dica: você pode hospedar a imagem e colar o link aqui. (Se preferir, depois integramos com Storage do Supabase.)</small>
+    </div>
+    <div class="actions">
+      <button id="cancelPost" class="btn btn-outline">Cancelar</button>
+      <button id="publishPost" class="btn follow">Publicar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+
+const supabase = createClient(
+  'https://srgoshlhsgflszwviwcp.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDg0OTAsImV4cCI6MjA2NTQ4NDQ5MH0.lH4lWyA0f2TzKUDB9UNOFI1nv0SE5ee2fcIy4pSS6J8'
+)
+
+// ===== Estado inicial / elementos
+const username = sessionStorage.getItem("nomedeusuario")
+if (!username) { alert("Faça login primeiro."); window.location.href="loginsocial.html" }
+
+let currentUserId = null
+
+const randomUsersDiv = document.getElementById("randomUsers")
+const followingList = document.getElementById("followingList")
+const rankingList = document.getElementById("rankingList")
+const searchInput = document.getElementById("searchInput")
+
+const profileBubble = document.getElementById("profileBubble")
+const profilePanel = document.getElementById("profilePanel")
+const profileName = document.getElementById("profileName")
+const profileHandle = document.getElementById("profileHandle")
+const profileFollowersCount = document.getElementById("profileFollowersCount")
+const profileFollowingCount = document.getElementById("profileFollowingCount")
+const followersList = document.getElementById("followersList")
+const followingListPanel = document.getElementById("followingListPanel")
+const closeBtn = profilePanel.querySelector(".closeBtn")
+
+const openPostsBtn = document.getElementById("openPosts")
+const postModal = document.getElementById("postModal")
+const cancelPostBtn = document.getElementById("cancelPost")
+const publishPostBtn = document.getElementById("publishPost")
+const postText = document.getElementById("postText")
+const postImage = document.getElementById("postImage")
+const postsList = document.getElementById("postsList")
+
+// ===== Helpers
+function firstLetter(name){ return (name?.[0] || '?').toUpperCase() }
+function timeAgo(dateStr){
+  const d = new Date(dateStr); const diff = (Date.now() - d.getTime())/1000;
+  const m = Math.floor(diff/60), h = Math.floor(m/60), d2 = Math.floor(h/24);
+  if (diff < 60) return 'agora';
+  if (m < 60) return `${m} min`;
+  if (h < 24) return `${h} h`;
+  return `${d2} d`;
+}
+
+function renderUserCard(user, isFollowing) {
+  const card = document.createElement("div")
+  card.className = "user-card"
+  const left = document.createElement('div')
+  left.className = 'user-info'
+  left.innerHTML = `<div class="avatar">${firstLetter(user.username)}</div>
+                    <div>
+                      <div>@${user.username}</div>
+                      <div class="muted">${user.followers ?? ''}</div>
+                    </div>`
+  const btn = document.createElement("button")
+  btn.className = isFollowing ? "btn unfollow" : "btn follow"
+  btn.textContent = isFollowing ? "Parar de seguir" : "Seguir"
+  btn.onclick = (e) => { e.stopPropagation(); toggleFollow(user.id, btn) }
+  card.appendChild(left)
+  card.appendChild(btn)
+  return card
+}
+
+async function fetchCurrentUser() {
+  const { data, error } = await supabase.from('usuarios').select('id, username').eq('username', username).single()
+  if (error || !data) { alert('Usuário não encontrado'); return }
+  currentUserId = data.id
+  // configura seu perfil (sempre o seu, conforme seu pedido)
+  profileName.textContent = data.username
+  profileHandle.textContent = data.username
+}
+
+async function loadRandomUsers(search="") {
+  const { data, error } = await supabase.from("usuarios").select("id, username")
+  if (error) return console.error(error)
+  let outros = data.filter(u => u.id !== currentUserId)
+  if (search) outros = outros.filter(u => u.username.toLowerCase().includes(search.toLowerCase()))
+  const sorteados = outros.sort(() => Math.random() - 0.5).slice(0, 8)
+
+  const { data: seguindos } = await supabase.from("seguidores").select("seguindo_id").eq("seguidor_id", currentUserId)
+  const followingIds = seguindos?.map(s => s.seguindo_id) || []
+
+  randomUsersDiv.innerHTML = ""
+  sorteados.forEach(u => {
+    const isFollowing = followingIds.includes(u.id)
+    randomUsersDiv.appendChild(renderUserCard(u, isFollowing))
+  })
+}
+
+async function loadFollowing() {
+  const { data, error } = await supabase
+    .from("seguidores")
+    .select("seguindo_id, seguindo:seguindo_id(username)")
+    .eq("seguidor_id", currentUserId)
+  if (error) return console.error(error)
+  followingList.innerHTML = ""
+  data.forEach(row => followingList.appendChild(renderUserCard({username: row.seguindo.username, id: row.seguindo_id}, true)))
+}
+
+async function toggleFollow(targetUserId, btn) {
+  if (targetUserId === currentUserId) return alert("Você não pode seguir a si mesmo!")
+  const { data: existing, error } = await supabase
+    .from("seguidores")
+    .select("id")
+    .eq("seguidor_id", currentUserId)
+    .eq("seguindo_id", targetUserId)
+  if (error) { console.error(error); return }
+
+  if (existing.length > 0) {
+    await supabase.from("seguidores").delete().eq("seguidor_id", currentUserId).eq("seguindo_id", targetUserId)
+    btn.textContent = "Seguir"; btn.className = "btn follow"
+  } else {
+    await supabase.from("seguidores").insert([{ seguidor_id: currentUserId, seguindo_id: targetUserId }])
+    btn.textContent = "Parar de seguir"; btn.className = "btn unfollow"
+  }
+  await Promise.all([loadFollowing(), loadRanking(), loadProfileCounts(), loadPosts()])
+}
+
+async function loadRanking() {
+  // Busca todos e traz seguidores aninhados (pode ajustar com policies/rls)
+  const { data, error } = await supabase.from("usuarios").select("id, username, seguidores:seguidores(*)")
+  if (error) { console.error(error); return }
+  const ranked = data
+    .filter(u => u.id !== currentUserId)
+    .map(u => ({ id:u.id, username:u.username, followers: u.seguidores?.length || 0 }))
+    .sort((a,b) => b.followers - a.followers)
+    .slice(0, 10)
+
+  rankingList.innerHTML = ""
+  ranked.forEach((u, i) => {
+    const li = document.createElement("li")
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'🏅'
+    li.innerHTML = `<span class="medal">${medal}</span> <span>@${u.username}</span> <span>${u.followers}</span>`
+    rankingList.appendChild(li)
+  })
+}
+
+async function loadProfileCounts() {
+  const { data: followers } = await supabase
+    .from("seguidores")
+    .select("id")
+    .eq("seguindo_id", currentUserId)
+  const { data: following } = await supabase
+    .from("seguidores")
+    .select("id")
+    .eq("seguidor_id", currentUserId)
+
+  profileFollowersCount.textContent = followers?.length || 0
+  profileFollowingCount.textContent = following?.length || 0
+
+  // listas detalhadas (nomes)
+  const followersNames = await supabase
+    .from("seguidores")
+    .select("seguidor:seguidor_id(username)")
+    .eq("seguindo_id", currentUserId)
+  const followingNames = await supabase
+    .from("seguidores")
+    .select("seguindo:seguindo_id(username)")
+    .eq("seguidor_id", currentUserId)
+
+  followersList.innerHTML = (followersNames.data||[]).map(f=>`<li>@${f.seguidor.username}</li>`).join("") || '<li class="muted">Sem seguidores</li>'
+  followingListPanel.innerHTML = (followingNames.data||[]).map(f=>`<li>@${f.seguindo.username}</li>`).join("") || '<li class="muted">Você não segue ninguém</li>'
+}
+
+// ===== Posts =====
+function renderPostCard(post){
+  const card = document.createElement('div')
+  card.className = 'post-card'
+  const head = document.createElement('div')
+  head.className='post-head'
+  head.innerHTML = `
+    <div class="avatar">${firstLetter(post.autor?.username)}</div>
+    <div>
+      <div>@${post.autor?.username || 'desconhecido'}</div>
+      <div class="muted">${timeAgo(post.criado_em)}</div>
+    </div>`
+  const text = document.createElement('div')
+  text.textContent = post.conteudo || ''
+  card.appendChild(head)
+  if (post.conteudo) card.appendChild(text)
+  if (post.imagem_url){
+    const img = document.createElement('img')
+    img.src = post.imagem_url
+    img.alt = 'imagem do post'
+    img.className='post-img'
+    card.appendChild(img)
+  }
+  // apagar (somente dono)
+  if (post.usuario_id === currentUserId){
+    const del = document.createElement('button')
+    del.className='btn btn-outline'
+    del.textContent='Excluir'
+    del.style.alignSelf='flex-end'
+    del.onclick = async () => {
+      await supabase.from('posts').delete().eq('id', post.id)
+      await loadPosts()
+    }
+    card.appendChild(del)
+  }
+  return card
+}
+
+async function loadPosts(){
+  // pega ids que você segue + você
+  const { data: seg } = await supabase.from('seguidores').select('seguindo_id').eq('seguidor_id', currentUserId)
+  const ids = [currentUserId, ...(seg?.map(s=>s.seguindo_id)||[])]
+  if (ids.length === 0){ postsList.innerHTML='<div class="empty">Sem posts</div>'; return }
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select('id, usuario_id, conteudo, imagem_url, criado_em, autor:usuario_id (username)')
+    .in('usuario_id', ids)
+    .order('criado_em', { ascending:false })
+    .limit(50)
+  if (error){ console.error(error); return }
+
+  postsList.innerHTML = ""
+  if (!data || data.length===0){
+    postsList.innerHTML = '<div class="empty">Sem posts por enquanto. Clique em “📝 Posts” para publicar o primeiro!</div>'
+    return
+  }
+  data.forEach(p => postsList.appendChild(renderPostCard(p)))
+}
+
+async function publishPost(){
+  const text = (postText.value||'').trim()
+  const img = (postImage.value||'').trim()
+  if (!text && !img){ alert('Escreva algo ou informe uma imagem.'); return }
+  const payload = { usuario_id: currentUserId, conteudo: text }
+  if (img) payload.imagem_url = img
+  const { error } = await supabase.from('posts').insert([payload])
+  if (error){ alert('Erro ao publicar.'); console.error(error); return }
+  postText.value = ''; postImage.value = ''
+  postModal.style.display = 'none'
+  await loadPosts()
+}
+
+// ===== Eventos UI
+searchInput.addEventListener("input", e => loadRandomUsers(e.target.value))
+profileBubble.onclick = () => { profilePanel.style.display = "flex" }
+closeBtn.onclick = () => { profilePanel.style.display = "none" }
+openPostsBtn.onclick = () => { postModal.style.display='flex' }
+cancelPostBtn.onclick = () => { postModal.style.display='none' }
+publishPostBtn.onclick = publishPost
+postModal.addEventListener('click', (e)=>{ if(e.target===postModal) postModal.style.display='none' })
+
+// ===== Boot
+async function init(){
+  await fetchCurrentUser()
+  await Promise.all([
+    loadRandomUsers(),
+    loadFollowing(),
+    loadRanking(),
+    loadProfileCounts(),
+    loadPosts()
+  ])
+}
+init()
+</script>
+</body>
+</html>

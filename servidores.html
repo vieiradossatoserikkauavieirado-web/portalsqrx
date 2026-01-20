@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servidores Parceiros • SiqueiraX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --bg:#0b0b0b;
+  --card:#141414;
+  --glass:rgba(20,20,20,.75);
+  --radius:14px;
+  --transition:.3s ease;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:var(--bg);
+  color:#ddd;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:2.5rem 1rem 4rem;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at 20% 20%, rgba(255,0,43,.15), transparent 55%),
+             radial-gradient(circle at 80% 80%, rgba(255,0,43,.12), transparent 55%);
+  z-index:-1;
+}
+
+/* HEADER */
+header{
+  margin-bottom:2.5rem;
+  text-align:center;
+}
+
+header h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:2.4rem;
+  color:var(--red);
+  text-shadow:0 0 25px rgba(255,0,43,.7);
+}
+
+/* GRID */
+.servers{
+  width:100%;
+  max-width:1100px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:1.2rem;
+}
+
+/* CARD */
+.card{
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--radius);
+  padding:1.2rem 1rem 1.4rem;
+  text-align:center;
+  transition:var(--transition);
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 25px rgba(255,0,43,.45);
+}
+
+/* LOGO */
+.card img{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid var(--red);
+  margin-bottom:.6rem;
+}
+
+/* TITLE */
+.card h2{
+  font-size:1rem;
+  font-weight:600;
+  color:#fff;
+  margin-bottom:.4rem;
+}
+
+/* INFO */
+.info{
+  font-size:.85rem;
+  margin-bottom:.6rem;
+  word-break:break-all;
+}
+
+/* ACTIONS */
+.actions{
+  display:flex;
+  gap:.5rem;
+  justify-content:center;
+}
+
+.btn{
+  flex:1;
+  padding:.45rem .6rem;
+  border-radius:10px;
+  font-size:.78rem;
+  font-weight:600;
+  cursor:pointer;
+  border:none;
+  transition:var(--transition);
+  text-decoration:none;
+  text-align:center;
+}
+
+/* COPY */
+.btn-copy{
+  background:#1f1f1f;
+  color:#fff;
+}
+
+.btn-copy:hover{
+  background:var(--red);
+  box-shadow:0 0 15px rgba(255,0,43,.7);
+}
+
+/* DISCORD */
+.btn-discord{
+  background:var(--red-dark);
+  color:#fff;
+}
+
+.btn-discord:hover{
+  background:var(--red);
+  box-shadow:0 0 15px rgba(255,0,43,.7);
+}
+
+/* BACK */
+.back{
+  margin-top:3.5rem;
+  padding:.9rem 2.2rem;
+  border:none;
+  border-radius:18px;
+  font-weight:700;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 0 30px rgba(255,0,43,.6);
+  transition:var(--transition);
+}
+
+.back:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 45px rgba(255,0,43,.9);
+}
+
+/* FOOTER */
+footer{
+  margin-top:3rem;
+  font-size:.75rem;
+  opacity:.45;
+}
+
+/* MOBILE */
+@media(max-width:480px){
+  header h1{font-size:1.9rem}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Servidores Parceiros</h1>
+</header>
+
+<section class="servers">
+
+  <!-- CARD PADRÃO (repete os seus sem mudar nada) -->
+  <article class="card">
+    <article class="card">
+        <img src="https://i.imgur.com/aSvZqvr.png" alt="Logo Street City RPG" />
+        <h2>Street City RPG</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">191.96.224.79:8327</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="https://discord.gg/8zr537aja4" target="_blank" rel="noopener">Discord</a>
+        </div>
+        </article>
+
+    <article class="card">
+        <img src="https://i.imgur.com/Rv6If9U.png" alt="Logo Fortal City Roleplay" />
+        <h2>Fortal City Roleplay</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">108.165.179.212:7777</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="https://discord.gg/JUkbKPdync" target="_blank" rel="noopener">Discord</a>
+        </div>
+        </article>
+
+
+      <article class="card">
+        <img src="https://i.imgur.com/nfC1jU7.jpeg" alt="Logo Rede Mafiosa [RPG]" />
+        <h2>Rede Mafiosa [RPG]</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">88.198.129.10:7777</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="https://discord.gg/C6AKhPmsm4" target="_blank" rel="noopener">Discord</a>
+        </div>
+        </article>
+      
+
+        <article class="card">
+        <img src="https://i.imgur.com/FXqpM2c.jpeg" alt="Logo Sunshine RPG" />
+        <h2>Sunshine RPG</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">51.222.19.203:7777</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="https://discord.gg/QdjsYx9n" target="_blank" rel="noopener">Discord</a>
+        </div>
+        </article>
+
+
+       <article class="card">
+        <img src="https://i.imgur.com/B1cXwFx.png" alt="Logo Angel RP" />
+        <h2>Angel RP</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">135.148.76.132:7777</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="https://discord.gg/XszJnqVn" target="_blank" rel="noopener">Discord</a>
+        </div>
+        </article>
+
+
+    
+
+      <article class="card">
+        <img src="https://i.imgur.com/WL7YlV2.jpeg" alt="Logo Fenix RPG" />
+        <h2>Fenix RPG</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">167.114.42.153:7777</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="https://discord.gg/fenixrpg" target="_blank" rel="noopener">Discord</a>
+        </div>
+        </article>
+
+
+
+      <article class="card">
+        <img src="https://i.imgur.com/ZF3FhKG.png" alt="Logo New StarT RPG" />
+        <h2>New StarT RPG</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">167.114.111.254:7777</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="" target="_blank" rel="noopener">Discord</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="https://i.imgur.com/twZkCsU.jpeg" alt="Logo Egito RPG" />
+        <h2>Egito RPG</h2>
+        <div class="info"><strong>IP:</strong> <span class="ip">181.215.45.155:7777</span></div>
+        <div class="actions">
+          <button class="btn btn-copy" onclick="copyIP(this)">Copiar IP</button>
+          <a class="btn btn-discord" href="https://discord.gg/ZMUeeb3RNG" target="_blank" rel="noopener">Discord</a>
+        </div>
+        </article>
+
+</section>
+
+<a href="index.html"><button class="back">⬅ Voltar ao Menu</button></a>
+
+<footer>© 2025 SiqueiraX • Todos os direitos reservados</footer>
+
+<script>
+function copyIP(btn){
+  const ip = btn.closest('.card').querySelector('.ip').textContent
+  navigator.clipboard.writeText(ip)
+  const t = btn.textContent
+  btn.textContent = 'Copiado'
+  btn.disabled = true
+  setTimeout(()=>{
+    btn.textContent = t
+    btn.disabled = false
+  },1500)
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gamemodes - Portal SiqueiraX</title>
+  <style>
+    body {
+      margin: 0;
+      background: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #78aaff;
+      margin-bottom: 20px;
+    }
+
+    .search-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 30px;
+    }
+    .search-container input {
+      width: 100%;
+      padding: 12px 40px 12px 15px;
+      border-radius: 25px;
+      border: none;
+      font-size: 16px;
+      background: #333;
+      color: white;
+      outline: none;
+      transition: background-color 0.3s;
+    }
+    .search-container input::placeholder {
+      color: #bbb;
+    }
+    .search-container input:focus {
+      background-color: #444;
+    }
+    .search-container .icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      fill: #bbb;
+      width: 20px;
+      height: 20px;
+    }
+
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .card {
+      background: #222;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #444;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 20px #78aaff;
+    }
+    .card img {
+      width: 100%;
+      object-fit: cover;
+      aspect-ratio: 16/9;
+    }
+    .card-content {
+      padding: 15px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+      color: #78aaff;
+      word-break: break-word;
+    }
+    .card-model {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: #bbb;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .card-enviado-por {
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      color: #999;
+      font-style: italic;
+      word-break: break-word;
+    }
+    .download-btn {
+      background: #5a88ff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-mini-send {
+      display: inline-block;
+      background-color: #0055ff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 0 8px #0055ffbb;
+      margin-bottom: 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-mini-send:hover {
+      background-color: #003ccc;
+      transform: scale(1.05);
+    }
+
+
+    .download-btn:hover {
+      background-color: #3c6fff;
+    }
+
+    @media (max-width: 480px) {
+      .cards-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="enviadoresgm.html" class="btn-mini-send">+ Enviar Gamemode</a>
+
+
+  <h1>Gamemodes</h1>
+  
+  <div class="search-container">
+    <input type="search" id="searchInput" placeholder="Buscar gamemodes..." aria-label="Buscar gamemodes" />
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M10 18c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm6.707-1.293l4.586 4.586-1.414 1.414-4.586-4.586a9 9 0 1 1 1.414-1.414z"/>
+    </svg>
+  </div>
+
+  <div class="cards-container" id="cardsContainer">
+    <!-- Cards serão inseridos aqui -->
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const supabaseUrl = 'https://srgoshlhsgflszwviwcp.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDg0OTAsImV4cCI6MjA2NTQ4NDQ5MH0.lH4lWyA0f2TzKUDB9UNOFI1nv0SE5ee2fcIy4pSS6J8';
+
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    const cardsContainer = document.getElementById('cardsContainer');
+    const searchInput = document.getElementById('searchInput');
+
+    let gamemodes = [];
+
+    async function fetchGamemodes() {
+     const { data, error } = await supabase
+  .from('gamemodes')
+  .select()
+  .order('created_at', { ascending: false });
+
+
+      if (error) {
+        cardsContainer.innerHTML = `<p style="color:#ff5555; text-align:center;">Erro ao carregar gamemodes: ${error.message}</p>`;
+        return;
+      }
+
+      gamemodes = data;
+      renderGamemodes(gamemodes);
+    }
+
+    function renderGamemodes(list) {
+      if (!list.length) {
+        cardsContainer.innerHTML = '<p style="text-align:center; color:#bbb;">Nenhum gamemode encontrado.</p>';
+        return;
+      }
+
+      cardsContainer.innerHTML = list.map(gm => `
+        <div class="card" tabindex="0">
+          <img src="${gm.imagem_url}" alt="Imagem do gamemode ${escapeHtml(gm.nome)}" loading="lazy" />
+          <div class="card-content">
+            <div>
+              <div class="card-title">${escapeHtml(gm.nome)}</div>
+              <div class="card-model">${escapeHtml(gm.model)}</div>
+              <div class="card-enviado-por">Enviado por: ${gm.enviado_por ? escapeHtml(gm.enviado_por) : 'Desconhecido'}</div>
+            </div>
+            <a href="${gm.download_url}" class="download-btn" target="_blank" rel="noopener noreferrer" aria-label="Download do gamemode ${escapeHtml(gm.nome)}">Baixar</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      if (!query) {
+        renderGamemodes(gamemodes);
+        return;
+      }
+      const filtered = gamemodes.filter(gm =>
+        gm.nome.toLowerCase().includes(query) ||
+        gm.model.toLowerCase().includes(query) ||
+        (gm.enviado_por && gm.enviado_por.toLowerCase().includes(query))
+      );
+      renderGamemodes(filtered);
+    });
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    fetchGamemodes();
+  </script>
+</body>
+</html>

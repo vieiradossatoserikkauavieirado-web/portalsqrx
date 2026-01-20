@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enviar Notificação - Portal SiqueiraX</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: #0e1117;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      background: #161b22;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+    h1 { text-align: center; margin-bottom: 1.5rem; }
+    label { display: block; margin: 1rem 0 0.5rem; }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+    textarea { resize: none; height: 100px; }
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.8rem;
+      background: #0868ed;
+      color: #fff;
+      border: none;
+      border-radius: 0.6rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+    button:hover { background: #0358cf; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Enviar Notificação</h1>
+    <label for="titulo">Título</label>
+    <input type="text" id="titulo" placeholder="Nome do anúncio">
+
+    <label for="mensagem">Mensagem</label>
+    <textarea id="mensagem" placeholder="Texto do anúncio"></textarea>
+
+    <button id="enviar">Enviar Notificação</button>
+  </div>
+
+  <script>
+    // Solicitar permissão para notificações
+    if ('Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+
+    document.getElementById('enviar').addEventListener('click', () => {
+      const titulo = document.getElementById('titulo').value.trim();
+      const mensagem = document.getElementById('mensagem').value.trim();
+
+      if (!titulo || !mensagem) {
+        alert('Preencha título e mensagem!');
+        return;
+      }
+
+      // Disparar notificação
+      if (Notification.permission === 'granted') {
+        new Notification(titulo, {
+          body: mensagem,
+          icon: '/icons/icon-192.png'
+        });
+        alert('Notificação enviada com sucesso!');
+      } else {
+        alert('Permissão de notificações negada. Atualize e permita notificações.');
+      }
+
+      // Limpar campos
+      document.getElementById('titulo').value = '';
+      document.getElementById('mensagem').value = '';
+    });
+  </script>
+</body>
+</html>

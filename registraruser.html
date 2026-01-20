@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registrar Usuário - Portal SiqueiraX</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      margin: 0;
+    }
+
+    .container {
+      background: #222;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #555;
+      width: 100%;
+      max-width: 380px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      color: #78aaff;
+      font-weight: 600;
+      font-size: 2rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 15px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      background: #333;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    input::placeholder { color: #bbb; }
+    input:focus {
+      outline: none;
+      background-color: #444;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background-color: #5a88ff;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      color: white;
+      font-weight: 600;
+      margin-top: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover { background-color: #3c6fff; }
+
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+      min-height: 22px;
+      font-size: 1rem;
+    }
+
+    .success { color: #6ef26e; }
+    .error { color: #ff5555; }
+
+    #logoutBtn {
+      margin-top: 25px;
+      width: 100%;
+      padding: 14px;
+      background-color: #ff5555;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      font-weight: 600;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    #logoutBtn:hover { background-color: #cc4444; }
+
+    @media (max-width: 400px) {
+      .container { padding: 25px 20px; }
+      h1 { font-size: 1.6rem; }
+      input, button[type="submit"], #logoutBtn {
+        font-size: 15px;
+        padding: 12px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Registrar Usuário</h1>
+    <form id="registerForm">
+      <input type="text" id="username" placeholder="Nome de usuário" required autocomplete="username" />
+      <input type="password" id="password" placeholder="Senha" required autocomplete="new-password" />
+      <button type="submit">Registrar</button>
+    </form>
+    <div class="message" id="message"></div>
+    <button id="logoutBtn">Logout Admin</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    if (localStorage.getItem('adminLoggedIn') !== 'true') {
+      alert('Acesso negado! Faça login como admin.');
+      window.location.href = 'loginadm.html';
+    }
+
+    const supabaseUrl = 'https://srgoshlhsgflszwviwcp.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDg0OTAsImV4cCI6MjA2NTQ4NDQ5MH0.lH4lWyA0f2TzKUDB9UNOFI1nv0SE5ee2fcIy4pSS6J8';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    const form = document.getElementById('registerForm');
+    const message = document.getElementById('message');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    message.textContent = '';
+    message.className = 'message';
+
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!username || !password) {
+      message.textContent = 'Preencha todos os campos.';
+      message.classList.add('error');
+      return;
+    }
+
+    // 🔍 Verifica se o usuário já existe
+    const { data: existingUser, error: lookupError } = await supabase
+      .from('usuarios')
+      .select('id')
+      .eq('username', username)
+      .single();
+
+    if (existingUser) {
+      message.textContent = 'Este nome de usuário já está registrado.';
+      message.classList.add('error');
+      return;
+    }
+
+    if (lookupError && lookupError.code !== 'PGRST116') {
+      // PGRST116 = no rows found, o que é esperado se o usuário não existir
+      message.textContent = 'Erro ao verificar usuário: ' + lookupError.message;
+      message.classList.add('error');
+      return;
+    }
+
+    // ✅ Registra novo usuário
+    const { data, error } = await supabase.from('usuarios').insert([
+      { username, password, acesso_gamemodes: 'permitido' }
+    ]);
+
+    if (error) {
+      message.textContent = 'Erro ao registrar: ' + error.message;
+      message.classList.add('error');
+    } else {
+      const { error: countError } = await supabase.rpc('incrementar_total_usuarios');
+
+      if (countError) {
+        message.textContent = 'Usuário registrado, mas erro ao atualizar contador.';
+        message.classList.add('error');
+      } else {
+        message.textContent = `Usuário "${username}" registrado com sucesso!`;
+        message.classList.add('success');
+        form.reset();
+      }
+    }
+  });
+
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('adminLoggedIn');
+      window.location.href = 'loginadm.html';
+    });
+  </script>
+
+</body>
+</html>

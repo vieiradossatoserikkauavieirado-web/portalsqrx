@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login • Portal SiqueiraX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --glass:rgba(15,15,15,.78);
+  --transition:.35s ease;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(18px);
+  z-index:-1;
+}
+
+/* CARD */
+.login-card{
+  width:100%;
+  max-width:460px;
+  background:var(--glass);
+  border-radius:24px;
+  padding:2.8rem 2.6rem;
+  box-shadow:0 0 45px rgba(255,0,43,.6);
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.login-card h1{
+  font-family:'Orbitron',sans-serif;
+  text-align:center;
+  font-size:2.4rem;
+  margin-bottom:1rem;
+  color:var(--red);
+  text-shadow:0 0 25px rgba(255,0,43,.7);
+}
+
+/* TEXTO */
+.terms-text{
+  font-size:.92rem;
+  color:#ddd;
+  line-height:1.45;
+  margin-bottom:1.4rem;
+  background:rgba(0,0,0,.35);
+  padding:1rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.terms-text strong{color:#ff4d4d}
+
+/* INPUTS */
+.field{margin-bottom:1.1rem}
+
+.field input{
+  width:100%;
+  padding:1rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.35);
+  color:#fff;
+}
+
+.field input::placeholder{color:#ffb3b3}
+
+.field input:focus{
+  outline:none;
+  border-color:var(--red);
+  box-shadow:0 0 20px rgba(255,0,43,.6);
+}
+
+/* CHECK */
+.accept-box{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  margin:1rem 0;
+  font-size:.9rem;
+}
+
+.accept-box input{
+  accent-color:var(--red);
+  transform:scale(1.2);
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  padding:1rem;
+  border:none;
+  border-radius:16px;
+  font-weight:700;
+  letter-spacing:1px;
+  cursor:not-allowed;
+  color:#fff;
+  background:linear-gradient(135deg,#555,#333);
+  transition:var(--transition);
+}
+
+button.enabled{
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  box-shadow:0 0 30px rgba(255,0,43,.7);
+}
+
+button.enabled:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 45px rgba(255,0,43,.9);
+}
+
+/* ALERT */
+.alert-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99;
+}
+
+.alert-box{
+  background:#120607;
+  border-radius:20px;
+  padding:2.2rem;
+  max-width:420px;
+  width:90%;
+  text-align:center;
+  box-shadow:0 0 45px rgba(255,0,43,.7);
+}
+
+.alert-box h2{color:#ff4d4d;margin-bottom:.6rem}
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+  <h1>Portal SiqueiraX</h1>
+
+  <div class="terms-text">
+    Efetue login para acessar todas as <strong>gamemodes do canal SiqueiraX</strong>.<br><br>
+    Todas as gamemodes disponibilizadas são de autoria do SiqueiraX ou bases enviadas para vazamento.
+    <strong>Nenhum conteúdo pertence a clientes</strong> ou a pessoas que realizaram serviços profissionais.<br><br>
+    Os serviços prestados pelo SiqueiraX são <strong>100% profissionais</strong> e entregues corretamente.
+    Os vazamentos disponíveis não possuem qualquer relação com trabalhos pagos.
+  </div>
+
+  <form id="loginForm">
+    <div class="field">
+      <input type="text" id="username" placeholder="Usuário" required>
+    </div>
+    <div class="field">
+      <input type="password" id="password" placeholder="Senha" required>
+    </div>
+
+    <div class="accept-box">
+      <input type="checkbox" id="acceptTerms">
+      <label for="acceptTerms">Li e entendi os termos acima</label>
+    </div>
+
+    <button type="submit" id="loginBtn">ENTRAR</button>
+  </form>
+</div>
+
+<div class="alert-overlay" id="alertOverlay">
+  <div class="alert-box">
+    <h2>⛔ Acesso Negado</h2>
+    <p id="alertMessage"></p>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+
+const supabase = createClient(
+ 'https://srgoshlhsgflszwviwcp.supabase.co',
+ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxMDAzNTQsImV4cCI6MjA3NzQ2MDM1NH0.ge8ziu8qhxJiTd-Th8HWiN-L3S515g0y0WyDBt7T8lA'
+)
+
+const form=document.getElementById('loginForm')
+const overlay=document.getElementById('alertOverlay')
+const message=document.getElementById('alertMessage')
+const checkbox=document.getElementById('acceptTerms')
+const button=document.getElementById('loginBtn')
+
+checkbox.addEventListener('change',()=>{
+ if(checkbox.checked){
+  button.classList.add('enabled')
+  button.disabled=false
+ }else{
+  button.classList.remove('enabled')
+  button.disabled=true
+ }
+})
+
+button.disabled=true
+
+form.addEventListener('submit',async e=>{
+ e.preventDefault()
+ if(!checkbox.checked) return
+
+ const username=document.getElementById('username').value.trim()
+ const password=document.getElementById('password').value.trim()
+
+ try{
+  const { data:user } = await supabase
+   .from('usuarios')
+   .select('*')
+   .eq('username',username)
+   .eq('password',password)
+   .maybeSingle()
+
+  if(!user) return show('Usuário ou senha incorretos.')
+  if(user.acesso_gamemodes!=='permitido') return show('Conta sem permissão.')
+
+  sessionStorage.setItem('nomedeusuario',user.username)
+  window.location.href='gamemodes.html'
+
+ }catch{
+  show('Erro ao conectar ao servidor.')
+ }
+})
+
+function show(text){
+ message.textContent=text
+ overlay.style.display='flex'
+ overlay.onclick=()=>overlay.style.display='none'
+}
+</script>
+
+</body>
+</html>

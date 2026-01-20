@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - Portal SiqueiraX</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://i.imgur.com/eKjFtd1.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Fundo desfocado com efeito */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(12px);
+      z-index: -1;
+    }
+
+    .register-card {
+      background: rgba(0,0,0,0.7);
+      border-radius: 30px;
+      border: 2px solid rgba(255,255,255,0.1);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .register-card h1 {
+      font-size: 28px;
+      color: #00cfff;
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px #ff5555, 0 0 15px #00cfff;
+    }
+
+    .register-card p {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 30px;
+      line-height: 1.5;
+      text-align: justify;
+    }
+
+    .discord-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(90deg, #ff0033, #007bff);
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+      width: 100%;
+    }
+
+    .discord-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #ff0033, 0 0 15px #007bff;
+    }
+
+    .discord-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .note {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #f0f0f0;
+      background: rgba(255,255,255,0.05);
+      padding: 12px 15px;
+      border-radius: 15px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 600px) {
+      .register-card { padding: 30px 20px; }
+      .register-card h1 { font-size: 24px; }
+      .register-card p { font-size: 15px; }
+      .discord-btn { font-size: 16px; padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-card">
+    <h1>Registro Automático</h1>
+    <p>
+      Para se registrar no Portal SiqueiraX, você precisa acessar nosso servidor Discord. 
+      Lá, um bot automático criará seu usuário e senha. Basta possuir a tag de <strong>Inscrito</strong> e seguir as instruções no canal específico.
+    </p>
+
+    <button class="discord-btn" onclick="window.open('https://discord.com/channels/1180192351432482947/1384218315798347930', '_blank')">
+      <i data-lucide="discord"></i> Acessar Registro no Discord
+    </button>
+
+    <div class="note">
+      ⚠️ Lembre-se: O registro é automático. Não é necessário criar usuário ou senha manualmente. Apenas entre no canal e siga o bot!
+      <br>
+      🔗 Link rápido para nosso servidor: <a href="https://dsc.gg/siqueiraxsamp" target="_blank" style="color:#00cfff;text-decoration:underline;">dsc.gg/siqueiraxsamp</a>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

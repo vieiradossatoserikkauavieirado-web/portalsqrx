@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Área VIP • SiqueiraX</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --glass:rgba(15,15,15,.8);
+  --transition:.35s ease;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(18px);
+  z-index:-1;
+}
+
+/* ===== CARD ===== */
+.vip-card{
+  width:100%;
+  max-width:440px;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:26px;
+  padding:3rem 2.5rem;
+  box-shadow:0 0 55px rgba(255,0,43,.6);
+  animation:fadeUp .8s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.vip-card h1{
+  font-family:'Orbitron',sans-serif;
+  text-align:center;
+  font-size:2.2rem;
+  margin-bottom:.8rem;
+  background:linear-gradient(90deg,#ff002b,#ff5c5c);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 30px rgba(255,0,43,.7);
+}
+
+.vip-card .subtitle{
+  text-align:center;
+  font-size:.95rem;
+  opacity:.85;
+  margin-bottom:1.8rem;
+}
+
+/* ===== INFO ===== */
+.vip-info{
+  font-size:.85rem;
+  line-height:1.5;
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:1rem;
+  margin-bottom:1.6rem;
+}
+
+.vip-info b{color:#ff4d4d}
+
+/* ===== INPUTS ===== */
+.field{margin-bottom:1rem}
+
+.field input{
+  width:100%;
+  padding:1rem 1.1rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(0,0,0,.4);
+  color:#fff;
+  font-size:.95rem;
+  transition:var(--transition);
+}
+
+.field input::placeholder{color:#ffb3b3}
+
+.field input:focus{
+  outline:none;
+  border-color:var(--red);
+  box-shadow:0 0 20px rgba(255,0,43,.6);
+}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:1rem;
+  margin-top:.6rem;
+  border:none;
+  border-radius:16px;
+  font-size:.95rem;
+  font-weight:700;
+  letter-spacing:1px;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  box-shadow:0 0 30px rgba(255,0,43,.7);
+  transition:var(--transition);
+}
+
+button:hover{
+  transform:scale(1.06);
+  box-shadow:0 0 45px rgba(255,0,43,.9);
+}
+
+/* ===== ERROR ===== */
+.error-message{
+  margin-top:1rem;
+  color:#ff6b6b;
+  font-size:.85rem;
+  text-align:center;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:480px){
+  .vip-card{padding:2.2rem 1.8rem}
+  .vip-card h1{font-size:1.9rem}
+}
+</style>
+</head>
+
+<body>
+
+<div class="vip-card">
+  <h1>Área VIP</h1>
+  <div class="subtitle">Acesso restrito • Portal SiqueiraX</div>
+
+  <div class="vip-info">
+    Efetue login para acessar <b>todas as GameModes VIP</b> do canal SiqueiraX.<br><br>
+    Todo conteúdo é de autoria do <b>SiqueiraX</b> ou bases enviadas para vazamento.<br>
+    <b>Não há conteúdo de clientes ou serviços profissionais.</b>
+  </div>
+
+  <form id="loginVipForm">
+    <div class="field">
+      <input type="text" id="vipUser" placeholder="Usuário VIP" required>
+    </div>
+    <div class="field">
+      <input type="password" id="vipPass" placeholder="Senha VIP" required>
+    </div>
+    <button type="submit">ACESSAR ÁREA VIP</button>
+  </form>
+
+  <p id="vipErrorMessage" class="error-message"></p>
+</div>
+
+<script>
+const supabaseVip = window.supabase.createClient(
+ 'https://srgoshlhsgflszwviwcp.supabase.co',
+ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxMDAzNTQsImV4cCI6MjA3NzQ2MDM1NH0.ge8ziu8qhxJiTd-Th8HWiN-L3S515g0y0WyDBt7T8lA'
+)
+
+const formVip=document.getElementById('loginVipForm')
+const vipError=document.getElementById('vipErrorMessage')
+
+formVip.addEventListener('submit',async e=>{
+ e.preventDefault()
+ vipError.textContent=''
+
+ const username=document.getElementById('vipUser').value.trim()
+ const password=document.getElementById('vipPass').value
+
+ try{
+  const { data:banido } = await supabaseVip
+   .from('banidos')
+   .select('*')
+   .eq('username',username)
+   .single()
+
+  if(banido){
+    localStorage.setItem('banMotivoVip',banido.motivo)
+    return window.location.href='banidos.html'
+  }
+
+  const { data:user } = await supabaseVip
+   .from('usuariovip')
+   .select('*')
+   .eq('username',username)
+   .eq('password',password)
+   .single()
+
+  if(!user){
+    vipError.textContent='Usuário ou senha incorretos.'
+    return
+  }
+
+  localStorage.setItem('vipUsuarioLogado',user.username)
+  localStorage.setItem('vipAcessoGamemodes',user.acesso_gamemodes)
+  sessionStorage.setItem('nomedeusuario',user.username)
+
+  window.location.href='acessovip.html'
+
+ }catch{
+  vipError.textContent='Erro inesperado.'
+ }
+})
+</script>
+
+</body>
+</html>

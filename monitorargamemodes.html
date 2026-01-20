@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitorar Gamemodes - Portal SiqueiraX</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Orbitron', Arial, sans-serif;
+      background: url('https://i.imgur.com/eKjFtd1.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #c0eaff;
+      text-shadow: 0 0 8px #004080;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 15px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      background: rgba(0, 40, 80, 0.9);
+      border-radius: 20px;
+      padding: 30px 35px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 0 25px #0099ffcc;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.6rem;
+      margin: 0;
+      background: linear-gradient(90deg, #00c3ff, #004080);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 5s linear infinite;
+      user-select: none;
+    }
+
+    @keyframes shine {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(0,0,0,0.3);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 0 20px #0099ffcc;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      color: #c0eaff;
+      user-select: text;
+    }
+
+    th {
+      background: rgba(0, 40, 80, 0.8);
+      font-weight: 700;
+    }
+
+    tr:not(:last-child) {
+      border-bottom: 1px solid #004080;
+    }
+
+    img.gm-thumb {
+      width: 120px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 8px #0055ffbb;
+    }
+
+    a.link-download {
+      color: #00c3ff;
+      font-weight: 700;
+      text-decoration: none;
+      user-select: text;
+    }
+    a.link-download:hover {
+      text-decoration: underline;
+    }
+
+    button.btn-delete {
+      background-color: #ff4040;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 14px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 15px #ff4040bb;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      user-select: none;
+    }
+    button.btn-delete:hover {
+      background-color: #cc3030;
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #cc3030cc;
+    }
+
+    /* Responsividade */
+    @media (max-width: 680px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 25px;
+        border: 2px solid #004080;
+        border-radius: 14px;
+        padding: 10px;
+      }
+
+      td {
+        padding-left: 50%;
+        position: relative;
+        text-align: right;
+        user-select: text;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        font-weight: 700;
+        color: #00c3ff;
+        text-align: left;
+        user-select: none;
+      }
+
+      img.gm-thumb {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+      }
+
+      button.btn-delete {
+        width: 100%;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Monitorar Gamemodes</h1>
+
+    <table aria-label="Tabela de Gamemodes" id="gmTable">
+      <thead>
+        <tr>
+          <th>Imagem</th>
+          <th>Nome</th>
+          <th>Modelo</th>
+          <th>Enviado por</th>
+          <th>Download</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Gamemodes serão carregados aqui -->
+      </tbody>
+    </table>
+  </div>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+
+  const supabaseUrl = 'https://srgoshlhsgflszwviwcp.supabase.co'
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDg0OTAsImV4cCI6MjA2NTQ4NDQ5MH0.lH4lWyA0f2TzKUDB9UNOFI1nv0SE5ee2fcIy4pSS6J8'
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  const gmTableBody = document.querySelector('#gmTable tbody')
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;")
+  }
+
+  async function carregarGamemodes() {
+    gmTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; user-select:none;">Carregando gamemodes...</td></tr>'
+
+    const { data, error } = await supabase
+      .from('gamemodes')
+      .select()
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      gmTableBody.innerHTML = `<tr><td colspan="6" style="color:#ff8080; text-align:center;">Erro ao carregar gamemodes: ${escapeHtml(error.message)}</td></tr>`
+      return
+    }
+
+    if (!data.length) {
+      gmTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#bbb;">Nenhum gamemode cadastrado.</td></tr>`
+      return
+    }
+
+    gmTableBody.innerHTML = ''
+
+    data.forEach(gm => {
+      const imgUrl = escapeHtml(gm.imagem_url || '')
+      const nome = escapeHtml(gm.nome || '')
+      const model = escapeHtml(gm.model || '')
+      const enviadoPor = escapeHtml(gm.enviado_por || 'Desconhecido')
+      const downloadUrl = escapeHtml(gm.download_url || '')
+
+      const tr = document.createElement('tr')
+
+      tr.innerHTML = `
+        <td data-label="Imagem"><img src="${imgUrl}" alt="Imagem do gamemode ${nome}" class="gm-thumb" loading="lazy"></td>
+        <td data-label="Nome">${nome}</td>
+        <td data-label="Modelo">${model}</td>
+        <td data-label="Enviado por">${enviadoPor}</td>
+        <td data-label="Download"><a href="${downloadUrl}" target="_blank" rel="noopener noreferrer" class="link-download">Link</a></td>
+        <td data-label="Ações">
+          <button class="btn-delete" data-id="${gm.id}" aria-label="Apagar gamemode ${nome}">Apagar</button>
+        </td>
+      `
+
+      gmTableBody.appendChild(tr)
+    })
+  }
+
+  gmTableBody.addEventListener('click', async (e) => {
+    if (!e.target.classList.contains('btn-delete')) return
+
+    const id = e.target.getAttribute('data-id')
+    if (!id) return
+
+    const nome = e.target.closest('tr').querySelector('td[data-label="Nome"]').textContent
+
+    if (!confirm(`Deseja realmente apagar o gamemode "${nome}"? Esta ação não pode ser desfeita.`)) return
+
+    e.target.disabled = true
+    e.target.textContent = 'Apagando...'
+
+    const { error } = await supabase
+      .from('gamemodes')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      alert('Erro ao apagar gamemode: ' + error.message)
+      e.target.disabled = false
+      e.target.textContent = 'Apagar'
+      return
+    }
+
+    carregarGamemodes()
+  })
+
+  carregarGamemodes()
+</script>
+</body>
+</html>

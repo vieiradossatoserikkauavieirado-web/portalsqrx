@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel GM - Gerenciar Enviadores</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #78aaff;
+      margin-bottom: 25px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #1e1e1e;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      background: #333;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 5px;
+      cursor: pointer;
+      background-color: #5a88ff;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3c6fff;
+    }
+
+    .message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+      font-size: 1rem;
+    }
+
+    .success { color: #6ef26e; }
+    .error { color: #ff4d4d; }
+
+    .enviador-list {
+      margin-top: 25px;
+    }
+
+    .enviador-item {
+      background: #2a2a2a;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .enviador-item button {
+      background-color: #ff5555;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .enviador-item button:hover {
+      background-color: #cc4444;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      button, input {
+        font-size: 15px;
+      }
+
+      .enviador-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .enviador-item button {
+        margin-top: 8px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Painel GM - Gerenciar Enviadores</h1>
+
+    <input type="text" id="usuario" placeholder="Nome do enviador" autocomplete="username" />
+    <input type="password" id="senha" placeholder="Senha" autocomplete="new-password" />
+    <button onclick="cadastrarEnviador()">Registrar Enviador</button>
+
+    <div id="message" class="message"></div>
+
+    <button style="margin-top: 20px;" onclick="carregarEnviadores()">Exibir Enviadores</button>
+
+    <div class="enviador-list" id="enviadorList"></div>
+  </div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    // Configurações do Supabase (substitua pela sua info)
+    const supabaseUrl = 'https://srgoshlhsgflszwviwcp.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDg0OTAsImV4cCI6MjA2NTQ4NDQ5MH0.lH4lWyA0f2TzKUDB9UNOFI1nv0SE5ee2fcIy4pSS6J8';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    const message = document.getElementById('message');
+    const enviadorList = document.getElementById('enviadorList');
+
+    async function cadastrarEnviador() {
+      message.textContent = '';
+      message.className = 'message';
+
+      const usuario = document.getElementById('usuario').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      if (!usuario || !senha) {
+        message.textContent = 'Preencha todos os campos.';
+        message.className = 'message error';
+        return;
+      }
+
+      // Verificar se usuário já existe
+      const { data: existente, error: erroCheck } = await supabase
+        .from('enviadoresgm')
+        .select('id')
+        .eq('usuario', usuario)
+        .maybeSingle();
+
+      if (erroCheck) {
+        message.textContent = 'Erro ao verificar usuário: ' + erroCheck.message;
+        message.className = 'message error';
+        return;
+      }
+
+      if (existente) {
+        message.textContent = 'Usuário já existe.';
+        message.className = 'message error';
+        return;
+      }
+
+      // Inserir novo enviador
+      const { error } = await supabase
+        .from('enviadoresgm')
+        .insert([{ usuario, senha }]);
+
+      if (error) {
+        message.textContent = 'Erro ao cadastrar enviador: ' + error.message;
+        message.className = 'message error';
+      } else {
+        message.textContent = 'Enviador cadastrado com sucesso!';
+        message.className = 'message success';
+        document.getElementById('usuario').value = '';
+        document.getElementById('senha').value = '';
+        carregarEnviadores();
+      }
+    }
+
+    async function carregarEnviadores() {
+      const { data, error } = await supabase
+        .from('enviadoresgm')
+        .select('id, usuario');
+
+      enviadorList.innerHTML = '';
+
+      if (error) {
+        message.textContent = 'Erro ao carregar enviadores: ' + error.message;
+        message.className = 'message error';
+        console.error('Supabase error:', error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        enviadorList.innerHTML = '<p>Nenhum enviador cadastrado.</p>';
+        return;
+      }
+
+      data.forEach(enviador => {
+        const item = document.createElement('div');
+        item.className = 'enviador-item';
+        item.innerHTML = `
+          <span><strong>${enviador.usuario}</strong></span>
+          <button onclick="deletarEnviador('${enviador.id}')">Deletar</button>
+        `;
+        enviadorList.appendChild(item);
+      });
+    }
+
+    async function deletarEnviador(id) {
+      if (!confirm('Deseja deletar este enviador?')) return;
+
+      const { error } = await supabase
+        .from('enviadoresgm')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert('Erro ao deletar enviador: ' + error.message);
+      } else {
+        carregarEnviadores();
+      }
+    }
+  </script>
+
+</body>
+</html>

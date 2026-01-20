@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Portal SiqueiraX</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: url('https://i.imgur.com/eKjFtd1.png') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: white;
+    }
+    .login-box {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-box h1 {
+      margin-bottom: 25px;
+      font-size: 28px;
+      color: #78aaff;
+      text-shadow: 0 0 10px rgba(120,170,255,0.5);
+    }
+    .login-box input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 16px;
+    }
+    .login-box input::placeholder { color: #ccc; }
+    .login-box button {
+      width: 100%;
+      padding: 14px;
+      background-color: #5a88ff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+    .login-box button:hover { background-color: #3c6fff; }
+
+    .alert-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .alert-box {
+      background: #1c1c1c;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      color: white;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+      border: 2px solid red;
+      animation: fadeIn 0.3s ease;
+    }
+    .alert-box h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #ff4d4d;
+    }
+    .alert-box p { font-size: 18px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <h1>Portal SiqueiraX</h1>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Nome de usuário" required />
+      <input type="password" id="password" placeholder="Senha" required />
+      <button type="submit">ENTRAR</button>
+    </form>
+  </div>
+
+  <div class="alert-overlay" id="alertOverlay">
+    <div class="alert-box">
+      <h2>⛔ Acesso Negado</h2>
+      <p id="alertMessage">Mensagem</p>
+    </div>
+  </div>
+
+  <!-- Supabase com verificação de IP -->
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+
+    const supabase = createClient(
+      'https://srgoshlhsgflszwviwcp.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZ29zaGxoc2dmbHN6d3Zpd2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxMDAzNTQsImV4cCI6MjA3NzQ2MDM1NH0.ge8ziu8qhxJiTd-Th8HWiN-L3S515g0y0WyDBt7T8lA'
+    )
+
+    const form = document.getElementById('loginForm')
+    const alertOverlay = document.getElementById('alertOverlay')
+    const alertMessage = document.getElementById('alertMessage')
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault()
+
+      const username = document.getElementById('username').value.trim()
+      const password = document.getElementById('password').value
+
+      try {
+        const { data: user, error } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('username', username)
+          .eq('password', password)
+          .single()
+
+        if (error || !user) {
+          showAlert('❌ Usuário ou senha incorretos.')
+          return
+        }
+
+        if (user.acesso_gamemodes !== 'permitido') {
+          showAlert('⛔ Conta banida ou acesso negado.')
+          return
+        }
+
+        const ip = await fetch('https://api.ipify.org?format=json')
+          .then(res => res.json())
+          .then(json => json.ip)
+          .catch(() => 'IP desconhecido')
+
+        const serial = navigator.userAgent + ' | ' + screen.width + 'x' + screen.height
+
+        // Verifica se já existe IP autorizado
+        const { data: ipData } = await supabase
+          .from('usuario_ips_autorizados')
+          .select('*')
+          .eq('username', username)
+          .single()
+
+        if (username !== 'SiqueiraX') {
+          if (!ipData) {
+            // Primeira vez: salvar IP
+            await supabase.from('usuario_ips_autorizados').insert([{ username, ip }])
+          } else if (ipData.ip !== ip) {
+            showAlert(`🚫 IP não autorizado.\n\nSeu IP: ${ip}\nIP autorizado: ${ipData.ip}`)
+            return
+          }
+        }
+
+        // Registrar log
+        await supabase.from('usuario_logs').insert([{
+          username,
+          ip,
+          serial
+        }])
+
+        // Salvar na sessionStorage para sessão temporária
+        sessionStorage.setItem('nomedeusuario', user.username)
+
+        // Redirecionar
+        window.location.href = 'music.html'
+
+      } catch (err) {
+        console.error('Erro:', err)
+        showAlert('Erro inesperado.')
+      }
+    })
+
+    function showAlert(message) {
+      alertMessage.innerText = message
+      alertOverlay.style.display = 'flex'
+    }
+  </script>
+</body>
+</html>

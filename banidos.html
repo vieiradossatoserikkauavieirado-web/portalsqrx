@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Acesso Bloqueado</title>
+  <style>
+    body {
+      background-color: #2c0000;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    .ban-box {
+      background-color: #400000;
+      padding: 30px;
+      border-radius: 10px;
+      display: inline-block;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+
+    h1 {
+      color: #ff4444;
+    }
+
+    p {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ban-box">
+    <h1>Você foi banido do Portal SiqueiraX</h1>
+    <p id="motivo"></p>
+    <p>Se acha que isso foi um erro, abra um ticket no Discord.</p>
+  </div>
+
+  <script>
+    const motivo = localStorage.getItem("banMotivo") || "Motivo não especificado.";
+    document.getElementById("motivo").textContent = "Motivo: " + motivo;
+  </script>
+
+</body>
+</html>

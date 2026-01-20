@@ -1,0 +1,15 @@
+{
+  "name": "Portal SiqueiraX",
+  "short_name": "SiqueiraX",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0e1117",
+  "theme_color": "#0868ed",
+  "icons": [
+    {
+      "src": "/icons/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

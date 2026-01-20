@@ -1,4 +1,14 @@
 [
+
+   {
+    "title": "WONDER RPG ® OFICIAL",
+    "image": "https://i.imgur.com/VEZmOgO.png",
+    "link": "menuvip.html",
+    "linkText": "Disponível na página VIP!",
+    "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
+    "vip": true
+  },
+
   {
     "title": "GM BRASIL PLAY FLOW COM VOIP!",
     "image": "https://i.imgur.com/hjcUVHF.png",
@@ -8,11 +18,35 @@
     "vip": false
   },
   {
-    "title": "WONDER RPG ® OFICIAL ...",
-    "image": "https://i.imgur.com/VEZmOgO.png",
-    "link": "loginvip.html",
-    "linkText": "Disponível na página VIP!",
+    "title": "GM BRASIL PLAY SHOX FULL MYSQL!",
+    "image": "https://i.imgur.com/sDGGUGT.png",
+    "link": "https://dimagratis.com/shox2025",
+    "linkText": "Download",
     "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
+    "vip": true
+  },
+  {
+    "title": "GM OS CRIAS ROLEPLAY 2025!",
+    "image": "https://i.imgur.com/DVQFy52.png",
+    "link": "https://dimagratis.online/oscriasrp2025",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
+  },
+  {
+    "title": "GM BRASIL PLAY STARK",
+    "image": "https://i.imgur.com/RxyJOm6.png",
+    "link": "https://dimagratis.online/starksiqueirax",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
+  },
+  {
+    "title": "GM BRASIL PLAY STARS V1.0 2025",
+    "image": "https://i.imgur.com/Mf59jK0.png",
+    "link": "https://dimagratis.online/starksiqueirax",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": true
   }
 ]

@@ -195,16 +195,7 @@ footer{
 
 <body>
 
-<div class="overlay" id="overlay">
-  <div class="notice">
-    <i class="fas fa-shield-alt"></i>
-    <h2>Aviso Importante</h2>
-    <p>
-      Todo conteúdo disponibilizado é <strong>100% próprio</strong> e autorizado.<br>
-      Nenhuma gamemode de cliente é divulgada.
-    </p>
-  </div>
-</div>
+
 
 <header>
   <h1>Portal SiqueiraX</h1>
@@ -252,40 +243,40 @@ footer{
 </footer>
 
 <script>
- process.env.SUPABASE_URL,
- process.env.SUPABASE_SERVICE_ROLE_KEY
- const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY);
-
-async function fetchUserCount(){
- const el=document.querySelector("#userCount strong");
- const {data}=await supabaseClient.from("totalusuarios").select("total");
- el.textContent=data.reduce((a,b)=>a+(b.total||0),0);
+async function fetchUserCount() {
+  const el = document.querySelector("#userCount strong")
+  try {
+    const r = await fetch("/.netlify/functions/stats")
+    const d = await r.json()
+    el.textContent = d.total
+  } catch {
+    el.textContent = "—"
+  }
 }
 
-async function loadDiscord(){
- const el=document.querySelector("#discordStats span");
- try{
-  const r=await fetch("https://discord.com/api/v9/invites/HSd3YcWryb?with_counts=true");
-  const d=await r.json();
-  el.innerHTML=`Membros: <strong>${d.approximate_member_count}</strong> • Online: <strong>${d.approximate_presence_count}</strong>`;
- }catch{el.textContent="Erro Discord"}
+async function loadDiscord() {
+  const el = document.querySelector("#discordStats span")
+  try {
+    const r = await fetch("https://discord.com/api/v9/invites/HSd3YcWryb?with_counts=true")
+    const d = await r.json()
+    el.innerHTML = `Membros: <strong>${d.approximate_member_count}</strong> • Online: <strong>${d.approximate_presence_count}</strong>`
+  } catch {
+    el.textContent = "Erro Discord"
+  }
 }
 
-function tempoOnline(){
- document.querySelector("#tempo-online strong").textContent="desde 2025";
+function tempoOnline() {
+  document.querySelector("#tempo-online strong").textContent = "desde 2025"
 }
 
-function openVip(){
- document.getElementById("vipModal").style.display="flex";
+function openVip() {
+  document.getElementById("vipModal").style.display = "flex"
 }
 
-document.addEventListener("DOMContentLoaded",()=>{
- fetchUserCount();
- loadDiscord();
- tempoOnline();
- setTimeout(()=>document.getElementById("overlay").remove(),1800);
-});
+document.addEventListener("DOMContentLoaded", () => {
+  fetchUserCount()
+  loadDiscord()
+  tempoOnline()
+  setTimeout(() => document.getElementById("overlay")?.remove(), 1800)
+})
 </script>
-
-</body>
-</html>

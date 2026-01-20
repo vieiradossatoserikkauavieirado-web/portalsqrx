@@ -14,29 +14,23 @@ export async function handler(event) {
     return { statusCode: 405, body: 'Método não permitido' }
   }
 
-  const { username, password } = JSON.parse(event.body || '{}')
-  const u = (username || '').trim()
-  const p = (password || '').trim()
-
-  if (!u || !p) return { statusCode: 400, body: 'Dados inválidos' }
-
-  const { data: user, error } = await supabase
-    .from('usuarios')
-    .select('username, password, acesso_gamemodes')
-    .eq('username', u)
-    .maybeSingle()
-
-  if (error) return { statusCode: 500, body: 'Erro consulta usuários' }
-  if (!user) return { statusCode: 401, body: 'Usuário não encontrado' }
-
-  // compara senha exatamente (do jeito que está no seu banco hoje)
-  if ((user.password || '').trim() !== p) {
-    return { statusCode: 401, body: 'Senha incorreta' }
+  const { username, password } = JSON.parse(event.body || {})
+  if (!username || !password) {
+    return { statusCode: 400, body: 'Dados inválidos' }
   }
 
-  const acesso = (user.acesso_gamemodes || '').trim().toLowerCase()
-  if (acesso !== 'permitido') {
-    return { statusCode: 403, body: `Sem permissão (acesso_gamemodes="${user.acesso_gamemodes}")` }
+  const { data: user } = await supabase
+    .from('usuarios')
+    .select('username, password, acesso_gamemodes')
+    .eq('username', username.trim())
+    .maybeSingle()
+
+  if (!user || user.password !== password.trim()) {
+    return { statusCode: 401, body: 'Usuário ou senha incorretos' }
+  }
+
+  if ((user.acesso_gamemodes || '').trim() !== 'permitido') {
+    return { statusCode: 403, body: 'Sem permissão' }
   }
 
   const token = crypto.randomUUID()
@@ -44,7 +38,7 @@ export async function handler(event) {
   await supabase.from('sessoes').insert({
     token,
     username: user.username,
-    expira_em: new Date(Date.now() + 1000 * 60 * 60).toISOString()
+    expira_em: new Date(Date.now() + 60 * 60 * 1000).toISOString()
   })
 
   return {

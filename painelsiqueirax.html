@@ -292,46 +292,40 @@ try {
   throw new Error("no-session")
 }
 
-// ===== USER PILL (blindado) =====
+
 const userPill = document.getElementById('userPill')
 
-// garante estrutura interna
-let vipIcon = document.getElementById('vipIcon')
-let userText = document.getElementById('userText')
-let vipBadge = document.getElementById('vipBadge')
 
-// cria se não existir (resolve cache / html antigo)
-if (!vipIcon) {
-  vipIcon = document.createElement('span')
-  vipIcon.id = 'vipIcon'
-  vipIcon.textContent = '💎'
-  vipIcon.style.display = 'none'
-  vipIcon.style.marginRight = '.45rem'
-  userPill.appendChild(vipIcon)
-}
+userPill.textContent = ''
 
-if (!userText) {
-  userText = document.createElement('span')
-  userText.id = 'userText'
-  userPill.appendChild(userText)
-}
+// cria estrutura do pill do zero
+const vipIcon = document.createElement('span')
+vipIcon.id = 'vipIcon'
+vipIcon.textContent = '💎'
+vipIcon.style.display = 'none'
+vipIcon.style.marginRight = '.45rem'
 
-if (!vipBadge) {
-  vipBadge = document.createElement('span')
-  vipBadge.id = 'vipBadge'
-  vipBadge.textContent = 'VIP'
-  vipBadge.style.display = 'none'
-  vipBadge.style.marginLeft = '.55rem'
-  vipBadge.style.padding = '.18rem .55rem'
-  vipBadge.style.borderRadius = '999px'
-  vipBadge.style.fontSize = '.72rem'
-  vipBadge.style.fontWeight = '900'
-  vipBadge.style.letterSpacing = '.9px'
-  vipBadge.style.background = 'rgba(255,0,43,.18)'
-  vipBadge.style.border = '1px solid rgba(255,0,43,.45)'
-  vipBadge.style.boxShadow = '0 0 18px rgba(255,0,43,.35)'
-  userPill.appendChild(vipBadge)
-}
+const userText = document.createElement('span')
+userText.id = 'userText'
+
+const vipBadge = document.createElement('span')
+vipBadge.id = 'vipBadge'
+vipBadge.textContent = 'VIP'
+vipBadge.style.display = 'none'
+vipBadge.style.marginLeft = '.55rem'
+vipBadge.style.padding = '.18rem .55rem'
+vipBadge.style.borderRadius = '999px'
+vipBadge.style.fontSize = '.72rem'
+vipBadge.style.fontWeight = '900'
+vipBadge.style.letterSpacing = '.9px'
+vipBadge.style.background = 'rgba(255,0,43,.18)'
+vipBadge.style.border = '1px solid rgba(255,0,43,.45)'
+vipBadge.style.boxShadow = '0 0 18px rgba(255,0,43,.35)'
+
+// monta
+userPill.appendChild(vipIcon)
+userPill.appendChild(userText)
+userPill.appendChild(vipBadge)
 
 // seta username
 userText.textContent = '@' + (me?.username || 'usuario')
@@ -341,6 +335,7 @@ if (me?.vip) {
   vipIcon.style.display = 'inline-block'
   vipBadge.style.display = 'inline-block'
 }
+
 
 // mostra painel
 loading.style.display = 'none'

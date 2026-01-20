@@ -246,7 +246,7 @@ footer{
 async function fetchUserCount() {
   const el = document.querySelector("#userCount strong")
   try {
-    const r = await fetch("/.netlify/functions/stats")
+    const r = await fetch("/netlify/functions/stats")
     const d = await r.json()
     el.textContent = d.total
   } catch {

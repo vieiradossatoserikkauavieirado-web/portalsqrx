@@ -6,29 +6,24 @@ const supabase = createClient(
 )
 
 function setCookie(token) {
-  return `sx_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=3600`
+  return `sx_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=3600; Secure`
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Método não permitido' }
-  }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Método não permitido' }
 
-  const body = JSON.parse(event.body || '{}')
-  const username = (body.username || '').trim()
-  const password = (body.password || '').trim()
+  const { username, password } = JSON.parse(event.body || '{}')
+  const u = (username || '').trim()
+  const p = (password || '').trim()
+  if (!u || !p) return { statusCode: 400, body: 'Dados inválidos' }
 
-  if (!username || !password) {
-    return { statusCode: 400, body: 'Dados inválidos' }
-  }
-
-  const { data: user } = await supabase
+  const { data: user, error: e1 } = await supabase
     .from('usuarios')
     .select('username, password, acesso_gamemodes')
-    .eq('username', username)
+    .eq('username', u)
     .maybeSingle()
 
-  if (!user || (user.password || '').trim() !== password) {
+  if (e1 || !user || (user.password || '').trim() !== p) {
     return { statusCode: 401, body: 'Usuário ou senha incorretos' }
   }
 
@@ -37,19 +32,19 @@ exports.handler = async (event) => {
   }
 
   const token = crypto.randomUUID()
-
-  await supabase.from('sessoes').insert({
+  const { error: e2 } = await supabase.from('sessoes').insert({
     token,
     username: user.username,
     expira_em: new Date(Date.now() + 60 * 60 * 1000).toISOString()
   })
 
+  if (e2) {
+    return { statusCode: 500, body: 'Erro ao criar sessão (tabela sessoes)' }
+  }
+
   return {
     statusCode: 200,
-    headers: {
-      'Set-Cookie': setCookie(token),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ ok: true })
+    headers: { 'Set-Cookie': setCookie(token) },
+    body: 'ok'
   }
 }

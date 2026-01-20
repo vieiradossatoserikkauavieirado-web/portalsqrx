@@ -292,28 +292,61 @@ try {
   throw new Error("no-session")
 }
 
-const userText = document.getElementById('userText')
-const vipIcon = document.getElementById('vipIcon')
-const vipBadge = document.getElementById('vipBadge')
+// ===== USER PILL (blindado) =====
+const userPill = document.getElementById('userPill')
 
+// garante estrutura interna
+let vipIcon = document.getElementById('vipIcon')
+let userText = document.getElementById('userText')
+let vipBadge = document.getElementById('vipBadge')
 
-if (userText) {
-  userText.textContent = '@' + (me?.username || 'usuario')
-} else {
-  const userPill = document.getElementById('userPill')
-  if (userPill) userPill.textContent = '@' + (me?.username || 'usuario')
+// cria se não existir (resolve cache / html antigo)
+if (!vipIcon) {
+  vipIcon = document.createElement('span')
+  vipIcon.id = 'vipIcon'
+  vipIcon.textContent = '💎'
+  vipIcon.style.display = 'none'
+  vipIcon.style.marginRight = '.45rem'
+  userPill.appendChild(vipIcon)
 }
 
-s
+if (!userText) {
+  userText = document.createElement('span')
+  userText.id = 'userText'
+  userPill.appendChild(userText)
+}
+
+if (!vipBadge) {
+  vipBadge = document.createElement('span')
+  vipBadge.id = 'vipBadge'
+  vipBadge.textContent = 'VIP'
+  vipBadge.style.display = 'none'
+  vipBadge.style.marginLeft = '.55rem'
+  vipBadge.style.padding = '.18rem .55rem'
+  vipBadge.style.borderRadius = '999px'
+  vipBadge.style.fontSize = '.72rem'
+  vipBadge.style.fontWeight = '900'
+  vipBadge.style.letterSpacing = '.9px'
+  vipBadge.style.background = 'rgba(255,0,43,.18)'
+  vipBadge.style.border = '1px solid rgba(255,0,43,.45)'
+  vipBadge.style.boxShadow = '0 0 18px rgba(255,0,43,.35)'
+  userPill.appendChild(vipBadge)
+}
+
+// seta username
+userText.textContent = '@' + (me?.username || 'usuario')
+
+// mostra VIP
 if (me?.vip) {
-  if (vipIcon) vipIcon.style.display = 'inline-block'
-  if (vipBadge) vipBadge.style.display = 'inline-block'
+  vipIcon.style.display = 'inline-block'
+  vipBadge.style.display = 'inline-block'
 }
 
-if (loading) loading.style.display = 'none'
-if (panel) panel.style.display = 'block'
+// mostra painel
+loading.style.display = 'none'
+panel.style.display = 'block'
 
-
+// navegações
 document.getElementById('goGamemodes')?.addEventListener('click', () => {
   window.location.href = 'gamemodes.html'
 })
@@ -322,10 +355,12 @@ document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'loginvip.html'
 })
 
+// logout
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
   window.location.href = 'login.html'
 })
 </script>
+
 
 
 </body>

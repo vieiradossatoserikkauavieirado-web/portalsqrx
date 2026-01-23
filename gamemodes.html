@@ -263,15 +263,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const savedTs = Number(sessionStorage.getItem(TS_KEY) || 0)
   const expired = !savedTs || (now - savedTs) > FIVE_MIN
 
-  // ✅ regra 1: TODA vez que acessar a página, pede autorização do Discord
-  // - pra não entrar em loop, só não pede se acabou de voltar do OAuth (sub=1)
   if (!justAuthed) {
     forceDiscordAuth()
     return
   }
 
-  // ✅ regra 2: sessão expira em 5 minutos (client-side)
-  // - se já passou do tempo, força OAuth de novo
   if (expired) {
     forceDiscordAuth()
     return
@@ -297,17 +293,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const clean = `${location.pathname}${params.toString() ? "?" + params.toString() : ""}`
   history.replaceState({}, "", clean)
 
-  // ✅ expira automaticamente ao bater 5 min
+  
   const remaining = FIVE_MIN - (Date.now() - Number(sessionStorage.getItem(TS_KEY) || Date.now()))
+  //
   setTimeout(() => {
-    // revalida na hora de expirar (mais rígido)
-    sessionStorage.removeItem(TS_KEY)
-    forceDiscordAuth()
-  }, Math.max(1000, remaining))
+    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html";
+  }, 5 * 60 * 1000);
 
-  // =========================
-  // ✅ 3) render normal
-  // =========================
+
   const gmContainer = document.getElementById("gmContainer")
   const search = document.getElementById("search")
 

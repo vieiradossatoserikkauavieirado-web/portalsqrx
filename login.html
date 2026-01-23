@@ -215,19 +215,18 @@ form.addEventListener('submit', async (e) => {
 
   try {
     const res = await fetch('/.netlify/functions/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ username, password })
-  })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ username, password })
+    })
 
+    if (!res.ok) {
+      show(await res.text())
+      return
+    }
 
-  if (!res.ok) return show(await res.text())
-  window.location.href = 'login.html'
-
-
-    if (!res.ok) return show(await res.text())
-
+    // ✅ login ok -> vai pro painel
     window.location.href = 'painelsiqueirax.html'
   } catch {
     show('Erro ao conectar ao servidor.')

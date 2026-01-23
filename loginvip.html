@@ -84,28 +84,6 @@ body::before{
 
 .vip-info b{color:#ff4d4d}
 
-/* ===== INPUTS ===== */
-.field{margin-bottom:1rem}
-
-.field input{
-  width:100%;
-  padding:1rem 1.1rem;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.15);
-  background:rgba(0,0,0,.4);
-  color:#fff;
-  font-size:.95rem;
-  transition:var(--transition);
-}
-
-.field input::placeholder{color:#ffb3b3}
-
-.field input:focus{
-  outline:none;
-  border-color:var(--red);
-  box-shadow:0 0 20px rgba(255,0,43,.6);
-}
-
 /* ===== BUTTON ===== */
 button{
   width:100%;
@@ -151,18 +129,13 @@ button:hover{
   <div class="subtitle">Acesso restrito • Portal SiqueiraX</div>
 
   <div class="vip-info">
-    Efetue login para acessar <b>todas as GameModes Premium/Link direto</b> do canal SiqueiraX.<br><br>
+    Faça login com o <b>Discord</b> para acessar <b>todas as GameModes Premium/Link direto</b> do canal SiqueiraX.<br><br>
+    O sistema verifica automaticamente se você possui o <b>cargo VIP</b> no servidor.<br><br>
     Todo conteúdo é de autoria do <b>SiqueiraX</b>
   </div>
 
   <form id="loginVipForm">
-    <div class="field">
-      <input type="text" id="vipUser" placeholder="Usuário VIP" required>
-    </div>
-    <div class="field">
-      <input type="password" id="vipPass" placeholder="Senha VIP" required>
-    </div>
-    <button type="submit">ACESSAR ÁREA VIP</button>
+    <button type="submit">ENTRAR COM DISCORD</button>
   </form>
 
   <p id="vipErrorMessage" class="error-message"></p>
@@ -172,7 +145,6 @@ button:hover{
 const formVip = document.getElementById('loginVipForm')
 const vipError = document.getElementById('vipErrorMessage')
 
-// ✅ garante que o usuário está logado no painel (tem sx_session)
 try {
   const r = await fetch("/.netlify/functions/me", {
     credentials: "include",
@@ -184,34 +156,14 @@ try {
   throw new Error("no-normal-session")
 }
 
-formVip.addEventListener('submit', async (e) => {
+formVip.addEventListener('submit', (e) => {
   e.preventDefault()
   vipError.textContent = ''
 
-  const username = document.getElementById('vipUser').value.trim()
-  const password = document.getElementById('vipPass').value.trim()
-
-  try{
-    const res = await fetch('/.netlify/functions/login-vip', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ username, password })
-    })
-
-    if (!res.ok) {
-      const txt = await res.text()
-      vipError.textContent = txt || 'Falha no login VIP.'
-      return
-    }
-
-    window.location.href = 'gamemodesvip.html'
-  } catch {
-    vipError.textContent = 'Erro ao conectar ao servidor.'
-  }
+  
+  window.location.href = "/.netlify/functions/discord-login"
 })
 </script>
-
 
 </body>
 </html>

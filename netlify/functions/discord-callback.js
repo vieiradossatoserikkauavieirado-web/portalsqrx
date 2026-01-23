@@ -81,7 +81,7 @@ exports.handler = async (event) => {
       if (!process.env[k]) {
         return {
           statusCode: 302,
-          headers: { Location: "/login.vip.html?err=loginfail" },
+          headers: { Location: "/loginvip.html?err=loginfail" },
           body: "",
         };
       }
@@ -92,7 +92,7 @@ exports.handler = async (event) => {
     if (!code) {
       return {
         statusCode: 302,
-        headers: { Location: "/login.vip.html?err=loginfail" },
+        headers: { Location: "/loginvip.html?err=loginfail" },
         body: "",
       };
     }
@@ -108,7 +108,7 @@ exports.handler = async (event) => {
     if (!member) {
       return {
         statusCode: 302,
-        headers: { Location: "/login.vip.html?err=loginfail" },
+        headers: { Location: "/loginvip.html?err=loginfail" },
         body: "",
       };
     }
@@ -117,7 +117,7 @@ exports.handler = async (event) => {
     if (!roles.includes(process.env.DISCORD_VIP_ROLE_ID)) {
       return {
         statusCode: 302,
-        headers: { Location: "/login.vip.html?err=novip" },
+        headers: { Location: "/loginvip.html?err=novip" },
         body: "",
       };
     }
@@ -133,7 +133,7 @@ exports.handler = async (event) => {
     if (error) {
       return {
         statusCode: 302,
-        headers: { Location: "/login.vip.html?err=loginfail" },
+        headers: { Location: "/loginvip.html?err=loginfail" },
         body: "",
       };
     }
@@ -150,7 +150,7 @@ exports.handler = async (event) => {
   } catch {
     return {
       statusCode: 302,
-      headers: { Location: "/login.vip.html?err=loginfail" },
+      headers: { Location: "/loginvip.html?err=loginfail" },
       body: "",
     };
   }

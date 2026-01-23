@@ -80,7 +80,7 @@ exports.handler = async (event) => {
     }
 
     const token = sign(
-      { discord_id: user.id, exp: Date.now() + 60 * 60 * 1000 },
+      { discord_id: user.id, exp: Date.now() + 10 * 60 * 1000 },
       process.env.SUB_SESSION_SECRET
     );
 

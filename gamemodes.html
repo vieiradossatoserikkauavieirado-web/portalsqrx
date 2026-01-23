@@ -201,10 +201,36 @@ header h1{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-  // valida sessão pelo cookie e pega username
+  // ✅ se voltou sem cargo inscrito, mostra aviso
+  const err = new URLSearchParams(location.search).get("err")
+  if (err === "nosub") {
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
+        <div style="max-width:520px;width:100%;background:rgba(15,15,15,.78);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:24px;box-shadow:0 0 35px rgba(255,0,43,.35);color:#fff;">
+          <h2 style="font-family:Orbitron,sans-serif;margin-bottom:10px;background:linear-gradient(90deg,#ff002b,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+            Acesso restrito
+          </h2>
+          <div style="opacity:.9;line-height:1.5;margin-bottom:16px;">
+            Você precisa estar no Discord com o cargo <b>Inscrito</b>.<br><br>
+            Acesse o Discord e solicite a tag de inscrito:
+          </div>
+          <a href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener"
+             style="display:block;text-align:center;padding:.8rem;border-radius:14px;font-weight:800;text-decoration:none;color:#fff;background:linear-gradient(135deg,#ff002b,#b0001c);box-shadow:0 0 18px rgba(255,0,43,.6);">
+            Entrar no Discord
+          </a>
+        </div>
+      </div>
+    `
+    return
+  }
+
+  // ✅ 1) valida sessão normal (sx_session) e pega username
   let me
   try {
-    const r = await fetch("/.netlify/functions/me", { credentials: "include" })
+    const r = await fetch("/.netlify/functions/me", {
+      credentials: "include",
+      cache: "no-store"
+    })
     if (!r.ok) throw new Error()
     me = await r.json()
   } catch {
@@ -214,6 +240,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("userName").textContent = me.username
 
+  // ✅ 2) valida sessão "inscrito" (sx_sub_session). Se não tiver, pede Discord.
+  try {
+    const r2 = await fetch("/.netlify/functions/sub-me", {
+      credentials: "include",
+      cache: "no-store"
+    })
+    if (!r2.ok) throw new Error()
+  } catch {
+    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html"
+    return
+  }
+
+  // ✅ 3) render normal
   const gmContainer = document.getElementById("gmContainer")
   const search = document.getElementById("search")
 
@@ -248,7 +287,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   })
 })
 </script>
-
 
 
 </body>

@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
     if (!r.ok) throw new Error()
   } catch {
-    window.location.href = "login.vip.html"
+    window.location.href = "loginvip.html"
     return
   }
 
@@ -291,7 +291,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     `).join("")
   }
 
-  // ✅ JSON VIP (com cache-buster)
   const res = await fetch(`/gamemodesvip.json?v=${Date.now()}`, { cache: "no-store" })
   if (!res.ok) {
     gmContainer.innerHTML = `<div style="padding:1rem;opacity:.9">

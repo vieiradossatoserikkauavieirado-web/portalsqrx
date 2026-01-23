@@ -14,8 +14,9 @@ function parseState(raw) {
   }
 }
 
+// ✅ cookie expira em 5 minutos (300s)
 function setCookie(token) {
-  return `sx_sub_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=3600; Secure`;
+  return `sx_sub_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=300; Secure`;
 }
 
 async function exchangeCodeForToken(code, redirectUri) {
@@ -65,28 +66,39 @@ exports.handler = async (event) => {
   const redirectUri = (process.env.DISCORD_SUB_REDIRECT_URI || "").trim().replace(/\/$/, "");
 
   try {
-    if (!code) return { statusCode: 302, headers: { Location: `${returnTo}?err=sublogin` }, body: "" };
-    if (!redirectUri) return { statusCode: 500, body: "missing_env:DISCORD_SUB_REDIRECT_URI" };
+    if (!code) {
+      return { statusCode: 302, headers: { Location: `${returnTo}?err=sublogin` }, body: "" };
+    }
+    if (!redirectUri) {
+      return { statusCode: 500, body: "missing_env:DISCORD_SUB_REDIRECT_URI" };
+    }
 
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     const user = await getDiscordUser(tokenData.access_token);
 
     const member = await getGuildMember(user.id);
-    if (!member) return { statusCode: 302, headers: { Location: `${returnTo}?err=notguild` }, body: "" };
+    if (!member) {
+      return { statusCode: 302, headers: { Location: `${returnTo}?err=notguild` }, body: "" };
+    }
 
     const roles = member.roles || [];
     if (!roles.includes(process.env.DISCORD_SUB_ROLE_ID)) {
       return { statusCode: 302, headers: { Location: `${returnTo}?err=nosub` }, body: "" };
     }
 
+    // ✅ token expira em 5 minutos também
     const token = sign(
-      { discord_id: user.id, exp: Date.now() + 10 * 60 * 1000 },
+      { discord_id: user.id, exp: Date.now() + 5 * 60 * 1000 },
       process.env.SUB_SESSION_SECRET
     );
 
     return {
       statusCode: 302,
-      headers: { "Set-Cookie": setCookie(token), Location: returnTo },
+      headers: {
+        "Set-Cookie": setCookie(token),
+        Location: returnTo,
+        "Cache-Control": "no-store",
+      },
       body: "",
     };
   } catch {

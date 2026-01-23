@@ -5,45 +5,35 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-function getCookie(name, headers) {
-  const cookieHeader = headers?.cookie || headers?.Cookie || headers?.COOKIE || "";
-  if (!cookieHeader) return null;
-
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
+function getCookie(event, name) {
+  const raw = event.headers.cookie || event.headers.Cookie || "";
+  const parts = raw.split(";").map((s) => s.trim());
+  for (const p of parts) {
+    const [k, ...v] = p.split("=");
+    if (k === name) return v.join("=");
+  }
+  return null;
 }
 
 exports.handler = async (event) => {
-  const token = getCookie("sx_session", event.headers);
-  if (!token) return { statusCode: 401, body: "Não autorizado" };
+  try {
+    const token = getCookie(event, "sx_vip_session");
+    if (!token) return { statusCode: 401, body: "no_session" };
 
-  const { data: sess, error } = await supabase
-    .from("sessoes")
-    .select("username, expira_em")
-    .eq("token", token)
-    .maybeSingle();
+    const { data, error } = await supabase
+      .from("sessoes_vip")
+      .select("token, expira_em")
+      .eq("token", token)
+      .maybeSingle();
 
-  if (error || !sess) return { statusCode: 401, body: "Não autorizado" };
+    if (error) return { statusCode: 500, body: `supabase_read_failed:${error.message}` };
+    if (!data) return { statusCode: 401, body: "invalid_session" };
 
-  if (new Date(sess.expira_em).getTime() < Date.now()) {
-    return { statusCode: 401, body: "Sessão expirada" };
+    const exp = new Date(data.expira_em).getTime();
+    if (Number.isNaN(exp) || Date.now() > exp) return { statusCode: 401, body: "expired_session" };
+
+    return { statusCode: 200, body: "ok" };
+  } catch (e) {
+    return { statusCode: 500, body: `internal_error:${String(e.message || e)}` };
   }
-
-  // ✅ verifica VIP (ajuste o nome da tabela se for outro)
-  const { data: vipUser, error: eVip } = await supabase
-    .from("usuariovip")
-    .select("username")
-    .eq("username", sess.username)
-    .maybeSingle();
-
-  if (eVip) return { statusCode: 500, body: "Erro ao verificar VIP" };
-
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify({ username: sess.username, vip: !!vipUser }),
-  };
 };

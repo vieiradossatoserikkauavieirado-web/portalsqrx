@@ -82,6 +82,19 @@ body::before{
   margin-bottom:1.6rem;
 }
 
+.vip-alert{
+  font-size:.88rem;
+  line-height:1.5;
+  background:rgba(255,0,43,.10);
+  border:1px solid rgba(255,0,43,.35);
+  border-radius:14px;
+  padding:1rem;
+  margin-bottom:1.2rem;
+  box-shadow:0 0 25px rgba(255,0,43,.25);
+}
+.vip-alert b{color:#ff4d4d}
+
+
 .vip-info b{color:#ff4d4d}
 
 /* ===== BUTTON ===== */
@@ -100,6 +113,7 @@ button{
   box-shadow:0 0 30px rgba(255,0,43,.7);
   transition:var(--transition);
 }
+
 
 button:hover{
   transform:scale(1.06);
@@ -122,6 +136,8 @@ button:hover{
 </style>
 </head>
 
+
+
 <body>
 
 <div class="vip-card">
@@ -140,6 +156,9 @@ button:hover{
 
   <p id="vipErrorMessage" class="error-message"></p>
 </div>
+
+<div id="vipAlert" class="vip-alert" style="display:none"></div>
+
 
 <script type="module">
 const formVip = document.getElementById('loginVipForm')

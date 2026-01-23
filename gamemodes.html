@@ -201,9 +201,7 @@ header h1{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-  // ✅ se voltou sem cargo inscrito, mostra aviso
-  const params = new URLSearchParams(location.search)
-  const err = params.get("err")
+  const err = new URLSearchParams(location.search).get("err")
   if (err === "nosub") {
     document.body.innerHTML = `
       <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
@@ -225,82 +223,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     return
   }
 
-  // ✅ 1) valida sessão normal (sx_session) e pega username
+  // 1) sessão normal
   let me
   try {
-    const r = await fetch("/.netlify/functions/me", {
-      credentials: "include",
-      cache: "no-store"
-    })
+    const r = await fetch("/.netlify/functions/me", { credentials: "include", cache: "no-store" })
     if (!r.ok) throw new Error()
     me = await r.json()
   } catch {
     window.location.href = "login.html"
     return
   }
-
   document.getElementById("userName").textContent = me.username
 
-
-  const FIVE_MIN = 5 * 60 * 1000
-  const TS_KEY = "sx_sub_auth_ts"
-
-  // quando o usuário volta do OAuth, a URL vem com sub=1
-  const justAuthed = params.get("sub") === "1"
-
-  // helper pra forçar reautorização sempre (e também quando expirar)
-  function forceDiscordAuth() {
-    // mantém err se existir (pra não quebrar seu fluxo)
-    const base = "/gamemodes.html"
-    const newParams = new URLSearchParams(location.search)
-    newParams.delete("sub") // evita loop estranho
-    // retorna com sub=1 pra gente saber que acabou de autenticar
-    const ret = `${base}?sub=1${newParams.toString() ? "&" + newParams.toString() : ""}`
-    window.location.href = `/.netlify/functions/discord-login-sub?return=${encodeURIComponent(ret)}&force=1`
+  // helper: manda pro discord só quando precisar (SEM loop)
+  function goDiscordSub() {
+    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html"
   }
 
-  const now = Date.now()
-  const savedTs = Number(sessionStorage.getItem(TS_KEY) || 0)
-  const expired = !savedTs || (now - savedTs) > FIVE_MIN
-
-  if (!justAuthed) {
-    forceDiscordAuth()
-    return
-  }
-
-  if (expired) {
-    forceDiscordAuth()
-    return
-  }
-
-  // ✅ valida o "inscrito" no servidor também (se falhar, força OAuth)
+  // 2) valida "inscrito" (só redireciona se NÃO estiver válido)
   try {
-    const r2 = await fetch("/.netlify/functions/sub-me", {
-      credentials: "include",
-      cache: "no-store"
-    })
+    const r2 = await fetch("/.netlify/functions/sub-me", { credentials: "include", cache: "no-store" })
     if (!r2.ok) throw new Error()
   } catch {
-    forceDiscordAuth()
+    goDiscordSub()
     return
   }
 
-  // ✅ atualiza timestamp (agora que a autorização foi confirmada)
-  sessionStorage.setItem(TS_KEY, String(now))
+  // 3) expira em 5 minutos (revalida e, se falhar, pede Discord)
+  const FIVE_MIN = 5 * 60 * 1000
+  setTimeout(async () => {
+    try {
+      const r3 = await fetch("/.netlify/functions/sub-me", { credentials: "include", cache: "no-store" })
+      if (!r3.ok) throw new Error()
+      // se quiser ser MAIS rígido ainda, mesmo validando:
+      // goDiscordSub(); return;
+    } catch {
+      goDiscordSub()
+      return
+    }
+  }, FIVE_MIN)
 
-  // ✅ limpa o sub=1 da URL pra ficar bonito e evitar efeitos colaterais
-  params.delete("sub")
-  const clean = `${location.pathname}${params.toString() ? "?" + params.toString() : ""}`
-  history.replaceState({}, "", clean)
-
-  
-  const remaining = FIVE_MIN - (Date.now() - Number(sessionStorage.getItem(TS_KEY) || Date.now()))
-  //
-  setTimeout(() => {
-    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html";
-  }, 5 * 60 * 1000);
-
-
+  // 4) render normal
   const gmContainer = document.getElementById("gmContainer")
   const search = document.getElementById("search")
 
@@ -335,6 +298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   })
 })
 </script>
+
 
 
 

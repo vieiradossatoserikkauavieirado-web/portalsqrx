@@ -18,19 +18,19 @@ function setCookie(token) {
   return `sx_sub_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=3600; Secure`;
 }
 
-async function exchangeCodeForToken(code) {
+async function exchangeCodeForToken(code, redirectUri) {
   const body = new URLSearchParams({
     client_id: process.env.DISCORD_CLIENT_ID,
     client_secret: process.env.DISCORD_CLIENT_SECRET,
     grant_type: "authorization_code",
     code,
-    redirect_uri: process.env.DISCORD_SUB_REDIRECT_URI
+    redirect_uri: redirectUri,
   });
 
   const r = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body
+    body,
   });
 
   if (!r.ok) throw new Error("token_exchange_failed");
@@ -39,7 +39,7 @@ async function exchangeCodeForToken(code) {
 
 async function getDiscordUser(accessToken) {
   const r = await fetch("https://discord.com/api/users/@me", {
-    headers: { Authorization: `Bearer ${accessToken}` }
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
   if (!r.ok) throw new Error("get_user_failed");
   return r.json();
@@ -62,38 +62,32 @@ exports.handler = async (event) => {
   const stateRaw = url.searchParams.get("state") || "";
   const { returnTo } = parseState(stateRaw);
 
-  try {
-    if (!code) {
-      return { statusCode: 302, headers: { Location: `${returnTo}?err=sublogin` }, body: "" };
-    }
+  const redirectUri = (process.env.DISCORD_SUB_REDIRECT_URI || "").trim().replace(/\/$/, "");
 
-    const tokenData = await exchangeCodeForToken(code);
+  try {
+    if (!code) return { statusCode: 302, headers: { Location: `${returnTo}?err=sublogin` }, body: "" };
+    if (!redirectUri) return { statusCode: 500, body: "missing_env:DISCORD_SUB_REDIRECT_URI" };
+
+    const tokenData = await exchangeCodeForToken(code, redirectUri);
     const user = await getDiscordUser(tokenData.access_token);
 
     const member = await getGuildMember(user.id);
-    if (!member) {
-      return { statusCode: 302, headers: { Location: `${returnTo}?err=notguild` }, body: "" };
-    }
+    if (!member) return { statusCode: 302, headers: { Location: `${returnTo}?err=notguild` }, body: "" };
 
     const roles = member.roles || [];
     if (!roles.includes(process.env.DISCORD_SUB_ROLE_ID)) {
       return { statusCode: 302, headers: { Location: `${returnTo}?err=nosub` }, body: "" };
     }
 
-    const payload = {
-      discord_id: user.id,
-      exp: Date.now() + 60 * 60 * 1000
-    };
-
-    const token = sign(payload, process.env.SUB_SESSION_SECRET);
+    const token = sign(
+      { discord_id: user.id, exp: Date.now() + 60 * 60 * 1000 },
+      process.env.SUB_SESSION_SECRET
+    );
 
     return {
       statusCode: 302,
-      headers: {
-        "Set-Cookie": setCookie(token),
-        Location: returnTo
-      },
-      body: ""
+      headers: { "Set-Cookie": setCookie(token), Location: returnTo },
+      body: "",
     };
   } catch {
     return { statusCode: 302, headers: { Location: `${returnTo}?err=sublogin` }, body: "" };

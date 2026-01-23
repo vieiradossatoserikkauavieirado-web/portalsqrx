@@ -202,7 +202,8 @@ header h1{
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   // ✅ se voltou sem cargo inscrito, mostra aviso
-  const err = new URLSearchParams(location.search).get("err")
+  const params = new URLSearchParams(location.search)
+  const err = params.get("err")
   if (err === "nosub") {
     document.body.innerHTML = `
       <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
@@ -240,7 +241,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("userName").textContent = me.username
 
-  // ✅ 2) valida sessão "inscrito" (sx_sub_session). Se não tiver, pede Discord.
+
+  const FIVE_MIN = 5 * 60 * 1000
+  const TS_KEY = "sx_sub_auth_ts"
+
+  // quando o usuário volta do OAuth, a URL vem com sub=1
+  const justAuthed = params.get("sub") === "1"
+
+  // helper pra forçar reautorização sempre (e também quando expirar)
+  function forceDiscordAuth() {
+    // mantém err se existir (pra não quebrar seu fluxo)
+    const base = "/gamemodes.html"
+    const newParams = new URLSearchParams(location.search)
+    newParams.delete("sub") // evita loop estranho
+    // retorna com sub=1 pra gente saber que acabou de autenticar
+    const ret = `${base}?sub=1${newParams.toString() ? "&" + newParams.toString() : ""}`
+    window.location.href = `/.netlify/functions/discord-login-sub?return=${encodeURIComponent(ret)}&force=1`
+  }
+
+  const now = Date.now()
+  const savedTs = Number(sessionStorage.getItem(TS_KEY) || 0)
+  const expired = !savedTs || (now - savedTs) > FIVE_MIN
+
+  // ✅ regra 1: TODA vez que acessar a página, pede autorização do Discord
+  // - pra não entrar em loop, só não pede se acabou de voltar do OAuth (sub=1)
+  if (!justAuthed) {
+    forceDiscordAuth()
+    return
+  }
+
+  // ✅ regra 2: sessão expira em 5 minutos (client-side)
+  // - se já passou do tempo, força OAuth de novo
+  if (expired) {
+    forceDiscordAuth()
+    return
+  }
+
+  // ✅ valida o "inscrito" no servidor também (se falhar, força OAuth)
   try {
     const r2 = await fetch("/.netlify/functions/sub-me", {
       credentials: "include",
@@ -248,11 +285,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
     if (!r2.ok) throw new Error()
   } catch {
-    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html"
+    forceDiscordAuth()
     return
   }
 
+  // ✅ atualiza timestamp (agora que a autorização foi confirmada)
+  sessionStorage.setItem(TS_KEY, String(now))
+
+  // ✅ limpa o sub=1 da URL pra ficar bonito e evitar efeitos colaterais
+  params.delete("sub")
+  const clean = `${location.pathname}${params.toString() ? "?" + params.toString() : ""}`
+  history.replaceState({}, "", clean)
+
+  // ✅ expira automaticamente ao bater 5 min
+  const remaining = FIVE_MIN - (Date.now() - Number(sessionStorage.getItem(TS_KEY) || Date.now()))
+  setTimeout(() => {
+    // revalida na hora de expirar (mais rígido)
+    sessionStorage.removeItem(TS_KEY)
+    forceDiscordAuth()
+  }, Math.max(1000, remaining))
+
+  // =========================
   // ✅ 3) render normal
+  // =========================
   const gmContainer = document.getElementById("gmContainer")
   const search = document.getElementById("search")
 
@@ -287,6 +342,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   })
 })
 </script>
+
 
 
 

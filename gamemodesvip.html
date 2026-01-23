@@ -251,27 +251,21 @@ header h1{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-  // ✅ valida sessão pelo cookie e checa VIP
-  let me
+  // ✅ valida sessão VIP (cookie sx_vip_session)
   try {
-    const r = await fetch("/.netlify/functions/me_vip", {
+    const r = await fetch("/.netlify/functions/vip-me", {
       credentials: "include",
       cache: "no-store"
     })
     if (!r.ok) throw new Error()
-    me = await r.json()
   } catch {
-    window.location.href = "login.html"
+    window.location.href = "login.vip.html"
     return
   }
 
-  // ✅ se não for VIP, manda pro login VIP
-  if (!me.vip) {
-    window.location.href = "loginvip.html"
-    return
-  }
-
-  document.getElementById("userName").textContent = me.username
+  // (se você quer mostrar nome, precisa que vip-me retorne username em JSON.
+  // se não for necessário, pode remover a linha abaixo)
+  // document.getElementById("userName").textContent = "VIP"
 
   const gmContainer = document.getElementById("gmContainer")
   const search = document.getElementById("search")

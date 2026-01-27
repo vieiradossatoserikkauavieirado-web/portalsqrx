@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login IA • Portal SiqueiraX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --glass:rgba(15,15,15,.78);
+  --transition:.35s ease;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  color:#fff;
+  padding:1.25rem 1rem;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(18px);
+  z-index:-1;
+}
+.panel{
+  width:100%;
+  max-width:720px;
+  background:var(--glass);
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 0 55px rgba(255,0,43,.45);
+  padding:1.35rem;
+  margin-top:.5rem;
+}
+.brand h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.6rem;
+  color:var(--red);
+  text-shadow:0 0 25px rgba(255,0,43,.7);
+  line-height:1.1;
+}
+.brand p{opacity:.85;font-size:.95rem;margin-top:.35rem}
+.card{
+  margin-top:1rem;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.32);
+  padding:1.15rem;
+}
+.btn{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  padding:1rem;
+  font-weight:900;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:var(--transition);
+  color:#fff;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  box-shadow:0 0 30px rgba(255,0,43,.55);
+  text-transform:uppercase;
+}
+.btn:hover{ transform:scale(1.03); box-shadow:0 0 45px rgba(255,0,43,.85); }
+.alert{
+  margin-top:.9rem;
+  padding:.85rem .9rem;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.25);
+  line-height:1.45;
+}
+.alert.red{
+  border-color: rgba(255,0,43,.30);
+  background: rgba(255,0,43,.12);
+  box-shadow:0 0 18px rgba(255,0,43,.12);
+}
+.small{opacity:.85;font-size:.9rem;margin-top:.75rem}
+a{color:#fff}
+</style>
+</head>
+
+<body>
+  <div class="panel">
+    <div class="brand">
+      <h1>Login • IA</h1>
+      <p>Faça login com Discord. Acesso exclusivo <b>VIP GOLD</b>.</p>
+    </div>
+
+    <div class="card">
+      <button id="loginBtn" class="btn">ENTRAR COM DISCORD</button>
+
+      <div id="msg" class="alert" style="display:none"></div>
+
+      <div class="small">
+        Se você não tem acesso, adquira o <b>VIP GOLD</b> e pegue o cargo no Discord.
+      </div>
+    </div>
+  </div>
+
+<script>
+const msg = document.getElementById("msg")
+const loginBtn = document.getElementById("loginBtn")
+
+function show(type, text){
+  msg.style.display = "block"
+  msg.className = "alert " + (type || "")
+  msg.textContent = text
+}
+
+const qs = new URLSearchParams(location.search)
+const err = qs.get("err")
+
+if(err === "no_role"){
+  show("red", "Acesso negado: você precisa ser VIP GOLD (cargo no Discord) para usar a IA.")
+}else if(err === "not_in_guild"){
+  show("red", "Você precisa estar no Discord do servidor para validar seu cargo VIP GOLD.")
+}else if(err){
+  show("red", "Falha no login. Tente novamente.")
+}
+
+loginBtn.addEventListener("click", () => {
+  const returnTo = "/ia.html"
+  window.location.href = "/.netlify/functions/discordloginia?return=" + encodeURIComponent(returnTo)
+})
+</script>
+</body>
+</html>

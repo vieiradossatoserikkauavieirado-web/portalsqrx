@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IA • Portal SiqueiraX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --glass:rgba(15,15,15,.78);
+  --transition:.35s ease;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  color:#fff;
+  padding:1.25rem 1rem;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(18px);
+  z-index:-1;
+}
+
+.panel{
+  width:100%;
+  max-width:1100px;
+  background:var(--glass);
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 0 55px rgba(255,0,43,.45);
+  padding:1.35rem;
+  margin-top:.5rem;
+}
+
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:1rem;
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+  gap:.3rem;
+}
+.brand h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.6rem;
+  color:var(--red);
+  text-shadow:0 0 25px rgba(255,0,43,.7);
+  line-height:1.1;
+}
+.brand p{opacity:.85;font-size:.95rem}
+
+.userline{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.userpill{
+  padding:.5rem .75rem;
+  border-radius:999px;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:700;
+  letter-spacing:.3px;
+  box-shadow:0 0 18px rgba(255,0,43,.15);
+  display:flex;
+  align-items:center;
+}
+
+.btn{
+  border:none;
+  border-radius:16px;
+  padding:.78rem .95rem;
+  font-weight:900;
+  letter-spacing:.6px;
+  cursor:pointer;
+  transition:var(--transition);
+  color:#fff;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.btn:hover{transform:translateY(-2px); background:rgba(255,255,255,.12)}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:1rem;
+  align-items:stretch;
+}
+
+.card{
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.32);
+  padding:1.15rem;
+  position:relative;
+  overflow:hidden;
+  min-height: 420px;
+  display:flex;
+  flex-direction:column;
+}
+
+.card h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.15rem;
+  margin-bottom:.55rem;
+}
+
+.chatbox{
+  display:flex;
+  flex-direction:column;
+  gap:.8rem;
+  height:100%;
+}
+
+.messages{
+  flex:1;
+  overflow:auto;
+  padding:.65rem;
+  border-radius:16px;
+  background:rgba(0,0,0,.22);
+  border:1px solid rgba(255,255,255,.10);
+}
+
+.msg{
+  padding:.65rem .75rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  margin-bottom:.6rem;
+  line-height:1.45;
+  font-size:.95rem;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.msg.user{
+  background:rgba(255,255,255,.06);
+}
+
+.msg.bot{
+  background:rgba(255,0,43,.10);
+  border:1px solid rgba(255,0,43,.22);
+  box-shadow:0 0 18px rgba(255,0,43,.12);
+}
+
+.composer{
+  display:flex;
+  gap:.65rem;
+  margin-top:.2rem;
+}
+
+textarea{
+  flex:1;
+  min-height:56px;
+  max-height:140px;
+  resize:vertical;
+  border-radius:16px;
+  padding:.85rem .9rem;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.25);
+  color:#fff;
+  outline:none;
+}
+
+.send{
+  border:none;
+  border-radius:16px;
+  padding:.92rem 1rem;
+  font-weight:900;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:var(--transition);
+  color:#fff;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  box-shadow:0 0 30px rgba(255,0,43,.55);
+  min-width:150px;
+}
+.send:hover{ transform:scale(1.03); box-shadow:0 0 45px rgba(255,0,43,.85); }
+.send:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+.hint{
+  opacity:.85;
+  font-size:.9rem;
+  margin-top:.2rem;
+}
+
+.loading{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(10px);
+  z-index:999;
+}
+.loading .box{
+  background:rgba(15,15,15,.82);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  padding:1.1rem 1.3rem;
+  box-shadow:0 0 40px rgba(255,0,43,.35);
+  font-weight:800;
+  letter-spacing:.4px;
+}
+.loading .dot{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--red);
+  margin-left:.35rem;
+  box-shadow:0 0 18px rgba(255,0,43,.9);
+  animation:pulse .9s infinite ease-in-out;
+}
+@keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.6)} }
+
+@media (max-width:900px){
+  body{ padding:1rem .9rem; }
+  .panel{ padding:1.1rem; border-radius:22px; }
+  .brand h1{ font-size:1.45rem; }
+  .userline{ justify-content:flex-start; }
+  .card{ min-height:520px; }
+  .send{ min-width:120px; }
+}
+@media (max-width:420px){
+  .btn{ width:100%; }
+  .userline{ width:100%; }
+  .userpill{ width:100%; justify-content:center; }
+  .composer{ flex-direction:column; }
+  .send{ width:100%; }
+}
+</style>
+</head>
+
+<body>
+  <div id="loading" class="loading" style="display:flex">
+    <div class="box">Carregando<span class="dot"></span></div>
+  </div>
+
+  <div id="panel" class="panel" style="display:none">
+    <div class="topbar">
+      <div class="brand">
+        <h1>IA • Portal SiqueiraX</h1>
+        <p>Assistente de programação Pawn (SA-MP) — acesso VIP GOLD</p>
+      </div>
+
+      <div class="userline">
+        <div id="userpill" class="userpill">...</div>
+        <button id="logoutBtn" class="btn">SAIR</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Assistente Pawn</h2>
+
+        <div class="chatbox">
+          <div id="messages" class="messages"></div>
+
+          <div class="composer">
+            <textarea id="input" placeholder="Cole seu código/erro e diga o que você quer fazer..."></textarea>
+            <button id="sendBtn" class="send">ENVIAR</button>
+          </div>
+
+          <div class="hint">
+            Dica: mande o erro do compilador + o trecho do código. Ex: “warning 219” / “undefined symbol”.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+const loading = document.getElementById('loading')
+const panel = document.getElementById('panel')
+const userpill = document.getElementById('userpill')
+const logoutBtn = document.getElementById('logoutBtn')
+
+const messagesEl = document.getElementById('messages')
+const inputEl = document.getElementById('input')
+const sendBtn = document.getElementById('sendBtn')
+
+function addMsg(text, who){
+  const div = document.createElement('div')
+  div.className = `msg ${who}`
+  div.textContent = text
+  messagesEl.appendChild(div)
+  messagesEl.scrollTop = messagesEl.scrollHeight
+}
+
+function setLoading(on){
+  sendBtn.disabled = on
+  inputEl.disabled = on
+}
+
+let me
+try {
+  const r = await fetch("/.netlify/functions/me_ia", {
+    credentials: "include",
+    cache: "no-store"
+  })
+
+  if (!r.ok) {
+    window.location.href = "loginia.html"
+    throw new Error("no-session")
+  }
+
+  me = await r.json()
+} catch {
+  window.location.href = "loginia.html"
+}
+
+loading.style.display = "none"
+panel.style.display = "block"
+userpill.textContent = `Usuário: ${me.username} • ${me.plan || "VIP GOLD"}`
+
+addMsg("Olá! Eu sou o assistente Pawn do Portal SiqueiraX. Envie seu erro ou trecho do código e diga o que você quer fazer.", "bot")
+
+logoutBtn.addEventListener("click", async () => {
+  // simples: limpa cookie via function
+  await fetch("/.netlify/functions/logout_ia", { credentials:"include" }).catch(()=>{})
+  window.location.href = "loginia.html"
+})
+
+// histórico simples local (para reduzir tokens, mantém curto)
+const history = []
+
+async function send(){
+  const text = (inputEl.value || "").trim()
+  if(!text) return
+
+  inputEl.value = ""
+  addMsg(text, "user")
+  history.push({ role:"user", content:text })
+  while(history.length > 10) history.shift()
+
+  setLoading(true)
+  try{
+    const r = await fetch("/.netlify/functions/ai_chat", {
+      method:"POST",
+      credentials:"include",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ message: text, history })
+    })
+
+    const data = await r.json().catch(()=>null)
+    if(!r.ok){
+      const msg = data?.error || "Falha ao chamar IA."
+      addMsg(msg, "bot")
+      setLoading(false)
+      return
+    }
+
+    const answer = data?.answer || "(sem resposta)"
+    addMsg(answer, "bot")
+    history.push({ role:"assistant", content:answer })
+    while(history.length > 10) history.shift()
+  }catch{
+    addMsg("Erro de rede. Tente novamente.", "bot")
+  }finally{
+    setLoading(false)
+  }
+}
+
+sendBtn.addEventListener("click", send)
+inputEl.addEventListener("keydown", (e) => {
+  if(e.key === "Enter" && (e.ctrlKey || e.metaKey)){
+    e.preventDefault()
+    send()
+  }
+})
+</script>
+</body>
+</html>

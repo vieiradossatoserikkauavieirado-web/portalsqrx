@@ -7,8 +7,9 @@ const supabase = createClient(
 );
 
 function setCookie(token) {
-  return `sx_painel_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=3600; Secure`;
+  return `sx_painel_session=${token}; HttpOnly; Path=/; Domain=.portalsiqueirax.com.br; SameSite=Lax; Max-Age=3600; Secure`;
 }
+
 
 async function exchangeCodeForToken(code) {
   const body = new URLSearchParams({

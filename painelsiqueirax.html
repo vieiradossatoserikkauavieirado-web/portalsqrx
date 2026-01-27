@@ -336,35 +336,61 @@ try {
   me = await r.json()
 } catch {
   window.location.href = "loginpainel.html"
+  throw new Error("redirect")
 }
 
+// usuário
 const userPill = document.getElementById('userPill')
-userPill.textContent = ''
+if (userPill) {
+  userPill.textContent = ''
+  const userText = document.createElement('span')
+  userText.id = 'userText'
+  userPill.appendChild(userText)
+  userText.textContent = '@' + (me?.username || 'usuario')
+}
 
-const userText = document.createElement('span')
-userText.id = 'userText'
-userPill.appendChild(userText)
+// mostra painel
+if (loading) loading.style.display = 'none'
+if (panel) panel.style.display = 'block'
 
-userText.textContent = '@' + (me?.username || 'usuario')
-
-loading.style.display = 'none'
-panel.style.display = 'block'
-
+// navegação
 document.getElementById('goGamemodes')?.addEventListener('click', () => {
   window.location.href = 'gamemodes.html'
 })
+
 document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'gamemodesvip.html'
 })
+
+/**
+ * ✅ Botão da IA (recomendado):
+ * Vai para /ia.html e a própria página IA decide se precisa login
+ * (ela chama /.netlify/functions/me_ia e redireciona para loginia.html se necessário)
+ */
+document.getElementById('goIA')?.addEventListener('click', () => {
+  window.location.href = '/ia.html'
+})
+
+/**
+ * Se você AINDA quiser “forçar” login Discord direto ao clicar:
+ * (descomente e use no lugar do de cima)
+ *
+ * document.getElementById('goIA')?.addEventListener('click', () => {
+ *   window.location.href = "/.netlify/functions/discordloginia?return=" + encodeURIComponent("/ia.html");
+ * })
+ */
+
+// exemplo: botão desban (se ainda existir)
 document.getElementById('goDesban')?.addEventListener('click', () => {
-  window.location.href ="/.netlify/functions/discordloginia?return=" + encodeURIComponent("/ia.html");
+  window.location.href = 'desban.html'
 })
+
+// exemplo: botão servidores (se existir)
 document.getElementById('goServidores')?.addEventListener('click', () => {
-  window.location.href ="/.netlify/functions/discordloginia?return=" + encodeURIComponent("/ia.html");
-
+  window.location.href = 'servidores.html'
 })
 
-// logout REAL (apaga cookie e sessão)
+// logout painel (apaga cookie e sessão do painel)
 document.getElementById('logoutBtn')?.addEventListener('click', async () => {
   try {
     await fetch("/.netlify/functions/logout_painel", {
@@ -373,11 +399,10 @@ document.getElementById('logoutBtn')?.addEventListener('click', async () => {
     })
   } catch {}
 
-  // depois de limpar sessão, manda pro login
   window.location.href = "loginpainel.html"
 })
-
 </script>
+
 
 </body>
 </html>

@@ -23,10 +23,7 @@ body{
   background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
   display:flex;
   justify-content:center;
-
-  /* antes estava centralizado verticalmente e ficava “gigante” */
   align-items:flex-start;
-
   color:#fff;
   padding:1.25rem 1rem;
 }
@@ -47,11 +44,7 @@ body::before{
   border-radius:26px;
   border:1px solid rgba(255,255,255,.10);
   box-shadow:0 0 55px rgba(255,0,43,.45);
-
-  /* mais compacto */
   padding:1.35rem;
-
-  /* fica “nos cantos” sem colar demais */
   margin-top:.5rem;
 }
 
@@ -75,10 +68,7 @@ body::before{
   text-shadow:0 0 25px rgba(255,0,43,.7);
   line-height:1.1;
 }
-.brand p{
-  opacity:.85;
-  font-size:.95rem;
-}
+.brand p{opacity:.85;font-size:.95rem}
 
 .userline{
   display:flex;
@@ -114,10 +104,6 @@ body::before{
 }
 .btn:hover{transform:translateY(-2px); background:rgba(255,255,255,.12)}
 
-/* Grid mais flexível:
-   - no PC cabe 2-3 colunas dependendo do espaço
-   - cards menores
-*/
 .grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -129,14 +115,9 @@ body::before{
   border-radius:22px;
   border:1px solid rgba(255,255,255,.10);
   background:rgba(0,0,0,.32);
-
-  /* antes estava muito grande */
   padding:1.15rem;
-
   position:relative;
   overflow:hidden;
-
-  /* deixa mais “compacto” sem perder o visual */
   min-height: 210px;
   display:flex;
   flex-direction:column;
@@ -159,17 +140,12 @@ body::before{
   width:100%;
   border:none;
   border-radius:16px;
-
-  /* botão um pouco menor, mas ainda bom no toque */
   padding:.92rem;
-
   font-weight:900;
   letter-spacing:1px;
   cursor:pointer;
   transition:var(--transition);
   color:#fff;
-
-  /* empurra pro fim do card e mantém consistente */
   margin-top:auto;
 }
 
@@ -183,7 +159,7 @@ body::before{
   box-shadow:0 0 45px rgba(255,0,43,.85);
 }
 
-/* Premium “bem top” */
+/* Premium */
 .premium-badge{
   position:absolute;
   top:14px;
@@ -197,22 +173,16 @@ body::before{
   border:1px solid rgba(255,0,43,.45);
   box-shadow:0 0 22px rgba(255,0,43,.35);
 }
-
-.card-premium{
-  box-shadow: inset 0 0 0 1px rgba(255,0,43,.18);
-}
-
+.card-premium{ box-shadow: inset 0 0 0 1px rgba(255,0,43,.18); }
 .card-premium::before{
   content:"";
   position:absolute;
   inset:-120px -120px auto auto;
-  width:260px;
-  height:260px;
+  width:260px;height:260px;
   background:radial-gradient(circle at center, rgba(255,0,43,.40), transparent 62%);
   transform:rotate(25deg);
   pointer-events:none;
 }
-
 .cta-premium{
   background:linear-gradient(135deg,#ff1a3d,#7a0014);
   box-shadow:0 0 40px rgba(255,0,43,.70);
@@ -254,18 +224,14 @@ body::before{
 }
 @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.6)} }
 
-/* Mobile */
 @media (max-width:900px){
   body{ padding:1rem .9rem; }
   .panel{ padding:1.1rem; border-radius:22px; }
   .brand h1{ font-size:1.45rem; }
-  .topbar{ align-items:flex-start; }
   .userline{ justify-content:flex-start; }
   .card{ min-height:auto; }
-  .card .cta{ padding:1rem; } /* toque confortável */
+  .card .cta{ padding:1rem; }
 }
-
-/* Telas bem pequenas */
 @media (max-width:420px){
   .btn{ width:100%; }
   .userline{ width:100%; }
@@ -294,44 +260,28 @@ body::before{
   </div>
 
   <div class="grid">
-    <!-- Gamemodes -->
     <div class="card">
       <h2>GameModes</h2>
-      <p>
-        Acesse os <b>gamemodes disponíveis</b> no portal.
-        Conteúdo organizado, profissional e pronto pra baixar.
-      </p>
+      <p>Acesse os <b>gamemodes disponíveis</b> no portal. Conteúdo organizado e pronto.</p>
       <button class="cta cta-normal" id="goGamemodes">ACESSAR GAMEMODES</button>
     </div>
 
-    <!-- Premium -->
     <div class="card card-premium">
       <div class="premium-badge">PREMIUM</div>
       <h2>GameModes Premium</h2>
-      <p>
-        Área VIP com conteúdos <b>premium</b>.
-        Clique para entrar com sua conta VIP.
-      </p>
+      <p>Área VIP com conteúdos <b>premium</b>. Clique para entrar com sua conta VIP.</p>
       <button class="cta cta-premium" id="goPremium">ENTRAR NO PREMIUM</button>
     </div>
 
-    <!-- NOVO: Desban da Comunidade (Admin) -->
     <div class="card">
       <h2>Desban da Comunidade <span aria-hidden="true">🛡️</span></h2>
-      <p>
-        Ferramenta de <b>admin</b> para gerenciar pedidos e ações de desban.
-        Acesso controlado.
-      </p>
+      <p>Ferramenta de <b>admin</b> para gerenciar pedidos e ações de desban.</p>
       <button class="cta cta-normal" id="goDesban">ABRIR DESBAN (ADMIN)</button>
     </div>
 
-    <!-- NOVO: Gerenciar Servidores -->
     <div class="card">
       <h2>Gerenciar Servidores <span aria-hidden="true">🖥️</span></h2>
-      <p>
-        Central para <b>organizar e administrar</b> seus servidores,
-        configurações e status.
-      </p>
+      <p>Central para <b>administrar</b> servidores, configurações e status.</p>
       <button class="cta cta-normal" id="goServidores">ABRIR GERENCIADOR</button>
     </div>
   </div>
@@ -341,95 +291,53 @@ body::before{
 const loading = document.getElementById('loading')
 const panel = document.getElementById('panel')
 
-// valida sessão pelo cookie e pega username
 let me
 try {
-  const r = await fetch("/.netlify/functions/me_vip", {
+  const r = await fetch("/.netlify/functions/me_painel", {
     credentials: "include",
     cache: "no-store"
   })
 
-  // se não tiver sessão, volta pro login
   if (!r.ok) {
-    window.location.href = "login.html"
+    window.location.href = "loginpainel.html"
     throw new Error("no-session")
   }
 
-  // a function pode responder texto em erro, mas aqui já passou do ok
   me = await r.json()
 } catch (e) {
-  // fallback extra (se der erro de rede, etc.)
-  window.location.href = "login.html"
+  window.location.href = "loginpainel.html"
   throw e
 }
 
 const userPill = document.getElementById('userPill')
-
 userPill.textContent = ''
-
-// cria estrutura do pill do zero
-const vipIcon = document.createElement('span')
-vipIcon.id = 'vipIcon'
-vipIcon.textContent = '💎'
-vipIcon.style.display = 'none'
-vipIcon.style.marginRight = '.45rem'
 
 const userText = document.createElement('span')
 userText.id = 'userText'
-
-const vipBadge = document.createElement('span')
-vipBadge.id = 'vipBadge'
-vipBadge.textContent = 'VIP'
-vipBadge.style.display = 'none'
-vipBadge.style.marginLeft = '.55rem'
-vipBadge.style.padding = '.18rem .55rem'
-vipBadge.style.borderRadius = '999px'
-vipBadge.style.fontSize = '.72rem'
-vipBadge.style.fontWeight = '900'
-vipBadge.style.letterSpacing = '.9px'
-vipBadge.style.background = 'rgba(255,0,43,.18)'
-vipBadge.style.border = '1px solid rgba(255,0,43,.45)'
-vipBadge.style.boxShadow = '0 0 18px rgba(255,0,43,.35)'
-
-// monta
-userPill.appendChild(vipIcon)
 userPill.appendChild(userText)
-userPill.appendChild(vipBadge)
 
-// seta username
 userText.textContent = '@' + (me?.username || 'usuario')
 
-// mostra VIP
-if (me?.vip) {
-  vipIcon.style.display = 'inline-block'
-  vipBadge.style.display = 'inline-block'
-}
-
-// mostra painel
 loading.style.display = 'none'
 panel.style.display = 'block'
 
-// navegações
 document.getElementById('goGamemodes')?.addEventListener('click', () => {
   window.location.href = 'gamemodes.html'
 })
-
 document.getElementById('goPremium')?.addEventListener('click', () => {
-  window.location.href = 'loginvip.html'
+  window.location.href = 'gamemodesvip.html'
 })
-
-// NOVOS BOTÕES
 document.getElementById('goDesban')?.addEventListener('click', () => {
   window.location.href = 'desban.html'
 })
-
 document.getElementById('goServidores')?.addEventListener('click', () => {
   window.location.href = 'servidores.html'
 })
 
-// logout (front)
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
-  window.location.href = 'login.html'
+// logout REAL (apaga cookie)
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+  try { await fetch("/.netlify/functions/logout_painel", { credentials: "include", cache: "no-store" }) } catch {}
+  window.location.href = 'loginpainel.html'
 })
 </script>
 

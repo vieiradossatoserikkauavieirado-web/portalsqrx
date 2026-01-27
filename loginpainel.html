@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login • Portal SiqueiraX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --glass:rgba(15,15,15,.78);
+  --transition:.35s ease;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+  padding:1.25rem 1rem;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(18px);
+  z-index:-1;
+}
+
+.panel{
+  width:100%;
+  max-width:720px;
+  background:var(--glass);
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 0 55px rgba(255,0,43,.45);
+  padding:1.5rem;
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+  gap:.35rem;
+  margin-bottom:1.1rem;
+}
+.brand h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.7rem;
+  color:var(--red);
+  text-shadow:0 0 25px rgba(255,0,43,.7);
+  line-height:1.1;
+}
+.brand p{opacity:.85;font-size:.95rem}
+
+.card{
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.32);
+  padding:1.2rem;
+}
+
+.btn{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  padding:1rem;
+  font-weight:900;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:var(--transition);
+  color:#fff;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  box-shadow:0 0 30px rgba(255,0,43,.55);
+  text-transform:uppercase;
+}
+.btn:hover{
+  transform:scale(1.03);
+  box-shadow:0 0 45px rgba(255,0,43,.85);
+}
+
+.small{
+  margin-top:.9rem;
+  opacity:.75;
+  font-size:.9rem;
+  line-height:1.45;
+}
+
+@media (max-width:520px){
+  .panel{padding:1.2rem;border-radius:22px}
+  .brand h1{font-size:1.45rem}
+}
+</style>
+</head>
+
+<body>
+  <div class="panel">
+    <div class="brand">
+      <h1>Portal SiqueiraX</h1>
+      <p>Login do Painel via Discord</p>
+    </div>
+
+    <div class="card">
+      <button class="btn" id="btnLogin">ENTRAR COM DISCORD</button>
+      <div class="small" id="msg"></div>
+    </div>
+  </div>
+
+<script>
+  const msg = document.getElementById("msg")
+  const params = new URLSearchParams(location.search)
+  const err = params.get("err")
+  if (err) {
+    msg.textContent = "Erro no login: " + err + " (tente novamente)."
+  }
+
+  document.getElementById("btnLogin").onclick = () => {
+    window.location.href = "/.netlify/functions/discordloginpainel?return=/painel.html"
+  }
+</script>
+</body>
+</html>

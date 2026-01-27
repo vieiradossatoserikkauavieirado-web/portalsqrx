@@ -113,33 +113,62 @@ input::placeholder{opacity:.55}
     msg.textContent = text || "";
   }
 
+  function getReturnTo() {
+    const url = new URL(window.location.href);
+    const r = url.searchParams.get("return");
+    return (r && r.startsWith("/")) ? r : "/painelsiqueirax.html";
+  }
+
+  function showErrFromQuery() {
+    const url = new URL(window.location.href);
+    const err = url.searchParams.get("err");
+    if (!err) return false;
+
+    let friendly = "Falha na autorização do painel.";
+    if (err === "nopainel") friendly = "Sem permissão de painel (seu username não está em usuarios_painel).";
+    if (err === "desativado") friendly = "Conta do painel desativada.";
+    if (err === "sess") friendly = "Erro ao criar sessão do painel (sessoes_painel).";
+    if (err === "fail") friendly = "Falha interna na autorização do painel.";
+
+    setMsg(friendly, "err");
+    btn.disabled = false;
+    return true;
+  }
+
   async function ensureNormalSession() {
-    // igual ao VIP: exige sessão normal antes
     const r = await fetch("/.netlify/functions/me", {
       credentials: "include",
       cache: "no-store"
     });
     if (!r.ok) throw new Error("no-normal-session");
+
+    const data = await r.json().catch(() => null);
+    if (!data || !data.username) throw new Error("bad-me");
+
+    return data.username;
   }
 
-  btn.addEventListener("click", async () => {
+  async function start() {
+  
+    if (showErrFromQuery()) return;
+
     btn.disabled = true;
-    setMsg("Verificando sessão...", "");
+    setMsg("Verificando login do site...", "");
 
     try {
       await ensureNormalSession();
       setMsg("OK! Autorizando painel...", "ok");
-      // cria sx_painel_session e manda pro painel
-      window.location.href = "/.netlify/functions/painel-authorize?return=/painelsiqueirax.html";
+      window.location.href =
+        "/.netlify/functions/painel-authorize?return=" +
+        encodeURIComponent(getReturnTo());
     } catch {
       setMsg("Você precisa estar logado no site primeiro.", "err");
-      // manda pro login normal
       window.location.href = "/login.html";
     }
-  });
+  }
 
-  // auto (opcional): já tenta sozinho igual alguns fluxos
-  btn.click();
+  btn.addEventListener("click", start);
+  start();
 </script>
 </body>
 </html>

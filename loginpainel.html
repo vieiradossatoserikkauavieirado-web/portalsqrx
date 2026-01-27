@@ -232,7 +232,6 @@ button:disabled{
   }
 
   function mapErr(code){
-    // mensagens amigáveis
     if (code === "missing_env") return "Configuração faltando no servidor (env vars).";
     if (code === "dc_code") return "Discord não retornou o código de login. Tente novamente.";
     if (code === "dc_fail") return "Falha ao autenticar com Discord. Tente novamente.";
@@ -242,36 +241,39 @@ button:disabled{
     return "Falha no login do painel. Tente novamente.";
   }
 
-  // Se voltou com erro, mostra e NÃO fica em loop
-  const err = qs("err");
-  if (err) {
-    errEl.textContent = mapErr(err);
-    showAlert(`<b>Atenção:</b> ${mapErr(err)}`);
-  }
-
-  // Igual ao VIP: exige sessão normal (me.js)
+  // 1) Se já tiver sessão do painel, nem mostra login: vai direto
   try {
-    const r = await fetch("/.netlify/functions/me", {
+    const r = await fetch("/.netlify/functions/me_painel", {
       credentials: "include",
       cache: "no-store"
     });
-    if (!r.ok) throw new Error();
-  } catch {
-    window.location.href = "loginpainel.html";
-    throw new Error("no-normal-session");
+    if (r.ok) {
+      window.location.href = "painelsiqueirax.html";
+    }
+  } catch {}
+
+  // 2) Se voltou com erro, só mostra a mensagem e NÃO redireciona sozinho
+  const err = qs("err");
+  if (err) {
+    const msg = mapErr(err);
+    errEl.textContent = msg;
+    showAlert(`<b>Atenção:</b> ${msg}`);
   }
 
+  // 3) Só autoriza quando clicar no botão (sem auto)
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    errEl.textContent = "";
 
+    errEl.textContent = "";
     btn.disabled = true;
     btn.textContent = "REDIRECIONANDO...";
 
     const returnTo = qs("return") || "/painelsiqueirax.html";
-    window.location.href = "/.netlify/functions/discordloginpainel?return=" + encodeURIComponent(returnTo);
+    window.location.href =
+      "/.netlify/functions/discordloginpainel?return=" + encodeURIComponent(returnTo);
   });
 </script>
+
 
 </body>
 </html>

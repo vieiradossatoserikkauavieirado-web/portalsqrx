@@ -165,13 +165,13 @@ exports.handler = async (event) => {
     });
 
     if (error) {
-      console.error("supabase insert sessoes_ia error:", error);
-      return {
+    return {
         statusCode: 302,
         headers: { Location: "/loginia.html?err=sess" },
         body: "",
-      };
+    };
     }
+
 
     // 5) cookie + redirect
     return {

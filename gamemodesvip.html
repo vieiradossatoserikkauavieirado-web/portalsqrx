@@ -383,9 +383,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     if (!r.ok) {
-      renderNoVipBox(`Verificação VIP falhou (HTTP ${r.status}).`);
+    const reason = await r.text().catch(() => "");
+    if (reason === "no_session" || reason === "invalid_session" || reason === "expired_session") {
+      window.location.href = "loginvip.html";
       return;
     }
+    renderNoVipBox(`Acesso VIP negado • ${reason || "sem_detalhe"}`);
+    return;
+  }
+
   } catch {
     renderNoVipBox("Não foi possível validar seu acesso VIP.");
     return;

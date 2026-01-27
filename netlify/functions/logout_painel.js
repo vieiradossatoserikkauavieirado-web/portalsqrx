@@ -18,16 +18,20 @@ function getCookie(event, name) {
 exports.handler = async (event) => {
   const token = getCookie(event, "sx_painel_session")
 
-  // tenta deletar no banco (não importa se falhar)
   if (token) {
     try { await supabase.from("sessoes_painel").delete().eq("token", token) } catch {}
   }
 
-  const clear = "sx_painel_session=; Path=/; Domain=.portalsiqueirax.com.br; HttpOnly; SameSite=Lax; Secure; Max-Age=0"
+  const clear =
+    "sx_painel_session=; Path=/; Domain=.portalsiqueirax.com.br; HttpOnly; SameSite=Lax; Secure; Max-Age=0"
 
   return {
     statusCode: 200,
-    headers: { "Set-Cookie": clear, "Cache-Control": "no-store", "Content-Type": "text/plain" },
+    headers: {
+      "Set-Cookie": clear,
+      "Cache-Control": "no-store",
+      "Content-Type": "text/plain"
+    },
     body: "ok"
   }
 }

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel • Portal SiqueiraX</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --glass:rgba(15,15,15,.78);
+  --transition:.35s ease;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  color:#fff;
+  padding:1.25rem 1rem;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(18px);
+  z-index:-1;
+}
+
+.panel{
+  width:100%;
+  max-width:1100px;
+  background:var(--glass);
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 0 55px rgba(255,0,43,.45);
+  padding:1.35rem;
+  margin-top:.5rem;
+}
+
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:1rem;
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+  gap:.3rem;
+}
+.brand h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.6rem;
+  color:var(--red);
+  text-shadow:0 0 25px rgba(255,0,43,.7);
+  line-height:1.1;
+}
+.brand p{opacity:.85;font-size:.95rem}
+
+.userline{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.userpill{
+  padding:.5rem .75rem;
+  border-radius:999px;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:700;
+  letter-spacing:.3px;
+  box-shadow:0 0 18px rgba(255,0,43,.15);
+  display:flex;
+  align-items:center;
+}
+
+.btn{
+  border:none;
+  border-radius:16px;
+  padding:.78rem .95rem;
+  font-weight:900;
+  letter-spacing:.6px;
+  cursor:pointer;
+  transition:var(--transition);
+  color:#fff;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.btn:hover{transform:translateY(-2px); background:rgba(255,255,255,.12)}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  align-items:stretch;
+}
+
+.card{
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.32);
+  padding:1.15rem;
+  position:relative;
+  overflow:hidden;
+  min-height: 210px;
+  display:flex;
+  flex-direction:column;
+}
+
+.card h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.15rem;
+  margin-bottom:.55rem;
+}
+
+.card p{
+  opacity:.9;
+  line-height:1.5;
+  font-size:.92rem;
+  margin-bottom:1rem;
+}
+
+.card .cta{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  padding:.92rem;
+  font-weight:900;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:var(--transition);
+  color:#fff;
+  margin-top:auto;
+}
+
+/* Normal */
+.cta-normal{
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  box-shadow:0 0 30px rgba(255,0,43,.55);
+}
+.cta-normal:hover{
+  transform:scale(1.03);
+  box-shadow:0 0 45px rgba(255,0,43,.85);
+}
+
+/* Premium */
+.premium-badge{
+  position:absolute;
+  top:14px;
+  right:14px;
+  font-family:'Orbitron',sans-serif;
+  font-size:.75rem;
+  letter-spacing:1px;
+  padding:.45rem .65rem;
+  border-radius:999px;
+  background:rgba(255,0,43,.18);
+  border:1px solid rgba(255,0,43,.45);
+  box-shadow:0 0 22px rgba(255,0,43,.35);
+}
+.card-premium{ box-shadow: inset 0 0 0 1px rgba(255,0,43,.18); }
+.card-premium::before{
+  content:"";
+  position:absolute;
+  inset:-120px -120px auto auto;
+  width:260px;height:260px;
+  background:radial-gradient(circle at center, rgba(255,0,43,.40), transparent 62%);
+  transform:rotate(25deg);
+  pointer-events:none;
+}
+.cta-premium{
+  background:linear-gradient(135deg,#ff1a3d,#7a0014);
+  box-shadow:0 0 40px rgba(255,0,43,.70);
+  text-transform:uppercase;
+}
+.cta-premium:hover{
+  transform:scale(1.04);
+  box-shadow:0 0 60px rgba(255,0,43,.95);
+}
+
+/* Loading overlay */
+.loading{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(10px);
+  z-index:999;
+}
+.loading .box{
+  background:rgba(15,15,15,.82);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  padding:1.1rem 1.3rem;
+  box-shadow:0 0 40px rgba(255,0,43,.35);
+  font-weight:800;
+  letter-spacing:.4px;
+}
+.loading .dot{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--red);
+  margin-left:.35rem;
+  box-shadow:0 0 18px rgba(255,0,43,.9);
+  animation:pulse .9s infinite ease-in-out;
+}
+@keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.6)} }
+
+@media (max-width:900px){
+  body{ padding:1rem .9rem; }
+  .panel{ padding:1.1rem; border-radius:22px; }
+  .brand h1{ font-size:1.45rem; }
+  .userline{ justify-content:flex-start; }
+  .card{ min-height:auto; }
+  .card .cta{ padding:1rem; }
+}
+@media (max-width:420px){
+  .btn{ width:100%; }
+  .userline{ width:100%; }
+  .userpill{ width:100%; justify-content:center; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="loading" id="loading">
+  <div class="box">Validando sessão<span class="dot"></span></div>
+</div>
+
+<div class="panel" style="display:none" id="panel">
+  <div class="topbar">
+    <div class="brand">
+      <h1>Portal SiqueiraX</h1>
+      <p>Selecione o que você quer acessar</p>
+    </div>
+
+    <div class="userline">
+      <div class="userpill" id="userPill">@...</div>
+      <button class="btn" id="logoutBtn">SAIR</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>GameModes</h2>
+      <p>Acesse os <b>gamemodes disponíveis</b> no portal. Conteúdo organizado e pronto.</p>
+      <button class="cta cta-normal" id="goGamemodes">ACESSAR GAMEMODES</button>
+    </div>
+
+    <div class="card card-premium">
+      <div class="premium-badge">PREMIUM</div>
+      <h2>GameModes Premium</h2>
+      <p>Área VIP com conteúdos <b>premium</b>. Clique para entrar com sua conta VIP.</p>
+      <button class="cta cta-premium" id="goPremium">ENTRAR NO PREMIUM</button>
+    </div>
+
+    <div class="card">
+      <h2>Desban da Comunidade <span aria-hidden="true">🛡️</span></h2>
+      <p>Ferramenta de <b>admin</b> para gerenciar pedidos e ações de desban.</p>
+      <button class="cta cta-normal" id="goDesban">ABRIR DESBAN (ADMIN)</button>
+    </div>
+
+    <div class="card">
+      <h2>Gerenciar Servidores <span aria-hidden="true">🖥️</span></h2>
+      <p>Central para <b>administrar</b> servidores, configurações e status.</p>
+      <button class="cta cta-normal" id="goServidores">ABRIR GERENCIADOR</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+const loading = document.getElementById('loading')
+const panel = document.getElementById('panel')
+
+let me
+try {
+  const r = await fetch("/.netlify/functions/me_painel", {
+    credentials: "include",
+    cache: "no-store"
+  })
+
+  if (!r.ok) {
+    window.location.href = "loginpainel.html"
+    throw new Error("no-session")
+  }
+
+  me = await r.json()
+} catch {
+  window.location.href = "loginpainel.html"
+}
+
+const userPill = document.getElementById('userPill')
+userPill.textContent = ''
+
+const userText = document.createElement('span')
+userText.id = 'userText'
+userPill.appendChild(userText)
+
+userText.textContent = '@' + (me?.username || 'usuario')
+
+loading.style.display = 'none'
+panel.style.display = 'block'
+
+document.getElementById('goGamemodes')?.addEventListener('click', () => {
+  window.location.href = 'gamemodes.html'
+})
+document.getElementById('goPremium')?.addEventListener('click', () => {
+  window.location.href = 'gamemodesvip.html'
+})
+document.getElementById('goDesban')?.addEventListener('click', () => {
+  window.location.href = 'desban.html'
+})
+document.getElementById('goServidores')?.addEventListener('click', () => {
+  window.location.href = 'servidores.html'
+})
+
+// logout REAL (apaga cookie e sessão)
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+  try {
+    await fetch("/.netlify/functions/logout_painel", {
+      credentials: "include",
+      cache: "no-store"
+    })
+  } catch {}
+
+  // depois de limpar sessão, manda pro login
+  window.location.href = "loginpainel.html"
+})
+
+</script>
+
+</body>
+</html>

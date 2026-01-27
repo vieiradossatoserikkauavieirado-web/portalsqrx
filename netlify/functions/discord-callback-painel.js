@@ -1,118 +1,170 @@
-const { createClient } = require("@supabase/supabase-js")
-const crypto = require("crypto")
+const { createClient } = require("@supabase/supabase-js");
+const crypto = require("crypto");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
-)
-
-function parseState(raw) {
-  try {
-    return JSON.parse(Buffer.from(raw, "base64url").toString("utf8"))
-  } catch {
-    return { returnTo: "/painelsiqueirax.html" }
-  }
-}
+);
 
 function setCookie(token) {
-  return `sx_painel_session=${token}; HttpOnly; Path=/; Domain=.portalsiqueirax.com.br; SameSite=Lax; Max-Age=3600; Secure`
+  return `sx_painel_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=3600; Secure`;
 }
 
-async function exchangeCodeForToken(code, redirectUri) {
+async function exchangeCodeForToken(code) {
   const body = new URLSearchParams({
     client_id: process.env.DISCORD_CLIENT_ID,
     client_secret: process.env.DISCORD_CLIENT_SECRET,
     grant_type: "authorization_code",
     code,
-    redirect_uri: redirectUri,
-  })
+    redirect_uri: process.env.DISCORD_PAINEL_REDIRECT_URI,
+  });
 
   const r = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
-  })
+  });
 
-  if (!r.ok) throw new Error("token_exchange_failed")
-  return r.json()
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`token_exchange_failed:${r.status}:${text}`);
+  }
+
+  return r.json();
 }
 
 async function getDiscordUser(accessToken) {
   const r = await fetch("https://discord.com/api/users/@me", {
     headers: { Authorization: `Bearer ${accessToken}` },
-  })
-  if (!r.ok) throw new Error("get_user_failed")
-  return r.json()
+  });
+
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`get_user_failed:${r.status}:${text}`);
+  }
+
+  return r.json();
+}
+
+async function getGuildMember(userId) {
+  // Use /api/v10 (recomendado). Seu VIP usa /api sem versão e costuma funcionar,
+  // mas v10 é mais certinho.
+  const r = await fetch(
+    `https://discord.com/api/v10/guilds/${process.env.DISCORD_GUILD_ID}/members/${userId}`,
+    {
+      headers: { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` },
+    }
+  );
+
+  if (r.status === 404) return null;
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`get_member_failed:${r.status}:${text}`);
+  }
+
+  return r.json();
 }
 
 exports.handler = async (event) => {
-  const url = new URL(event.rawUrl)
-  const code = url.searchParams.get("code")
-  const stateRaw = url.searchParams.get("state") || ""
-  const { returnTo } = parseState(stateRaw)
-
-  const redirectUri = (process.env.DISCORD_PAINEL_REDIRECT_URI || "").trim().replace(/\/$/, "")
-
   try {
+    // valida envs essenciais
+    const required = [
+      "DISCORD_CLIENT_ID",
+      "DISCORD_CLIENT_SECRET",
+      "DISCORD_PAINEL_REDIRECT_URI",
+      "DISCORD_GUILD_ID",
+      "DISCORD_PAINEL_ROLE_ID",
+      "DISCORD_BOT_TOKEN",
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_ROLE_KEY",
+    ];
+
+    for (const k of required) {
+      if (!process.env[k]) {
+        return {
+          statusCode: 302,
+          headers: { Location: "/loginpainel.html?err=missing_env" },
+          body: "",
+        };
+      }
+    }
+
+    const url = new URL(event.rawUrl);
+    const code = url.searchParams.get("code");
     if (!code) {
-      return { statusCode: 302, headers: { Location: `/loginpainel.html?err=dc_code` }, body: "" }
-    }
-    if (!redirectUri) {
-      return { statusCode: 500, body: "missing_env:DISCORD_PAINEL_REDIRECT_URI" }
-    }
-
-    // 1) Discord OAuth
-    const tokenData = await exchangeCodeForToken(code, redirectUri)
-    const user = await getDiscordUser(tokenData.access_token)
-
-    const discord_id = String(user.id || "")
-    const username = String(user.username || "usuario")
-
-    if (!discord_id) {
-      return { statusCode: 302, headers: { Location: `/loginpainel.html?err=dc_user` }, body: "" }
+      return {
+        statusCode: 302,
+        headers: { Location: "/loginpainel.html?err=dc_code" },
+        body: "",
+      };
     }
 
-    // 2) Autoriza no Supabase (precisa estar em usuarios_painel)
-    //    => você vai salvar discord_id nessa tabela
-    const { data: painelUser, error: eUser } = await supabase
-      .from("usuarios_painel")
-      .select("discord_id, username, role, ativo")
-      .eq("discord_id", discord_id)
-      .maybeSingle()
-
-    if (eUser || !painelUser) {
-      return { statusCode: 302, headers: { Location: `/loginpainel.html?err=nopainel` }, body: "" }
-    }
-    if (!painelUser.ativo) {
-      return { statusCode: 302, headers: { Location: `/loginpainel.html?err=desativado` }, body: "" }
+    // (opcional) retorno
+    const stateRaw = url.searchParams.get("state") || "";
+    let returnTo = "/painelsiqueirax.html";
+    try {
+      const parsed = JSON.parse(Buffer.from(stateRaw, "base64url").toString("utf8"));
+      if (parsed?.returnTo && String(parsed.returnTo).startsWith("/")) returnTo = parsed.returnTo;
+    } catch {
+      // ignora e usa default
     }
 
-    // 3) Cria sessão no Supabase (sessoes_painel)
-    const token = crypto.randomUUID()
-    const expira_em = new Date(Date.now() + 60 * 60 * 1000).toISOString()
+    // 1) OAuth
+    const tokenData = await exchangeCodeForToken(code);
 
-    const { error: eSess } = await supabase.from("sessoes_painel").insert({
+    // 2) usuário
+    const user = await getDiscordUser(tokenData.access_token);
+
+    // 3) membro + cargos
+    const member = await getGuildMember(user.id);
+    if (!member) {
+      return {
+        statusCode: 302,
+        headers: { Location: "/loginpainel.html?err=not_in_guild" },
+        body: "",
+      };
+    }
+
+    const roles = member.roles || [];
+    if (!roles.includes(process.env.DISCORD_PAINEL_ROLE_ID)) {
+      return {
+        statusCode: 302,
+        headers: { Location: "/loginpainel.html?err=no_role" },
+        body: "",
+      };
+    }
+
+    // 4) cria sessão PAINEL
+    const token = crypto.randomUUID();
+    const { error } = await supabase.from("sessoes_painel").insert({
       token,
-      username: painelUser.username || username,
-      role: painelUser.role || "admin",
-      expira_em
-    })
+      username: `discord:${user.id}`,
+      role: "painel",
+      expira_em: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    });
 
-    if (eSess) {
-      return { statusCode: 302, headers: { Location: `/loginpainel.html?err=nopainel_${discord_id}` }, body: "" }
+    if (error) {
+      return {
+        statusCode: 302,
+        headers: { Location: "/loginpainel.html?err=sess" },
+        body: "",
+      };
     }
 
-    // 4) Seta cookie e volta
+    // 5) cookie + redirect
     return {
       statusCode: 302,
       headers: {
         "Set-Cookie": setCookie(token),
-        Location: returnTo || "/painelsiqueirax.html",
-        "Cache-Control": "no-store",
+        Location: returnTo,
       },
       body: "",
-    }
+    };
   } catch {
-    return { statusCode: 302, headers: { Location: `/loginpainel.html?err=dc_fail` }, body: "" }
+    return {
+      statusCode: 302,
+      headers: { Location: "/loginpainel.html?err=dc_fail" },
+      body: "",
+    };
   }
-}
+};

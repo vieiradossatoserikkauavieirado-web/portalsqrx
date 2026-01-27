@@ -15,9 +15,9 @@ function parseState(raw) {
 }
 
 function setCookie(token) {
-  // 10 min (mude se quiser)
-  return `sx_painel_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=600; Secure`
+  return `sx_painel_session=${token}; HttpOnly; Path=/; Domain=.portalsiqueirax.com.br; SameSite=Lax; Max-Age=600; Secure`;
 }
+
 
 async function exchangeCodeForToken(code, redirectUri) {
   const body = new URLSearchParams({

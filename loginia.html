@@ -133,6 +133,11 @@ else if(err === "env"){
   show("red", "Erro interno de configuração. Avise a administração.")
 }
 
+const why = qs.get("why");
+if (err === "sess") {
+  show("red", "Erro ao criar sessão (Supabase). " + (why ? ("Motivo: " + why) : ""))
+}
+
 
 loginBtn.addEventListener("click", () => {
   const returnTo = "/ia.html"

@@ -345,24 +345,22 @@ const panel = document.getElementById('panel')
 let me
 try {
   const r = await fetch("/.netlify/functions/me_vip", {
-    credentials: "include"
-    // tira o cache por enquanto pra não interferir
+    credentials: "include",
+    cache: "no-store"
   })
 
-  console.log("me status:", r.status)
-  const raw = await r.text()
-  console.log("me body:", raw)
+  // se não tiver sessão, volta pro login
+  if (!r.ok) {
+    window.location.href = "login.html"
+    throw new Error("no-session")
+  }
 
-  if (!r.ok) throw new Error("HTTP " + r.status)
-
-  me = JSON.parse(raw)
-} catch (err) {
-  console.error("Falhou validar sessão:", err)
-
-  // mostra erro na tela ao invés de redirecionar
-  const box = document.querySelector("#loading .box")
-  box.textContent = "Erro na sessão. Veja o console (F12)."
-  throw err
+  // a function pode responder texto em erro, mas aqui já passou do ok
+  me = await r.json()
+} catch (e) {
+  // fallback extra (se der erro de rede, etc.)
+  window.location.href = "login.html"
+  throw e
 }
 
 const userPill = document.getElementById('userPill')
@@ -420,7 +418,7 @@ document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'loginvip.html'
 })
 
-/* NOVOS BOTÕES */
+// NOVOS BOTÕES
 document.getElementById('goDesban')?.addEventListener('click', () => {
   window.location.href = 'desban.html'
 })
@@ -429,7 +427,7 @@ document.getElementById('goServidores')?.addEventListener('click', () => {
   window.location.href = 'servidores.html'
 })
 
-// logout
+// logout (front)
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
   window.location.href = 'login.html'
 })

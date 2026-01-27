@@ -164,13 +164,15 @@ exports.handler = async (event) => {
       expira_em,
     });
 
-    if (error) {
-    return {
-        statusCode: 302,
-        headers: { Location: "/loginia.html?err=sess" },
-        body: "",
-    };
-    }
+   if (error) {
+  const why = encodeURIComponent(error.message || JSON.stringify(error));
+  return {
+    statusCode: 302,
+    headers: { Location: `/loginia.html?err=sess&why=${why}` },
+    body: "",
+  };
+}
+
 
 
     // 5) cookie + redirect

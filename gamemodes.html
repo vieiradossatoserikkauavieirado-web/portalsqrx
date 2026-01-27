@@ -204,7 +204,8 @@ header h1{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-  const err = new URLSearchParams(location.search).get("err")
+  // ===== 0) tela de erro nosub =====
+  const err = new URLSearchParams(location.search).get("err");
   if (err === "nosub") {
     document.body.innerHTML = `
       <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
@@ -222,59 +223,84 @@ document.addEventListener("DOMContentLoaded", async () => {
           </a>
         </div>
       </div>
-    `
-    return
+    `;
+    return;
   }
 
-  // 1) sessão normal
-  let me
-  try {
-    const r = await fetch("/.netlify/functions/me", { credentials: "include", cache: "no-store" })
-    if (!r.ok) throw new Error()
-    me = await r.json()
-  } catch {
-    window.location.href = "login.html"
-    return
-  }
-  document.getElementById("userName").textContent = me.username
-
-  // helper: manda pro discord só quando precisar (SEM loop)
+  // helper: manda pro Discord sub quando precisar (SEM loop)
   function goDiscordSub() {
-    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html"
+    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html";
   }
 
-  // 2) valida "inscrito" (só redireciona se NÃO estiver válido)
+  // ===== 1) sessão: aceita painel OU normal =====
+  let me = null;
+
+  // 1a) tenta painel
   try {
-    const r2 = await fetch("/.netlify/functions/sub-me", { credentials: "include", cache: "no-store" })
-    if (!r2.ok) throw new Error()
-  } catch {
-    goDiscordSub()
-    return
+    const rp = await fetch("/.netlify/functions/me_painel", {
+      credentials: "include",
+      cache: "no-store"
+    });
+    if (rp.ok) me = await rp.json();
+  } catch {}
+
+  // 1b) se não tem painel, tenta normal
+  if (!me) {
+    try {
+      const r = await fetch("/.netlify/functions/me", {
+        credentials: "include",
+        cache: "no-store"
+      });
+      if (!r.ok) throw new Error();
+      me = await r.json();
+    } catch {
+      // não tem sessão nenhuma
+      window.location.href = "login.html";
+      return;
+    }
   }
 
-  // 3) expira em 5 minutos (revalida e, se falhar, pede Discord)
-  const FIVE_MIN = 5 * 60 * 1000
+ 
+  const userNameEl = document.getElementById("userName");
+  if (userNameEl) userNameEl.textContent = me?.username ? me.username : "usuario";
+
+
+  try {
+    const r2 = await fetch("/.netlify/functions/sub-me", {
+      credentials: "include",
+      cache: "no-store"
+    });
+    if (!r2.ok) throw new Error();
+  } catch {
+    goDiscordSub();
+    return;
+  }
+
+  // ===== 3) revalida em 5 minutos =====
+  const FIVE_MIN = 5 * 60 * 1000;
   setTimeout(async () => {
     try {
-      const r3 = await fetch("/.netlify/functions/sub-me", { credentials: "include", cache: "no-store" })
-      if (!r3.ok) throw new Error()
-      // se quiser ser MAIS rígido ainda, mesmo validando:
-      // goDiscordSub(); return;
+      const r3 = await fetch("/.netlify/functions/sub-me", {
+        credentials: "include",
+        cache: "no-store"
+      });
+      if (!r3.ok) throw new Error();
     } catch {
-      goDiscordSub()
-      return
+      goDiscordSub();
+      return;
     }
-  }, FIVE_MIN)
+  }, FIVE_MIN);
 
-  // 4) render normal
-  const gmContainer = document.getElementById("gmContainer")
-  const search = document.getElementById("search")
+  // ===== 4) render gamemodes =====
+  const gmContainer = document.getElementById("gmContainer");
+  const search = document.getElementById("search");
 
   function statusSpan(ok){
-    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`
+    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`;
   }
 
   function render(list){
+    if (!gmContainer) return;
     gmContainer.innerHTML = list.map(gm => `
       <div class="gm-card">
         <img src="${gm.image}" alt="${gm.title}" />
@@ -288,21 +314,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
         <a href="${gm.link}" target="_blank" rel="noopener noreferrer">${gm.linkText || "Download"}</a>
       </div>
-    `).join("")
+    `).join("");
   }
 
-  const res = await fetch("gamemodes.json", { cache: "no-store" })
-  const all = await res.json()
-  render(all)
+  const res = await fetch("gamemodes.json", { cache: "no-store" });
+  const all = await res.json();
+  render(all);
 
-  search.addEventListener("input", () => {
-    const v = search.value.toLowerCase()
-    render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)))
-  })
-})
+  if (search) {
+    search.addEventListener("input", () => {
+      const v = (search.value || "").toLowerCase();
+      render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)));
+    });
+  }
+});
 </script>
-
-
 
 
 

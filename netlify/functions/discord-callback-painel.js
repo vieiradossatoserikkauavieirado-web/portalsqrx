@@ -99,7 +99,7 @@ exports.handler = async (event) => {
     })
 
     if (eSess) {
-      return { statusCode: 302, headers: { Location: `/loginpainel.html?err=sessao` }, body: "" }
+      return { statusCode: 302, headers: { Location: `/loginpainel.html?err=nopainel_${discord_id}` }, body: "" }
     }
 
     // 4) Seta cookie e volta

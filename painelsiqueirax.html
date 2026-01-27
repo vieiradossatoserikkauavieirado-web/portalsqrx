@@ -23,9 +23,12 @@ body{
   background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
   display:flex;
   justify-content:center;
-  align-items:center;
+
+  /* antes estava centralizado verticalmente e ficava “gigante” */
+  align-items:flex-start;
+
   color:#fff;
-  padding:2rem 1rem;
+  padding:1.25rem 1rem;
 }
 
 body::before{
@@ -44,15 +47,20 @@ body::before{
   border-radius:26px;
   border:1px solid rgba(255,255,255,.10);
   box-shadow:0 0 55px rgba(255,0,43,.45);
-  padding:2.2rem;
+
+  /* mais compacto */
+  padding:1.35rem;
+
+  /* fica “nos cantos” sem colar demais */
+  margin-top:.5rem;
 }
 
 .topbar{
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:space-between;
   gap:1rem;
-  margin-bottom:1.6rem;
+  margin-bottom:1rem;
 }
 
 .brand{
@@ -62,7 +70,7 @@ body::before{
 }
 .brand h1{
   font-family:'Orbitron',sans-serif;
-  font-size:1.8rem;
+  font-size:1.6rem;
   color:var(--red);
   text-shadow:0 0 25px rgba(255,0,43,.7);
   line-height:1.1;
@@ -75,25 +83,27 @@ body::before{
 .userline{
   display:flex;
   align-items:center;
-  gap:.8rem;
+  gap:.7rem;
   flex-wrap:wrap;
   justify-content:flex-end;
 }
 
 .userpill{
-  padding:.55rem .85rem;
+  padding:.5rem .75rem;
   border-radius:999px;
   background:rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.12);
   font-weight:700;
   letter-spacing:.3px;
   box-shadow:0 0 18px rgba(255,0,43,.15);
+  display:flex;
+  align-items:center;
 }
 
 .btn{
   border:none;
   border-radius:16px;
-  padding:.85rem 1.05rem;
+  padding:.78rem .95rem;
   font-weight:900;
   letter-spacing:.6px;
   cursor:pointer;
@@ -104,44 +114,63 @@ body::before{
 }
 .btn:hover{transform:translateY(-2px); background:rgba(255,255,255,.12)}
 
+/* Grid mais flexível:
+   - no PC cabe 2-3 colunas dependendo do espaço
+   - cards menores
+*/
 .grid{
   display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  align-items:stretch;
 }
 
 .card{
   border-radius:22px;
   border:1px solid rgba(255,255,255,.10);
   background:rgba(0,0,0,.32);
-  padding:1.6rem;
+
+  /* antes estava muito grande */
+  padding:1.15rem;
+
   position:relative;
   overflow:hidden;
+
+  /* deixa mais “compacto” sem perder o visual */
+  min-height: 210px;
+  display:flex;
+  flex-direction:column;
 }
 
 .card h2{
   font-family:'Orbitron',sans-serif;
-  font-size:1.35rem;
-  margin-bottom:.6rem;
+  font-size:1.15rem;
+  margin-bottom:.55rem;
 }
 
 .card p{
   opacity:.9;
   line-height:1.5;
-  font-size:.95rem;
-  margin-bottom:1.2rem;
+  font-size:.92rem;
+  margin-bottom:1rem;
 }
 
 .card .cta{
   width:100%;
   border:none;
   border-radius:16px;
-  padding:1rem;
+
+  /* botão um pouco menor, mas ainda bom no toque */
+  padding:.92rem;
+
   font-weight:900;
   letter-spacing:1px;
   cursor:pointer;
   transition:var(--transition);
   color:#fff;
+
+  /* empurra pro fim do card e mantém consistente */
+  margin-top:auto;
 }
 
 /* Normal */
@@ -209,7 +238,7 @@ body::before{
   background:rgba(15,15,15,.82);
   border:1px solid rgba(255,255,255,.12);
   border-radius:18px;
-  padding:1.2rem 1.4rem;
+  padding:1.1rem 1.3rem;
   box-shadow:0 0 40px rgba(255,0,43,.35);
   font-weight:800;
   letter-spacing:.4px;
@@ -227,9 +256,20 @@ body::before{
 
 /* Mobile */
 @media (max-width:900px){
-  .grid{grid-template-columns:1fr}
-  .panel{padding:1.5rem}
-  .brand h1{font-size:1.6rem}
+  body{ padding:1rem .9rem; }
+  .panel{ padding:1.1rem; border-radius:22px; }
+  .brand h1{ font-size:1.45rem; }
+  .topbar{ align-items:flex-start; }
+  .userline{ justify-content:flex-start; }
+  .card{ min-height:auto; }
+  .card .cta{ padding:1rem; } /* toque confortável */
+}
+
+/* Telas bem pequenas */
+@media (max-width:420px){
+  .btn{ width:100%; }
+  .userline{ width:100%; }
+  .userpill{ width:100%; justify-content:center; }
 }
 </style>
 </head>
@@ -254,7 +294,7 @@ body::before{
   </div>
 
   <div class="grid">
-    <!-- ESQUERDA: Gamemodes -->
+    <!-- Gamemodes -->
     <div class="card">
       <h2>GameModes</h2>
       <p>
@@ -264,7 +304,7 @@ body::before{
       <button class="cta cta-normal" id="goGamemodes">ACESSAR GAMEMODES</button>
     </div>
 
-    <!-- DIREITA: Premium -->
+    <!-- Premium -->
     <div class="card card-premium">
       <div class="premium-badge">PREMIUM</div>
       <h2>GameModes Premium</h2>
@@ -273,6 +313,26 @@ body::before{
         Clique para entrar com sua conta VIP.
       </p>
       <button class="cta cta-premium" id="goPremium">ENTRAR NO PREMIUM</button>
+    </div>
+
+    <!-- NOVO: Desban da Comunidade (Admin) -->
+    <div class="card">
+      <h2>Desban da Comunidade <span aria-hidden="true">🛡️</span></h2>
+      <p>
+        Ferramenta de <b>admin</b> para gerenciar pedidos e ações de desban.
+        Acesso controlado.
+      </p>
+      <button class="cta cta-normal" id="goDesban">ABRIR DESBAN (ADMIN)</button>
+    </div>
+
+    <!-- NOVO: Gerenciar Servidores -->
+    <div class="card">
+      <h2>Gerenciar Servidores <span aria-hidden="true">🖥️</span></h2>
+      <p>
+        Central para <b>organizar e administrar</b> seus servidores,
+        configurações e status.
+      </p>
+      <button class="cta cta-normal" id="goServidores">ABRIR GERENCIADOR</button>
     </div>
   </div>
 </div>
@@ -284,7 +344,7 @@ const panel = document.getElementById('panel')
 // valida sessão pelo cookie e pega username
 let me
 try {
-  const r = await fetch("/.netlify/functions/me", { credentials: "include", cache: "no-store" })
+  const r = await fetch("/.netlify/functions/me_vip", { credentials: "include", cache: "no-store" })
   if (!r.ok) throw new Error()
   me = await r.json()
 } catch {
@@ -292,9 +352,7 @@ try {
   throw new Error("no-session")
 }
 
-
 const userPill = document.getElementById('userPill')
-
 
 userPill.textContent = ''
 
@@ -336,7 +394,6 @@ if (me?.vip) {
   vipBadge.style.display = 'inline-block'
 }
 
-
 // mostra painel
 loading.style.display = 'none'
 panel.style.display = 'block'
@@ -350,13 +407,20 @@ document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'loginvip.html'
 })
 
+/* NOVOS BOTÕES */
+document.getElementById('goDesban')?.addEventListener('click', () => {
+  window.location.href = 'desban.html'
+})
+
+document.getElementById('goServidores')?.addEventListener('click', () => {
+  window.location.href = 'servidores.html'
+})
+
 // logout
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
   window.location.href = 'login.html'
 })
 </script>
-
-
 
 </body>
 </html>

@@ -12,13 +12,12 @@ exports.handler = async (event) => {
     const qs = event.queryStringParameters || {};
     const force = qs.force === "1";
 
-    // só aceita paths locais (evita open-redirect)
+    // só aceita paths locais
     let returnTo = "/ia.html";
     if (qs.return && String(qs.return).startsWith("/")) {
       returnTo = String(qs.return);
     }
 
-    // state com returnTo
     const state = Buffer.from(JSON.stringify({ returnTo }), "utf8").toString("base64url");
 
     const params = new URLSearchParams({

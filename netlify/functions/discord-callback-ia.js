@@ -4,16 +4,16 @@ const crypto = require("crypto");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  { auth: { persistSession: false } }
 );
 
-// VIP GOLD role fixo
 const VIP_GOLD_ROLE_ID = "1465103020617633997";
 
 function setCookie(token) {
-  // Se você quiser deixar o Domain opcional por env:
-  // const domain = process.env.COOKIE_DOMAIN ? `; Domain=${process.env.COOKIE_DOMAIN}` : "";
-  // return `sx_ia_session=${token}; HttpOnly; Path=/${domain}; SameSite=Lax; Max-Age=3600; Secure`;
+  // Se quiser tornar isso configurável por env:
+  // const dom = process.env.COOKIE_DOMAIN ? `; Domain=${process.env.COOKIE_DOMAIN}` : "";
+  // return `sx_ia_session=${token}; HttpOnly; Path=/${dom}; SameSite=Lax; Max-Age=3600; Secure`;
 
   return `sx_ia_session=${token}; HttpOnly; Path=/; Domain=.portalsiqueirax.com.br; SameSite=Lax; Max-Age=3600; Secure`;
 }
@@ -72,7 +72,6 @@ async function getGuildMember(userId) {
 }
 
 function safeParseReturnTo(stateRaw) {
-  // stateRaw vem em base64url, contendo { returnTo: "/ia.html" }
   let returnTo = "/ia.html";
   if (!stateRaw) return returnTo;
 
@@ -82,9 +81,7 @@ function safeParseReturnTo(stateRaw) {
     if (parsed?.returnTo && String(parsed.returnTo).startsWith("/")) {
       returnTo = parsed.returnTo;
     }
-  } catch {
-    // ignora
-  }
+  } catch {}
   return returnTo;
 }
 
@@ -111,13 +108,11 @@ exports.handler = async (event) => {
       }
     }
 
-    // ✅ Netlify: pegue code/state do jeito mais compatível
     const qs = event.queryStringParameters || {};
     const code = qs.code;
     const stateRaw = qs.state || "";
 
     if (!code) {
-      // Isso acontece se alguém abrir o callback direto, ou se o Discord não redirecionou com code.
       console.error("dc_code: missing ?code. rawUrl=", event.rawUrl || "");
       return {
         statusCode: 302,
@@ -128,13 +123,13 @@ exports.handler = async (event) => {
 
     const returnTo = safeParseReturnTo(stateRaw);
 
-    // 1) OAuth
+    // 1) troca code por token
     const tokenData = await exchangeCodeForToken(code);
 
-    // 2) usuário
+    // 2) pega usuário
     const user = await getDiscordUser(tokenData.access_token);
 
-    // 3) membro + cargos
+    // 3) pega membro + cargos
     const member = await getGuildMember(user.id);
     if (!member) {
       return {
@@ -153,7 +148,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // 4) cria sessão IA
+    // 4) cria sessão
     const token = crypto.randomUUID();
     const expira_em = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
@@ -164,16 +159,18 @@ exports.handler = async (event) => {
       expira_em,
     });
 
-   if (error) {
-  const why = encodeURIComponent(error.message || JSON.stringify(error));
-  return {
-    statusCode: 302,
-    headers: { Location: `/loginia.html?err=sess&why=${why}` },
-    body: "",
-  };
-}
+    if (error) {
+      // ✅ ISSO AQUI VAI TE DIZER O MOTIVO REAL NO NETLIFY LOG
+      console.error("SUPABASE INSERT ERROR sessoes_ia:", error);
 
-
+      // ✅ (opcional) mostra o motivo na URL do login
+      const why = encodeURIComponent(error.message || "unknown");
+      return {
+        statusCode: 302,
+        headers: { Location: `/loginia.html?err=sess&why=${why}` },
+        body: "",
+      };
+    }
 
     // 5) cookie + redirect
     return {
@@ -186,7 +183,6 @@ exports.handler = async (event) => {
       body: "",
     };
   } catch (err) {
-    // ✅ Loga o motivo real no Netlify (isso é o que faltava pra debug)
     console.error("discord-callback-ia error:", err?.message || err);
     return {
       statusCode: 302,

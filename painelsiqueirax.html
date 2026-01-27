@@ -344,12 +344,25 @@ const panel = document.getElementById('panel')
 // valida sessão pelo cookie e pega username
 let me
 try {
-  const r = await fetch("/.netlify/functions/me_vip", { credentials: "include", cache: "no-store" })
-  if (!r.ok) throw new Error()
-  me = await r.json()
-} catch {
-  window.location.href = "login.html"
-  throw new Error("no-session")
+  const r = await fetch("/.netlify/functions/me_vip", {
+    credentials: "include"
+    // tira o cache por enquanto pra não interferir
+  })
+
+  console.log("me_vip status:", r.status)
+  const raw = await r.text()
+  console.log("me_vip body:", raw)
+
+  if (!r.ok) throw new Error("HTTP " + r.status)
+
+  me = JSON.parse(raw)
+} catch (err) {
+  console.error("Falhou validar sessão:", err)
+
+  // mostra erro na tela ao invés de redirecionar
+  const box = document.querySelector("#loading .box")
+  box.textContent = "Erro na sessão. Veja o console (F12)."
+  throw err
 }
 
 const userPill = document.getElementById('userPill')

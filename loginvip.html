@@ -164,28 +164,58 @@ button:hover{
 
 
 <script type="module">
-const formVip = document.getElementById('loginVipForm')
-const vipError = document.getElementById('vipErrorMessage')
+  const formVip = document.getElementById("loginVipForm");
+  const vipError = document.getElementById("vipErrorMessage");
+  const btn = formVip?.querySelector("button");
 
-try {
-  const r = await fetch("/.netlify/functions/me", {
-    credentials: "include",
-    cache: "no-store"
-  })
-  if (!r.ok) throw new Error()
-} catch {
-  window.location.href = "login.html"
-  throw new Error("no-normal-session")
-}
+  function qs(name){
+    return new URL(window.location.href).searchParams.get(name);
+  }
 
-formVip.addEventListener('submit', (e) => {
-  e.preventDefault()
-  vipError.textContent = ''
+  function setErr(t){
+    vipError.textContent = t || "";
+  }
 
-  
-  window.location.href = "/.netlify/functions/discord-login"
-})
+  function mapErr(code){
+    if (code === "novip") return "Você não possui o cargo VIP no Discord.";
+    if (code === "loginfail") return "Falha ao autenticar com Discord. Tente novamente.";
+    if (code === "missing_env") return "Configuração faltando no servidor (env vars).";
+    return "";
+  }
+
+  // 0) Se voltou do callback com erro, mostra
+  const err = qs("err");
+  if (err) setErr(mapErr(err));
+
+  // 1) Se já for VIP, vai direto (sem ficar pedindo login)
+  try {
+    const r = await fetch("/.netlify/functions/vip-me", {
+      credentials: "include",
+      cache: "no-store"
+    });
+
+    if (r.ok) {
+      window.location.href = "gamemodesvip.html";
+      throw new Error("already-vip");
+    }
+  } catch {
+    // segue normalmente (mostra botão)
+  }
+
+  // 2) Só autoriza quando clicar
+  formVip.addEventListener("submit", (e) => {
+    e.preventDefault();
+    setErr("");
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "REDIRECIONANDO...";
+    }
+
+    window.location.href = "/.netlify/functions/discord-login";
+  });
 </script>
+
 
 </body>
 </html>

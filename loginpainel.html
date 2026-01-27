@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login • Portal SiqueiraX</title>
+<title>Login Painel • Portal SiqueiraX</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -14,65 +14,59 @@
   --glass:rgba(15,15,15,.78);
   --transition:.35s ease;
 }
-
 *{margin:0;padding:0;box-sizing:border-box}
-
 body{
   font-family:'Inter',sans-serif;
   min-height:100vh;
   background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
-  padding:1.25rem 1rem;
+  display:flex;justify-content:center;align-items:center;
+  color:#fff;padding:1.25rem 1rem;
 }
-
 body::before{
-  content:"";
-  position:fixed;
-  inset:0;
+  content:"";position:fixed;inset:0;
   background:rgba(0,0,0,.75);
   backdrop-filter:blur(18px);
   z-index:-1;
 }
-
 .panel{
-  width:100%;
-  max-width:720px;
+  width:100%;max-width:720px;
   background:var(--glass);
   border-radius:26px;
   border:1px solid rgba(255,255,255,.10);
   box-shadow:0 0 55px rgba(255,0,43,.45);
   padding:1.5rem;
 }
-
-.brand{
-  display:flex;
-  flex-direction:column;
-  gap:.35rem;
-  margin-bottom:1.1rem;
-}
+.brand{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.1rem}
 .brand h1{
   font-family:'Orbitron',sans-serif;
-  font-size:1.7rem;
-  color:var(--red);
+  font-size:1.7rem;color:var(--red);
   text-shadow:0 0 25px rgba(255,0,43,.7);
   line-height:1.1;
 }
 .brand p{opacity:.85;font-size:.95rem}
-
 .card{
   border-radius:22px;
   border:1px solid rgba(255,255,255,.10);
   background:rgba(0,0,0,.32);
   padding:1.2rem;
 }
+.field{display:flex;flex-direction:column;gap:.45rem;margin-bottom:.85rem}
+label{font-weight:800;letter-spacing:.4px;font-size:.9rem;opacity:.9}
+input{
+  width:100%;
+  padding:.9rem .95rem;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.35);
+  color:#fff;
+  outline:none;
+  font-weight:700;
+}
+input::placeholder{opacity:.55}
 
 .btn{
   width:100%;
-  border:none;
-  border-radius:16px;
+  border:none;border-radius:16px;
   padding:1rem;
   font-weight:900;
   letter-spacing:1px;
@@ -83,17 +77,12 @@ body::before{
   box-shadow:0 0 30px rgba(255,0,43,.55);
   text-transform:uppercase;
 }
-.btn:hover{
-  transform:scale(1.03);
-  box-shadow:0 0 45px rgba(255,0,43,.85);
-}
+.btn:hover{transform:scale(1.03);box-shadow:0 0 45px rgba(255,0,43,.85)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
-.small{
-  margin-top:.9rem;
-  opacity:.75;
-  font-size:.9rem;
-  line-height:1.45;
-}
+.msg{margin-top:.85rem;font-weight:800;opacity:.9}
+.msg.err{color:#ff9aa8}
+.msg.ok{color:#b6ffcb}
 
 @media (max-width:520px){
   .panel{padding:1.2rem;border-radius:22px}
@@ -106,26 +95,85 @@ body::before{
   <div class="panel">
     <div class="brand">
       <h1>Portal SiqueiraX</h1>
-      <p>Login do Painel via Discord</p>
+      <p>Login do Painel</p>
     </div>
 
     <div class="card">
-      <button class="btn" id="btnLogin">ENTRAR COM DISCORD</button>
-      <div class="small" id="msg"></div>
+      <div class="field">
+        <label>Usuário</label>
+        <input id="u" placeholder="seu user" autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label>Senha</label>
+        <input id="p" type="password" placeholder="sua senha" autocomplete="current-password" />
+      </div>
+
+      <button class="btn" id="btnLogin">ENTRAR</button>
+      <div class="msg" id="msg"></div>
     </div>
   </div>
 
 <script>
-  const msg = document.getElementById("msg")
-  const params = new URLSearchParams(location.search)
-  const err = params.get("err")
-  if (err) {
-    msg.textContent = "Erro no login: " + err + " (tente novamente)."
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("btnLogin");
+  const u = document.getElementById("u");
+  const p = document.getElementById("p");
+
+  function setMsg(text, type) {
+    msg.className = "msg" + (type ? " " + type : "");
+    msg.textContent = text || "";
   }
 
-  document.getElementById("btnLogin").onclick = () => {
-    window.location.href = "/.netlify/functions/discordloginpainel?return=/painelsiqueirax.html"
+  function getReturnTo() {
+    const url = new URL(window.location.href);
+    const r = url.searchParams.get("return");
+    return r && r.startsWith("/") ? r : "/painelsiqueirax.html";
   }
+
+  btn.addEventListener("click", async () => {
+    setMsg("", "");
+    btn.disabled = true;
+    setMsg("Entrando...", "");
+
+    const username = (u.value || "").trim();
+    const password = (p.value || "").trim();
+
+    if (!username || !password) {
+      btn.disabled = false;
+      setMsg("Preencha usuário e senha.", "err");
+      return;
+    }
+
+    try {
+      const r = await fetch("/.netlify/functions/login_painel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+        credentials: "include",
+        cache: "no-store"
+      });
+
+      const text = await r.text();
+
+      if (!r.ok) {
+        btn.disabled = false;
+        setMsg(text || "Falha no login.", "err");
+        return;
+      }
+
+      setMsg("OK! Indo pro painel...", "ok");
+      window.location.href = getReturnTo();
+    } catch (e) {
+      btn.disabled = false;
+      setMsg("Erro de rede.", "err");
+    }
+  });
+
+  // Enter para logar
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") btn.click();
+  });
 </script>
 </body>
 </html>

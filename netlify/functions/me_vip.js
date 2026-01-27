@@ -1,39 +1,93 @@
-const { createClient } = require("@supabase/supabase-js");
+const { createClient } = require("@supabase/supabase-js")
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  { auth: { persistSession: false } }
+)
 
+/**
+ * Lê cookie pelo nome
+ */
 function getCookie(event, name) {
-  const raw = event.headers.cookie || event.headers.Cookie || "";
-  const parts = raw.split(";").map((s) => s.trim());
-  for (const p of parts) {
-    const [k, ...v] = p.split("=");
-    if (k === name) return v.join("=");
+  const raw =
+    event.headers.cookie ||
+    event.headers.Cookie ||
+    ""
+
+  if (!raw) return null
+
+  const cookies = raw.split(";").map(c => c.trim())
+  for (const c of cookies) {
+    if (!c.startsWith(name + "=")) continue
+    return c.substring(name.length + 1)
   }
-  return null;
+  return null
 }
 
 exports.handler = async (event) => {
   try {
-    const token = getCookie(event, "sx_vip_session");
-    if (!token) return { statusCode: 401, body: "no_session" };
+    /* ===============================
+       1. Lê cookie de sessão
+    =============================== */
+    const token = getCookie(event, "sx_vip_session")
+    if (!token) {
+      return {
+        statusCode: 401,
+        body: "no_session"
+      }
+    }
 
-    const { data, error } = await supabase
+    /* ===============================
+       2. Busca sessão no Supabase
+    =============================== */
+    const { data: sess, error } = await supabase
       .from("sessoes_vip")
-      .select("token, expira_em")
+      .select("token, username, expira_em")
       .eq("token", token)
-      .maybeSingle();
+      .limit(1)
+      .maybeSingle()
 
-    if (error) return { statusCode: 500, body: `supabase_read_failed:${error.message}` };
-    if (!data) return { statusCode: 401, body: "invalid_session" };
+    if (error || !sess) {
+      return {
+        statusCode: 401,
+        body: "invalid_session"
+      }
+    }
 
-    const exp = new Date(data.expira_em).getTime();
-    if (Number.isNaN(exp) || Date.now() > exp) return { statusCode: 401, body: "expired_session" };
+    /* ===============================
+       3. Verifica expiração
+    =============================== */
+    const exp = new Date(sess.expira_em).getTime()
+    if (!exp || Number.isNaN(exp) || Date.now() > exp) {
+      return {
+        statusCode: 401,
+        body: "expired_session"
+      }
+    }
 
-    return { statusCode: 200, body: "ok" };
-  } catch (e) {
-    return { statusCode: 500, body: `internal_error:${String(e.message || e)}` };
+    /* ===============================
+       4. OK — sessão válida
+    =============================== */
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        // evita cache agressivo
+        "Cache-Control": "no-store"
+      },
+      body: JSON.stringify({
+        vip: true,
+        username: sess.username
+      })
+    }
+
+  } catch (err) {
+    console.error("me_vip error:", err)
+
+    return {
+      statusCode: 500,
+      body: "internal_error"
+    }
   }
-};
+}

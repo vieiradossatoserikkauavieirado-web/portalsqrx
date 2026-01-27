@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login Painel • Portal SiqueiraX</title>
+<title>Painel • Portal SiqueiraX</title>
+
+<link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -11,164 +14,264 @@
 :root{
   --red:#ff002b;
   --red-dark:#b0001c;
-  --glass:rgba(15,15,15,.78);
+  --glass:rgba(15,15,15,.82);
   --transition:.35s ease;
 }
+
 *{margin:0;padding:0;box-sizing:border-box}
+
 body{
   font-family:'Inter',sans-serif;
   min-height:100vh;
   background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
-  display:flex;justify-content:center;align-items:center;
-  color:#fff;padding:1.25rem 1rem;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+  padding:1.25rem;
 }
+
 body::before{
-  content:"";position:fixed;inset:0;
-  background:rgba(0,0,0,.75);
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.78);
   backdrop-filter:blur(18px);
   z-index:-1;
 }
-.panel{
-  width:100%;max-width:720px;
+
+/* ===== CARD PRINCIPAL ===== */
+.painel-card{
+  width:100%;
+  max-width:520px;
   background:var(--glass);
-  border-radius:26px;
   border:1px solid rgba(255,255,255,.10);
-  box-shadow:0 0 55px rgba(255,0,43,.45);
-  padding:1.5rem;
+  border-radius:28px;
+  padding:2.8rem 2.4rem;
+  box-shadow:0 0 70px rgba(255,0,43,.55);
+  animation:fadeUp .8s ease;
+  position:relative;
+  overflow:hidden;
 }
-.brand{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.1rem}
+
+.painel-card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:radial-gradient(circle at 30% 10%, rgba(255,0,43,.22), transparent 55%),
+             radial-gradient(circle at 80% 80%, rgba(255,0,43,.18), transparent 55%);
+  pointer-events:none;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+  margin-bottom:1.35rem;
+  text-align:center;
+  position:relative;
+}
+
+.brand .badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  margin:0 auto;
+  padding:.45rem .85rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.35);
+  font-weight:800;
+  letter-spacing:.6px;
+  font-size:.78rem;
+  opacity:.92;
+}
+
 .brand h1{
   font-family:'Orbitron',sans-serif;
-  font-size:1.7rem;color:var(--red);
-  text-shadow:0 0 25px rgba(255,0,43,.7);
-  line-height:1.1;
+  font-size:2.25rem;
+  line-height:1.05;
+  background:linear-gradient(90deg,#ff002b,#ff5c5c);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 34px rgba(255,0,43,.7);
+  margin-top:.25rem;
 }
-.brand p{opacity:.85;font-size:.95rem}
-.card{
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(0,0,0,.32);
-  padding:1.2rem;
-}
-.field{display:flex;flex-direction:column;gap:.45rem;margin-bottom:.85rem}
-label{font-weight:800;letter-spacing:.4px;font-size:.9rem;opacity:.9}
-input{
-  width:100%;
-  padding:.9rem .95rem;
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(0,0,0,.35);
-  color:#fff;
-  outline:none;
-  font-weight:700;
-}
-input::placeholder{opacity:.55}
 
-.btn{
-  width:100%;
-  border:none;border-radius:16px;
+.brand .subtitle{
+  font-size:.98rem;
+  opacity:.88;
+}
+
+/* ===== INFO BOX ===== */
+.info{
+  font-size:.9rem;
+  line-height:1.55;
+  background:rgba(0,0,0,.40);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:1.05rem 1rem;
+  margin:1.2rem 0 1.35rem;
+  position:relative;
+}
+
+.info b{color:#ff4d4d}
+
+.alert{
+  display:none;
+  font-size:.9rem;
+  line-height:1.55;
+  background:rgba(255,0,43,.10);
+  border:1px solid rgba(255,0,43,.35);
+  border-radius:16px;
   padding:1rem;
+  margin-bottom:1.2rem;
+  box-shadow:0 0 25px rgba(255,0,43,.22);
+}
+.alert b{color:#ff4d4d}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:1.05rem 1rem;
+  border:none;
+  border-radius:16px;
+  font-size:1rem;
   font-weight:900;
   letter-spacing:1px;
   cursor:pointer;
-  transition:var(--transition);
   color:#fff;
   background:linear-gradient(135deg,var(--red),var(--red-dark));
-  box-shadow:0 0 30px rgba(255,0,43,.55);
+  box-shadow:0 0 34px rgba(255,0,43,.72);
+  transition:var(--transition);
   text-transform:uppercase;
 }
-.btn:hover{transform:scale(1.03);box-shadow:0 0 45px rgba(255,0,43,.85)}
-.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
-.msg{margin-top:.85rem;font-weight:800;opacity:.9}
-.msg.err{color:#ff9aa8}
-.msg.ok{color:#b6ffcb}
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 50px rgba(255,0,43,.92);
+}
 
-@media (max-width:520px){
-  .panel{padding:1.2rem;border-radius:22px}
-  .brand h1{font-size:1.45rem}
+button:disabled{
+  opacity:.65;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* ===== ERROR ===== */
+.error-message{
+  margin-top:1rem;
+  color:#ff6b6b;
+  font-size:.9rem;
+  text-align:center;
+  font-weight:800;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  margin-top:1.2rem;
+  text-align:center;
+  opacity:.7;
+  font-size:.82rem;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:520px){
+  .painel-card{padding:2.2rem 1.6rem}
+  .brand h1{font-size:1.95rem}
 }
 </style>
 </head>
 
 <body>
-  <div class="panel">
-    <div class="brand">
-      <h1>Portal SiqueiraX</h1>
-      <p>Autorização do Painel</p>
-    </div>
 
-    <div class="card">
-      <button class="btn" id="btnGo">CONTINUAR</button>
-      <div class="msg" id="msg"></div>
-    </div>
+<div class="painel-card">
+  <div class="brand">
+    <div class="badge">PORTAL SIQUEIRAX • PAINEL</div>
+    <h1>Login do Painel</h1>
+    <div class="subtitle">Acesso restrito • Autenticação via Discord</div>
   </div>
 
+  <div id="painelAlert" class="alert"></div>
+
+  <div class="info">
+    Clique em <b>Entrar com Discord</b> para autorizar o acesso ao <b>Painel SiqueiraX</b>.<br><br>
+    O sistema verifica automaticamente se você possui o <b>cargo necessário</b> no servidor.<br><br>
+    Se você não estiver logado no site, vamos te mandar para o <b>login</b> primeiro.
+  </div>
+
+  <form id="loginPainelForm">
+    <button id="btnPainel" type="submit">ENTRAR COM DISCORD</button>
+  </form>
+
+  <p id="painelErrorMessage" class="error-message"></p>
+
+  <div class="footer">© Portal SiqueiraX • Segurança ativa</div>
+</div>
+
 <script type="module">
-  const btn = document.getElementById("btnGo");
-  const msg = document.getElementById("msg");
+  const form = document.getElementById("loginPainelForm");
+  const errEl = document.getElementById("painelErrorMessage");
+  const alertEl = document.getElementById("painelAlert");
+  const btn = document.getElementById("btnPainel");
 
-  function setMsg(text, type) {
-    msg.className = "msg" + (type ? " " + type : "");
-    msg.textContent = text || "";
+  function qs(name){
+    const u = new URL(window.location.href);
+    return u.searchParams.get(name);
   }
 
-  function getReturnTo() {
-    const url = new URL(window.location.href);
-    const r = url.searchParams.get("return");
-    return (r && r.startsWith("/")) ? r : "/painelsiqueirax.html";
+  function showAlert(html){
+    alertEl.innerHTML = html;
+    alertEl.style.display = "block";
   }
 
-  function showErrFromQuery() {
-    const url = new URL(window.location.href);
-    const err = url.searchParams.get("err");
-    if (!err) return false;
-
-    let friendly = "Falha na autorização do painel.";
-    if (err === "nopainel") friendly = "Sem permissão de painel (seu username não está em usuarios_painel).";
-    if (err === "desativado") friendly = "Conta do painel desativada.";
-    if (err === "sess") friendly = "Erro ao criar sessão do painel (sessoes_painel).";
-    if (err === "fail") friendly = "Falha interna na autorização do painel.";
-
-    setMsg(friendly, "err");
-    btn.disabled = false;
-    return true;
+  function mapErr(code){
+    // mensagens amigáveis
+    if (code === "missing_env") return "Configuração faltando no servidor (env vars).";
+    if (code === "dc_code") return "Discord não retornou o código de login. Tente novamente.";
+    if (code === "dc_fail") return "Falha ao autenticar com Discord. Tente novamente.";
+    if (code === "not_in_guild") return "Você não está no servidor do Discord necessário.";
+    if (code === "no_role") return "Você não tem o cargo necessário para acessar o painel.";
+    if (code === "sess") return "Erro ao criar sessão do painel. Tente novamente.";
+    return "Falha no login do painel. Tente novamente.";
   }
 
-  async function ensureNormalSession() {
+  // Se voltou com erro, mostra e NÃO fica em loop
+  const err = qs("err");
+  if (err) {
+    errEl.textContent = mapErr(err);
+    showAlert(`<b>Atenção:</b> ${mapErr(err)}`);
+  }
+
+  // Igual ao VIP: exige sessão normal (me.js)
+  try {
     const r = await fetch("/.netlify/functions/me", {
       credentials: "include",
       cache: "no-store"
     });
-    if (!r.ok) throw new Error("no-normal-session");
-
-    const data = await r.json().catch(() => null);
-    if (!data || !data.username) throw new Error("bad-me");
-
-    return data.username;
+    if (!r.ok) throw new Error();
+  } catch {
+    window.location.href = "login.html";
+    throw new Error("no-normal-session");
   }
 
-  async function start() {
-  
-    if (showErrFromQuery()) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    errEl.textContent = "";
 
     btn.disabled = true;
-    setMsg("Verificando login do site...", "");
+    btn.textContent = "REDIRECIONANDO...";
 
-    try {
-      await ensureNormalSession();
-      setMsg("OK! Autorizando painel...", "ok");
-      window.location.href =
-        "/.netlify/functions/painel-authorize?return=" +
-        encodeURIComponent(getReturnTo());
-    } catch {
-      setMsg("Você precisa estar logado no site primeiro.", "err");
-      window.location.href = "/login.html";
-    }
-  }
-
-  btn.addEventListener("click", start);
-  start();
+    const returnTo = qs("return") || "/painelsiqueirax.html";
+    window.location.href = "/.netlify/functions/discordloginpainel?return=" + encodeURIComponent(returnTo);
+  });
 </script>
+
 </body>
 </html>

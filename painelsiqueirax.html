@@ -334,11 +334,19 @@ document.getElementById('goServidores')?.addEventListener('click', () => {
   window.location.href = 'servidores.html'
 })
 
-// logout REAL (apaga cookie)
+// logout REAL (apaga cookie e sessão)
 document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-  try { await fetch("/.netlify/functions/logout_painel", { credentials: "include", cache: "no-store" }) } catch {}
-  window.location.href = 'loginpainel.html'
+  try {
+    await fetch("/.netlify/functions/logout_painel", {
+      credentials: "include",
+      cache: "no-store"
+    })
+  } catch {}
+
+  // depois de limpar sessão, manda pro login
+  window.location.href = "loginpainel.html"
 })
+
 </script>
 
 </body>

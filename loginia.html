@@ -129,6 +129,10 @@ if(err === "no_role"){
 }else if(err){
   show("red", "Falha no login. Tente novamente.")
 }
+else if(err === "env"){
+  show("red", "Erro interno de configuração. Avise a administração.")
+}
+
 
 loginBtn.addEventListener("click", () => {
   const returnTo = "/ia.html"

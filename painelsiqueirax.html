@@ -259,32 +259,59 @@ body::before{
     </div>
   </div>
 
-  <div class="grid">
-    <div class="card">
-      <h2>GameModes</h2>
-      <p>Acesse os <b>gamemodes disponíveis</b> no portal. Conteúdo organizado e pronto.</p>
-      <button class="cta cta-normal" id="goGamemodes">ACESSAR GAMEMODES</button>
-    </div>
+ <div class="grid">
 
-    <div class="card card-premium">
-      <div class="premium-badge">PREMIUM</div>
-      <h2>GameModes Premium</h2>
-      <p>Área VIP com conteúdos <b>premium</b>. Clique para entrar com sua conta VIP.</p>
-      <button class="cta cta-premium" id="goPremium">ENTRAR NO PREMIUM</button>
-    </div>
-
-    <div class="card">
-      <h2>Desban da Comunidade <span aria-hidden="true">🛡️</span></h2>
-      <p>Ferramenta de <b>admin</b> para gerenciar pedidos e ações de desban.</p>
-      <button class="cta cta-normal" id="goDesban">ABRIR DESBAN (ADMIN)</button>
-    </div>
-
-    <div class="card">
-      <h2>Gerenciar Servidores <span aria-hidden="true">🖥️</span></h2>
-      <p>Central para <b>administrar</b> servidores, configurações e status.</p>
-      <button class="cta cta-normal" id="goServidores">ABRIR GERENCIADOR</button>
-    </div>
+  <div class="card">
+    <h2>GameModes</h2>
+    <p>
+      Acesse os <b>GameModes disponíveis</b> no portal.<br>
+      Conteúdo organizado, atualizado e pronto para uso.
+    </p>
+    <button class="cta cta-normal" id="goGamemodes">
+      ACESSAR GAMEMODES
+    </button>
   </div>
+
+  <div class="card card-premium">
+    <div class="premium-badge">PREMIUM</div>
+    <h2>GameModes Premium</h2>
+    <p>
+      Área exclusiva para <b>usuários VIP</b>.<br>
+      Conteúdos premium, links diretos e suporte dedicado.
+    </p>
+    <button class="cta cta-premium" id="goPremium">
+      ENTRAR NO PREMIUM
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>Desban da Comunidade <span aria-hidden="true">🛡️</span></h2>
+    <p>
+      Sistema para <b>solicitação e gerenciamento de desban</b>.<br>
+      Ideal para quem teve um amigo banido e deseja recorrer.
+    </p>
+    <button class="cta cta-normal" id="goDesban">
+      ACESSAR DESBAN
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>Gerenciamento de Servidores <span aria-hidden="true">🖥️</span></h2>
+    <p>
+      Central para <b>Owners de servidores</b>.<br>
+      Cadastro, gerenciamento e recursos especiais para <b>VIP Gold</b>.
+      <br><br>
+      <span style="opacity:.7;font-size:.85rem">
+        Em breve: pagamentos, desban e ferramentas administrativas.
+      </span>
+    </p>
+    <button class="cta cta-normal" id="goServidores">
+      EM BREVE
+    </button>
+  </div>
+
+</div>
+
 </div>
 
 <script type="module">
@@ -327,10 +354,10 @@ document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'gamemodesvip.html'
 })
 document.getElementById('goDesban')?.addEventListener('click', () => {
-  window.location.href = 'desban.html'
+  window.location.href = '#'
 })
 document.getElementById('goServidores')?.addEventListener('click', () => {
-  window.location.href = 'servidores.html'
+  window.location.href = '#'
 })
 
 // logout REAL (apaga cookie e sessão)

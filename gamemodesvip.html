@@ -254,27 +254,132 @@ header h1{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-  // ✅ valida sessão VIP (cookie sx_vip_session)
+  const gmContainer = document.getElementById("gmContainer");
+  const search = document.getElementById("search");
+
+  function renderNoVipBox(reasonText) {
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
+        <div style="max-width:720px;width:100%;
+          background:rgba(15,15,15,.82);
+          border:1px solid rgba(255,255,255,.10);
+          border-radius:26px;
+          padding:28px;
+          box-shadow:0 0 60px rgba(255,0,43,.40);
+          color:#fff; position:relative; overflow:hidden;">
+          
+          <div style="position:absolute;inset:-2px;
+            background:radial-gradient(circle at 20% 10%, rgba(255,0,43,.22), transparent 55%),
+                       radial-gradient(circle at 80% 80%, rgba(255,0,43,.16), transparent 55%);
+            pointer-events:none;"></div>
+
+          <div style="position:relative;">
+            <h1 style="
+              font-family:Orbitron,sans-serif;
+              margin:0 0 10px 0;
+              font-size:2rem;
+              line-height:1.1;
+              background:linear-gradient(90deg,#ff002b,#ff6b6b);
+              -webkit-background-clip:text;
+              -webkit-text-fill-color:transparent;
+              text-shadow:0 0 30px rgba(255,0,43,.65);
+              text-align:center;">
+              Área VIP • Acesso restrito
+            </h1>
+
+            <p style="text-align:center;opacity:.88;margin:0 0 18px 0;line-height:1.5;">
+              Para acessar os <b>GameModes VIP</b>, você precisa ter o <b>cargo VIP</b> no servidor do Discord.
+            </p>
+
+            <div style="
+              background:rgba(0,0,0,.40);
+              border:1px solid rgba(255,255,255,.08);
+              border-radius:16px;
+              padding:14px 14px;
+              margin-bottom:16px;
+              line-height:1.55;
+              opacity:.95;">
+              <b>Como liberar agora:</b><br>
+              • Assine o VIP no Discord do SiqueiraX.<br>
+              • Se tiver dúvidas, fale no WhatsApp: <b>82 9696-3727</b>.
+              ${reasonText ? `<div style="margin-top:10px;opacity:.85"><b>Detalhe:</b> ${reasonText}</div>` : ""}
+            </div>
+
+            <div style="display:grid;gap:10px;">
+              <a href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener"
+                 style="display:block;text-align:center;padding:1rem;border-radius:16px;
+                 font-weight:900;letter-spacing:1px;text-decoration:none;color:#fff;
+                 background:linear-gradient(135deg,#ff002b,#b0001c);
+                 box-shadow:0 0 28px rgba(255,0,43,.65); text-transform:uppercase;">
+                Entrar no Discord
+              </a>
+
+              <a href="https://wa.me/558296963727" target="_blank" rel="noopener"
+                 style="display:block;text-align:center;padding:1rem;border-radius:16px;
+                 font-weight:900;letter-spacing:1px;text-decoration:none;color:#fff;
+                 background:rgba(255,255,255,.08);
+                 border:1px solid rgba(255,255,255,.14);
+                 box-shadow:0 0 20px rgba(0,0,0,.25); text-transform:uppercase;">
+                Falar no WhatsApp
+              </a>
+
+              <button id="tryAgainBtn"
+                 style="width:100%;padding:1rem;border-radius:16px;border:none;
+                 font-weight:900;letter-spacing:1px;cursor:pointer;color:#fff;
+                 background:rgba(0,0,0,.35);
+                 border:1px solid rgba(255,255,255,.12);
+                 text-transform:uppercase;">
+                Tentar novamente
+              </button>
+            </div>
+
+            <p style="text-align:center;opacity:.65;margin:14px 0 0 0;font-size:.85rem;">
+              © Portal SiqueiraX • Segurança ativa
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("tryAgainBtn").addEventListener("click", () => {
+      window.location.reload();
+    });
+  }
+
+  // ✅ valida sessão VIP SEMPRE ao entrar
+  let vipOk = false;
+  let vipReason = "";
+
   try {
     const r = await fetch("/.netlify/functions/vip-me", {
       credentials: "include",
       cache: "no-store"
-    })
-    if (!r.ok) throw new Error()
+    });
+
+    if (!r.ok) {
+      vipReason = `Verificação VIP falhou (HTTP ${r.status}).`;
+      throw new Error("vip_not_ok");
+    }
+
+    // opcional: se seu vip-me retornar JSON com detalhes, tenta ler
+    try {
+      const data = await r.json();
+      // se o vip-me retornar {ok:true} etc, você pode checar aqui
+      // mas não é obrigatório
+    } catch {}
+
+    vipOk = true;
   } catch {
-    window.location.href = "loginvip.html"
-    return
+    // NÃO redireciona para loginvip.html, mostra a box profissional
+    renderNoVipBox(vipReason);
+    return;
   }
 
-  // (se você quer mostrar nome, precisa que vip-me retorne username em JSON.
-  // se não for necessário, pode remover a linha abaixo)
-  // document.getElementById("userName").textContent = "VIP"
-
-  const gmContainer = document.getElementById("gmContainer")
-  const search = document.getElementById("search")
+  // ===== Daqui pra baixo só executa se for VIP =====
+  if (!vipOk) return;
 
   function statusSpan(ok){
-    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`
+    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`;
   }
 
   function render(list){
@@ -291,26 +396,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
         <a href="${gm.link}" target="_blank" rel="noopener noreferrer">${gm.linkText || "Download"}</a>
       </div>
-    `).join("")
+    `).join("");
   }
 
-  const res = await fetch(`/gamemodesvip.json?v=${Date.now()}`, { cache: "no-store" })
+  const res = await fetch(`/gamemodesvip.json?v=${Date.now()}`, { cache: "no-store" });
   if (!res.ok) {
     gmContainer.innerHTML = `<div style="padding:1rem;opacity:.9">
       Não achei <b>gamemodesvip.json</b> (HTTP ${res.status}).
-    </div>`
-    return
+    </div>`;
+    return;
   }
 
-  const all = await res.json()
-  render(all)
+  const all = await res.json();
+  render(all);
 
-  search.addEventListener("input", () => {
-    const v = search.value.toLowerCase()
-    render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)))
-  })
-})
+  if (search) {
+    search.addEventListener("input", () => {
+      const v = (search.value || "").toLowerCase();
+      render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)));
+    });
+  }
+});
 </script>
+
 
 
 </body>

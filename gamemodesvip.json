@@ -1,6 +1,17 @@
 [
 
-   {
+  {
+    "order": 1,
+    "title": "OS CRIAS ROLEPLAY ©",
+    "image": "https://i.imgur.com/ua1rEUh.png",
+    "link": "https://www.mediafire.com/file/puqsdsf0nvpxhf3/in+osc.rar/file",
+    "linkText": "Mediafire",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
+  },
+
+  
+  {
     "order": 1,
     "title": "BRASIL PLAY STARS V2 2026 > PROFISSIONAL",
     "image": "https://i.imgur.com/i91oyvp.png",

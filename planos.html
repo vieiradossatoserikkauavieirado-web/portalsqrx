@@ -9,79 +9,184 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
 
- <style>
-:root{
- --red:#ff002b;
- --red-dark:#b0001c;
- --bg:#0b0b0b;
- --glass:rgba(15,15,15,.78);
- --vip1:#ff1a3d;
- --vip2:#7a0014;
-}
+  <style>
+    /* ===== ESTILO BASE (SEU CSS) ===== */
+    :root{
+      --red-main:#ff002b;
+      --red-dark:#b0001c;
+      --glass:rgba(15,15,15,.74);
+      --glass-2:rgba(18,18,18,.58);
+      --border:rgba(255,255,255,.10);
+      --radius:14px;
+      --radius-lg:18px;
+      --transition:.28s ease;
+      --shadow:0 18px 45px rgba(0,0,0,.45);
+      --shadow-soft:0 10px 26px rgba(0,0,0,.32);
+      --text-dim:rgba(255,255,255,.78);
+      --max:1040px;
+    }
 
-*{margin:0;padding:0;box-sizing:border-box}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Inter',sans-serif;
+      background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+      color:#fff;
+      min-height:100vh;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.64);
+      backdrop-filter:blur(18px);
+      z-index:-1;
+    }
 
-body{
- font-family:'Inter',sans-serif;
- background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
- min-height:100vh;
- color:#fff;
-}
+    .wrap{width:min(var(--max),100%);margin:0 auto;padding:0 1rem}
 
-body::before{
- content:"";
- position:fixed;
- inset:0;
- background:rgba(0,0,0,.75);
- backdrop-filter:blur(12px);
- z-index:-1;
-}
+    header{
+      text-align:center;
+      padding:3.1rem 1rem 1.3rem;
+    }
+    header h1{
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(2.3rem,5vw,4.4rem);
+      letter-spacing:3px;
+      background:linear-gradient(90deg,#ff002b,#ff4d4d);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    header p{margin-top:.5rem;color:var(--text-dim);font-weight:600}
 
-/* ===== HEADER ===== */
-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- padding:1rem 2rem;
- background:var(--glass);
- border-bottom:1px solid rgba(255,255,255,.08);
-}
+    /* ===== BOX ===== */
+    .box{
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow);
+      padding:1.3rem;
+      margin-bottom:1.3rem;
+    }
 
-header h1{
- font-family:'Orbitron',sans-serif;
- font-size:1.6rem;
- background:linear-gradient(90deg,var(--vip1),#ff6b6b);
- -webkit-background-clip:text;
- -webkit-text-fill-color:transparent;
-}
-/* ===== MOBILE ===== */
-@media(max-width:600px){
- header{
-  flex-direction:column;
-  gap:.6rem;
- }
-}
-</style>
+    /* ===== PLANOS ===== */
+    .plans{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:1rem;
+    }
+    .plan{
+      position:relative;
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:1.2rem;
+      box-shadow:var(--shadow-soft);
+      overflow:hidden;
+    }
+    .plan::before{
+      content:"";
+      position:absolute;
+      inset:-80px -80px auto auto;
+      width:190px;height:190px;
+      background:radial-gradient(circle, rgba(255,0,43,.22), rgba(255,0,43,0));
+    }
+    .plan h2{
+      font-family:'Orbitron',sans-serif;
+      font-size:1.3rem;
+      letter-spacing:1.5px;
+      display:flex;
+      justify-content:space-between;
+    }
+    .tag{
+      font-size:.78rem;
+      font-weight:900;
+      padding:.35rem .6rem;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .price{
+      margin:.8rem 0;
+      display:flex;
+      gap:.4rem;
+      align-items:flex-end;
+    }
+    .price strong{font-size:2rem;color:#ff6b6b}
+    .price span{color:var(--text-dim);font-weight:700}
+
+    .benefits{
+      list-style:none;
+      display:grid;
+      gap:.55rem;
+      font-weight:650;
+      color:var(--text-dim);
+    }
+    .benefits span{color:#fff;font-weight:750}
+
+    .btn{
+      margin-top:1rem;
+      width:100%;
+      background:linear-gradient(135deg,var(--red-main),var(--red-dark));
+      color:#fff;
+      padding:.95rem;
+      border-radius:var(--radius);
+      font-weight:800;
+      text-decoration:none;
+      display:inline-flex;
+      justify-content:center;
+      transition:.25s;
+    }
+    .btn:hover{filter:brightness(1.07)}
+
+    @media(max-width:900px){
+      .plans{grid-template-columns:1fr}
+    }
+  </style>
 </head>
+
 <body>
   <header class="wrap">
     <h1>PLANOS VIP</h1>
-    <p>Escolha seu plano e faça o pagamento via Pix.</p>
+    <p>Escolha seu plano e libere o acesso premium</p>
   </header>
 
-  <main class="wrap" id="app" style="padding-bottom:3rem;display:none;">
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
-      <div class="stat" style="flex-direction:column;align-items:flex-start;">
-        <span><strong>VIP Comum</strong> — 30 dias</span>
-        <span>R$ 25,00</span>
-        <a class="menu-btn" href="#" onclick="comprar('vip_30d')">Comprar</a>
-      </div>
+  <main class="wrap box" id="app" style="display:none">
+    <div class="plans">
+      <!-- VIP COMUM -->
+      <article class="plan">
+        <h2>VIP COMUM <span class="tag">30 DIAS</span></h2>
+        <div class="price">
+          <strong>R$ 25,00</strong><span>/ único</span>
+        </div>
 
-      <div class="stat" style="flex-direction:column;align-items:flex-start;">
-        <span><strong>Gold</strong> — permanente</span>
-        <span>R$ 50,00</span>
-        <a class="menu-btn" href="#" onclick="comprar('gold_perm')">Comprar</a>
-      </div>
+        <ul class="benefits">
+          <li>📢 <span>Marcação @everyone no canal de divulgação</span></li>
+          <li>🌐 <span>Acesso VIP ao site com todas as GMs</span></li>
+          <li>⏳ <span>GMs liberadas 1–2 meses antes</span></li>
+          <li>⏳ <span>GMs Superiores profissionais apenas pros vip</span></li>
+          <li>🚀 <span>Acesso antecipado com link direto</span></li>
+          <li>🏷️ <span>Tag exclusiva no Discord</span></li>
+          <li>🛠️ <span>Suporte priorizado</span></li>
+        </ul>
+
+        <a class="btn" href="#" onclick="comprar('vip_30d')">Comprar VIP</a>
+      </article>
+
+      <!-- GOLD -->
+      <article class="plan">
+        <h2>GOLD <span class="tag">PERMANENTE</span></h2>
+        <div class="price">
+          <strong>R$ 50,00</strong><span>/ único</span>
+        </div>
+
+        <ul class="benefits">
+          <li>👑 <span>Tudo do VIP Comum</span></li>
+          <li>⚡ <span>Prioridade máxima</span></li>
+          <li>🏆 <span>Acesso permanente</span></li>
+        </ul>
+
+        <a class="btn" href="#" onclick="comprar('gold_perm')">Comprar Gold</a>
+      </article>
     </div>
   </main>
 
@@ -89,7 +194,6 @@ header h1{
     async function ensureLogin() {
       const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
       if (!r.ok) {
-        // manda pro login do discord e volta pra /planos.html
         location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
         return;
       }
@@ -97,8 +201,7 @@ header h1{
     }
 
     function comprar(plano) {
-      alert("Próxima etapa: gerar Pix + confirmar pagamento automático. Plano: " + plano);
-      // aqui depois a gente chama create-payment (InfinitePay) e mostra QR
+      alert("Próximo passo: gerar Pix + confirmar pagamento automático.\nPlano: " + plano);
     }
 
     ensureLogin();

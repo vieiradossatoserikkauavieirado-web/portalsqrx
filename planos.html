@@ -191,6 +191,15 @@
   </main>
 
 <script>
+  async function ensureLogin() {
+    const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
+    if (!r.ok) {
+      location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
+      return;
+    }
+    document.getElementById("app").style.display = "block";
+  }
+
   async function comprar(plano) {
     const r = await fetch("/.netlify/functions/gerar_codigo_vip", {
       method: "POST",
@@ -206,7 +215,7 @@
 
     const data = await r.json();
 
-    const checkoutVip =
+    const checkoutUrl =
       plano === "vip_30d"
         ? "https://checkout.infinitepay.io/maria-luiza-b19/3awKyljP3b"
         : "https://checkout.infinitepay.io/maria-luiza-b19/7BshJTY0D3";
@@ -221,14 +230,16 @@ Após pagar:
 2️⃣ Envie esta mensagem:
 
 olá, acabei de adquirir vip (${data.plano_nome}) pelo valor de R$ ${data.valor_reais}
-código: ${data.codigo}
-
-Clique OK para continuar.`
+código: ${data.codigo}`
     );
 
-    window.open(checkoutVip, "_blank");
+    // abre o checkout na mesma aba (evita bloqueio de popup)
+    location.href = checkoutUrl;
   }
+
+  ensureLogin();
 </script>
+
 
 
 </body>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Planos VIP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+ <style>
+:root{
+ --red:#ff002b;
+ --red-dark:#b0001c;
+ --bg:#0b0b0b;
+ --glass:rgba(15,15,15,.78);
+ --vip1:#ff1a3d;
+ --vip2:#7a0014;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+ font-family:'Inter',sans-serif;
+ background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+ min-height:100vh;
+ color:#fff;
+}
+
+body::before{
+ content:"";
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.75);
+ backdrop-filter:blur(12px);
+ z-index:-1;
+}
+
+/* ===== HEADER ===== */
+header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:1rem 2rem;
+ background:var(--glass);
+ border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+header h1{
+ font-family:'Orbitron',sans-serif;
+ font-size:1.6rem;
+ background:linear-gradient(90deg,var(--vip1),#ff6b6b);
+ -webkit-background-clip:text;
+ -webkit-text-fill-color:transparent;
+}
+/* ===== MOBILE ===== */
+@media(max-width:600px){
+ header{
+  flex-direction:column;
+  gap:.6rem;
+ }
+}
+</style>
+</head>
+<body>
+  <header class="wrap">
+    <h1>PLANOS VIP</h1>
+    <p>Escolha seu plano e faça o pagamento via Pix.</p>
+  </header>
+
+  <main class="wrap" id="app" style="padding-bottom:3rem;display:none;">
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
+      <div class="stat" style="flex-direction:column;align-items:flex-start;">
+        <span><strong>VIP Comum</strong> — 30 dias</span>
+        <span>R$ 25,00</span>
+        <a class="menu-btn" href="#" onclick="comprar('vip_30d')">Comprar</a>
+      </div>
+
+      <div class="stat" style="flex-direction:column;align-items:flex-start;">
+        <span><strong>Gold</strong> — permanente</span>
+        <span>R$ 50,00</span>
+        <a class="menu-btn" href="#" onclick="comprar('gold_perm')">Comprar</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    async function ensureLogin() {
+      const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
+      if (!r.ok) {
+        // manda pro login do discord e volta pra /planos.html
+        location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
+        return;
+      }
+      document.getElementById("app").style.display = "block";
+    }
+
+    function comprar(plano) {
+      alert("Próxima etapa: gerar Pix + confirmar pagamento automático. Plano: " + plano);
+      // aqui depois a gente chama create-payment (InfinitePay) e mostra QR
+    }
+
+    ensureLogin();
+  </script>
+</body>
+</html>

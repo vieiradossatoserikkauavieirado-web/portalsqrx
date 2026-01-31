@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== ESTILO BASE (SEU CSS) ===== */
     :root{
       --red-main:#ff002b;
       --red-dark:#b0001c;
@@ -58,7 +57,6 @@
     }
     header p{margin-top:.5rem;color:var(--text-dim);font-weight:600}
 
-    /* ===== BOX ===== */
     .box{
       background:linear-gradient(180deg,var(--glass),var(--glass-2));
       border:1px solid var(--border);
@@ -68,7 +66,6 @@
       margin-bottom:1.3rem;
     }
 
-    /* ===== PLANOS ===== */
     .plans{
       display:grid;
       grid-template-columns:repeat(2,1fr);
@@ -96,6 +93,7 @@
       letter-spacing:1.5px;
       display:flex;
       justify-content:space-between;
+      gap:.8rem;
     }
     .tag{
       font-size:.78rem;
@@ -104,6 +102,7 @@
       border-radius:999px;
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.12);
+      white-space:nowrap;
     }
     .price{
       margin:.8rem 0;
@@ -134,12 +133,69 @@
       text-decoration:none;
       display:inline-flex;
       justify-content:center;
+      align-items:center;
+      border:0;
+      cursor:pointer;
       transition:.25s;
+      user-select:none;
     }
     .btn:hover{filter:brightness(1.07)}
+    .btn:disabled{opacity:.7;cursor:not-allowed}
 
     @media(max-width:900px){
       .plans{grid-template-columns:1fr}
+    }
+
+    /* ===== MODAL ===== */
+    .modalWrap{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.62);
+      backdrop-filter:blur(8px);
+      z-index:9999;
+      padding:1rem;
+    }
+    .modal{
+      width:min(560px,100%);
+      margin:10vh auto 0;
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:1.15rem;
+    }
+    .modal h3{
+      font-family:'Orbitron',sans-serif;
+      letter-spacing:1px;
+      margin-bottom:.35rem;
+      font-size:1.25rem;
+    }
+    .modal p{color:var(--text-dim);font-weight:650;margin-bottom:.85rem}
+    .codeBox{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      padding:.9rem;
+      white-space:pre-line;
+      color:#fff;
+      font-weight:650;
+      line-height:1.35rem;
+    }
+    .modalActions{
+      display:flex;
+      gap:.6rem;
+      margin-top:1rem;
+      flex-wrap:wrap;
+    }
+    .modalActions .btn{
+      margin-top:0;
+      flex:1;
+      min-width:180px;
+    }
+    .btnGhost{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
     }
   </style>
 </head>
@@ -169,7 +225,7 @@
           <li>🛠️ <span>Suporte priorizado</span></li>
         </ul>
 
-        <a class="btn" href="#" onclick="comprar('vip_30d')">Comprar VIP</a>
+        <button class="btn" type="button" onclick="comprar('vip_30d')">Comprar VIP</button>
       </article>
 
       <!-- GOLD -->
@@ -185,62 +241,100 @@
           <li>🏆 <span>Acesso permanente</span></li>
         </ul>
 
-        <a class="btn" href="#" onclick="comprar('gold_perm')">Comprar Gold</a>
+        <button class="btn" type="button" onclick="comprar('gold_perm')">Comprar Gold</button>
       </article>
     </div>
   </main>
 
-<script>
-  async function ensureLogin() {
-    const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
-    if (!r.ok) {
-      location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
-      return;
+  <!-- MODAL -->
+  <div id="modalVip" class="modalWrap" onclick="fecharModal(event)">
+    <div class="modal">
+      <h3>✅ Compra iniciada</h3>
+      <p>Copie a mensagem e depois clique em “Ir para pagamento”.</p>
+
+      <div id="vipTexto" class="codeBox"></div>
+
+      <div class="modalActions">
+        <button class="btn btnGhost" type="button" onclick="copiarVip()">Copiar mensagem</button>
+        <a id="vipPagar" class="btn" href="#">Ir para pagamento</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function ensureLogin() {
+      const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
+      if (!r.ok) {
+        location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
+        return;
+      }
+      document.getElementById("app").style.display = "block";
     }
-    document.getElementById("app").style.display = "block";
-  }
 
-  async function comprar(plano) {
-    const r = await fetch("/.netlify/functions/gerar_codigo_vip", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ plano })
-    });
-
-    if (!r.ok) {
-      alert("Erro ao iniciar compra.");
-      return;
+    function setButtonsDisabled(disabled) {
+      document.querySelectorAll(".plans .btn").forEach((b) => (b.disabled = disabled));
     }
 
-    const data = await r.json();
+    function fecharModal(e) {
+      if (e.target && e.target.id === "modalVip") {
+        document.getElementById("modalVip").style.display = "none";
+      }
+    }
 
-    const checkoutUrl =
-      plano === "vip_30d"
-        ? "https://checkout.infinitepay.io/maria-luiza-b19/3awKyljP3b"
-        : "https://checkout.infinitepay.io/maria-luiza-b19/7BshJTY0D3";
+    async function comprar(plano) {
+      try {
+        setButtonsDisabled(true);
 
-    alert(
-`✅ Código gerado: ${data.codigo}
+        const r = await fetch("/.netlify/functions/gerar_codigo_vip", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ plano })
+        });
 
-👉 Agora você será redirecionado para o pagamento.
+        if (!r.ok) {
+          setButtonsDisabled(false);
+          alert("Erro ao iniciar compra. Tente novamente.");
+          return;
+        }
 
-Após pagar:
-1️⃣ Abra um ticket no Discord
-2️⃣ Envie esta mensagem:
+        const data = await r.json();
+
+        const checkoutUrl =
+          plano === "vip_30d"
+            ? "https://checkout.infinitepay.io/maria-luiza-b19/3awKyljP3b"
+            : "https://checkout.infinitepay.io/maria-luiza-b19/7BshJTY0D3";
+
+        const texto =
+`Depois de pagar, abra um ticket no Discord e envie:
 
 olá, acabei de adquirir vip (${data.plano_nome}) pelo valor de R$ ${data.valor_reais}
-código: ${data.codigo}`
-    );
+código: ${data.codigo}`;
 
-    // abre o checkout na mesma aba (evita bloqueio de popup)
-    location.href = checkoutUrl;
-  }
+        document.getElementById("vipTexto").textContent = texto;
 
-  ensureLogin();
-</script>
+        const pagar = document.getElementById("vipPagar");
+        pagar.href = checkoutUrl;
+        pagar.onclick = () => { setButtonsDisabled(false); };
 
+        document.getElementById("modalVip").style.display = "block";
+      } catch {
+        setButtonsDisabled(false);
+        alert("Falha ao iniciar compra. Tente novamente.");
+      }
+    }
 
+    async function copiarVip() {
+      const txt = document.getElementById("vipTexto").textContent || "";
+      try {
+        await navigator.clipboard.writeText(txt);
+        alert("Mensagem copiada ✅");
+      } catch {
+        alert("Não deu pra copiar automaticamente. Selecione e copie manualmente.");
+      }
+    }
 
+    ensureLogin();
+  </script>
 </body>
 </html>

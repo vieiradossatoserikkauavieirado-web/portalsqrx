@@ -1,14 +1,23 @@
 exports.handler = async (event) => {
-  const clientId = process.env.DISCORD_CLIENT_ID
-  const redirectUri = (process.env.DISCORD_PLANOS_REDIRECT_URI || "").trim().replace(/\/$/, "")
+  const clientId = process.env.DISCORD_CLIENT_ID;
+
+  const redirectUri = (
+    process.env.DISCORD_PLANOS_REDIRECT_URI ||
+    process.env.DISCORD_PAINEL_REDIRECT_URI ||
+    process.env.DISCORD_REDIRECT_URI ||
+    ""
+  ).trim().replace(/\/$/, "");
 
   if (!clientId || !redirectUri) {
-    return { statusCode: 500, body: "missing_env: DISCORD_CLIENT_ID or DISCORD_PLANOS_REDIRECT_URI" }
+    return {
+      statusCode: 500,
+      body: "missing_env: DISCORD_CLIENT_ID or redirect_uri",
+    };
   }
 
-  const qs = event.queryStringParameters || {}
-  const returnTo = qs.return || "/planos.html"
-  const force = qs.force === "1"
+  const qs = event.queryStringParameters || {};
+  const returnTo = qs.return || "/planos.html";
+  const force = qs.force === "1";
 
   const params = new URLSearchParams({
     client_id: clientId,
@@ -16,11 +25,11 @@ exports.handler = async (event) => {
     response_type: "code",
     scope: "identify",
     state: Buffer.from(JSON.stringify({ returnTo })).toString("base64url"),
-  })
+  });
 
   if (force) {
-    params.set("prompt", "consent")
-    params.set("max_age", "0")
+    params.set("prompt", "consent");
+    params.set("max_age", "0");
   }
 
   return {
@@ -32,5 +41,5 @@ exports.handler = async (event) => {
       Expires: "0",
     },
     body: "",
-  }
-}
+  };
+};

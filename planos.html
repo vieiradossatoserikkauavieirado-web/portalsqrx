@@ -206,6 +206,24 @@
     <p>Escolha seu plano e libere o acesso premium</p>
   </header>
 
+
+  
+  <section class="box" id="postpay" style="display:none;margin-bottom:1rem;">
+  <h2 style="font-family:'Orbitron',sans-serif;letter-spacing:1px;margin-bottom:.35rem;">
+    ✅ Pagamento recebido
+  </h2>
+  <p id="postpayText" style="color:var(--text-dim);font-weight:650;line-height:1.45;">
+    Seu pagamento foi registrado. Aguarde no máximo <b>5h</b> para ativação do VIP na sua conta.
+  </p>
+  <p style="margin-top:.65rem;color:rgba(255,255,255,.72);font-weight:650;">
+    Se não liberar dentro do prazo, abra um ticket no Discord com o código gerado.
+  </p>
+</section>
+
+
+
+
+
   <main class="wrap box" id="app" style="display:none">
     <div class="plans">
       <!-- VIP COMUM -->
@@ -262,23 +280,20 @@
   </div>
 
 <script>
-  function mostrarPosPagamento() {
-    const qs = new URLSearchParams(location.search);
-    if (qs.get("pago") === "1") {
-      const box = document.getElementById("postpay");
-      if (box) box.style.display = "block";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  // evita spam no canal quando o usuário recarrega a página
+  function jaAvisou(discordPlanoKey) {
+    return sessionStorage.getItem(discordPlanoKey) === "1";
+  }
+  function marcarAvisou(discordPlanoKey) {
+    sessionStorage.setItem(discordPlanoKey, "1");
   }
 
-  async function ensureLogin() {
-    const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
-    if (!r.ok) {
-      location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
-      return;
-    }
-    document.getElementById("app").style.display = "block";
-    mostrarPosPagamento();
+  function getPlanoSelecionado() {
+    return sessionStorage.getItem("sx_plano_selecionado") || "";
+  }
+
+  function setPlanoSelecionado(plano) {
+    sessionStorage.setItem("sx_plano_selecionado", plano);
   }
 
   function setButtonsDisabled(disabled) {
@@ -291,9 +306,65 @@
     }
   }
 
+  async function avisarPagamento(plano) {
+    // key por plano pra não spammar
+    const key = `sx_aviso_${plano}`;
+    if (jaAvisou(key)) return;
+
+    const r = await fetch("/.netlify/functions/notify_vip_purchase", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plano }),
+    });
+
+    if (!r.ok) {
+      console.log("notify fail:", await r.text());
+      return; // não trava UX se falhar
+    }
+
+    marcarAvisou(key);
+  }
+
+  function mostrarPosPagamento() {
+    const qs = new URLSearchParams(location.search);
+    if (qs.get("pago") !== "1") return;
+
+    const box = document.getElementById("postpay");
+    const txt = document.getElementById("postpayText");
+    if (!box || !txt) return;
+
+    // tenta pegar do querystring, se não tiver pega do sessionStorage
+    const plano = qs.get("plano") || getPlanoSelecionado() || "vip_30d";
+
+    // mensagem diferente por plano (mais confiança pro usuário)
+    if (plano === "gold_perm") {
+      txt.innerHTML = `Seu pagamento foi registrado. Aguarde no máximo <b>5h</b> para ativação do <b>GOLD</b> na sua conta.`;
+    } else {
+      txt.innerHTML = `Seu pagamento foi registrado. Aguarde no máximo <b>5h</b> para ativação do <b>VIP</b> na sua conta.`;
+    }
+
+    box.style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // avisa no discord (1x)
+    avisarPagamento(plano);
+  }
+
+  async function ensureLogin() {
+    const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
+    if (!r.ok) {
+      location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
+      return;
+    }
+    document.getElementById("app").style.display = "block";
+    mostrarPosPagamento();
+  }
+
   async function comprar(plano) {
     try {
       setButtonsDisabled(true);
+      setPlanoSelecionado(plano);
 
       const r = await fetch("/.netlify/functions/gerar_codigo_vip", {
         method: "POST",
@@ -324,6 +395,7 @@ código: ${data.codigo}`;
 
       document.getElementById("vipTexto").textContent = texto;
 
+      // ✅ BUG FIX: estava quebrado aqui
       const pagar = document.getElementById("vipPagar");
       pagar.href = checkoutUrl;
       pagar.onclick = () => { setButtonsDisabled(false); };
@@ -347,6 +419,7 @@ código: ${data.codigo}`;
 
   ensureLogin();
 </script>
+
 
 </body>
 </html>

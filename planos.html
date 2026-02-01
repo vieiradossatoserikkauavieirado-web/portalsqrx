@@ -207,7 +207,7 @@
   </header>
 
 
-  
+
   <section class="box" id="postpay" style="display:none;margin-bottom:1rem;">
   <h2 style="font-family:'Orbitron',sans-serif;letter-spacing:1px;margin-bottom:.35rem;">
     ✅ Pagamento recebido
@@ -280,20 +280,24 @@
   </div>
 
 <script>
-  // evita spam no canal quando o usuário recarrega a página
-  function jaAvisou(discordPlanoKey) {
-    return sessionStorage.getItem(discordPlanoKey) === "1";
-  }
-  function marcarAvisou(discordPlanoKey) {
-    sessionStorage.setItem(discordPlanoKey, "1");
-  }
+  // evita spam no canal quando o usuário recarrega
+  function jaAvisou(key) { return sessionStorage.getItem(key) === "1"; }
+  function marcarAvisou(key) { sessionStorage.setItem(key, "1"); }
 
   function getPlanoSelecionado() {
     return sessionStorage.getItem("sx_plano_selecionado") || "";
   }
-
   function setPlanoSelecionado(plano) {
     sessionStorage.setItem("sx_plano_selecionado", plano);
+  }
+
+  // garante que VIP/GOLD nunca bugam por variação de nome
+  function normalizarPlano(raw) {
+    const p = String(raw || "").trim().toLowerCase();
+    if (!p) return "";
+    if (p === "vip" || p === "vip30" || p === "vip_30" || p === "vip_30d") return "vip_30d";
+    if (p === "gold" || p === "vip_gold" || p === "gold_perm" || p === "permanente") return "gold_perm";
+    return p;
   }
 
   function setButtonsDisabled(disabled) {
@@ -307,20 +311,20 @@
   }
 
   async function avisarPagamento(plano) {
-    // key por plano pra não spammar
-    const key = `sx_aviso_${plano}`;
+    const planoNorm = normalizarPlano(plano) || "vip_30d";
+    const key = `sx_aviso_${planoNorm}`;
     if (jaAvisou(key)) return;
 
     const r = await fetch("/.netlify/functions/notify_vip_purchase", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plano }),
+      body: JSON.stringify({ plano: planoNorm }),
     });
 
     if (!r.ok) {
       console.log("notify fail:", await r.text());
-      return; // não trava UX se falhar
+      return;
     }
 
     marcarAvisou(key);
@@ -334,10 +338,10 @@
     const txt = document.getElementById("postpayText");
     if (!box || !txt) return;
 
-    // tenta pegar do querystring, se não tiver pega do sessionStorage
-    const plano = qs.get("plano") || getPlanoSelecionado() || "vip_30d";
+    const planoQS = normalizarPlano(qs.get("plano"));
+    const planoSS = normalizarPlano(getPlanoSelecionado());
+    const plano = planoQS || planoSS || "vip_30d";
 
-    // mensagem diferente por plano (mais confiança pro usuário)
     if (plano === "gold_perm") {
       txt.innerHTML = `Seu pagamento foi registrado. Aguarde no máximo <b>5h</b> para ativação do <b>GOLD</b> na sua conta.`;
     } else {
@@ -364,13 +368,15 @@
   async function comprar(plano) {
     try {
       setButtonsDisabled(true);
-      setPlanoSelecionado(plano);
+
+      const planoNorm = normalizarPlano(plano) || "vip_30d";
+      setPlanoSelecionado(planoNorm);
 
       const r = await fetch("/.netlify/functions/gerar_codigo_vip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ plano })
+        body: JSON.stringify({ plano: planoNorm })
       });
 
       if (!r.ok) {
@@ -381,41 +387,40 @@
 
       const data = await r.json();
 
-      // CHECKOUTS
+      // CHECKOUTS (ATUALIZADO) - VIP e GOLD
       const checkoutUrl =
-        plano === "vip_30d"
-          ? "https://checkout.infinitepay.io/siqueira-santos-12/7BzqiAdKnD"
-          : "https://checkout.infinitepay.io/maria-luiza-b19/7BshJTY0D3";
+        planoNorm === "vip_30d"
+          ? "https://checkout.infinitepay.io/siqueira-santos-12/7C0iTUkuTJ"
+          : "https://checkout.infinitepay.io/siqueira-santos-12/1CKmySirGJ";
 
       const texto =
-`Depois de pagar, abra um ticket no Discord e envie:
+    `Depois de pagar, abra um ticket no Discord e envie:
 
-olá, acabei de adquirir vip (${data.plano_nome}) pelo valor de R$ ${data.valor_reais}
-código: ${data.codigo}`;
+    olá, acabei de adquirir vip (${data.plano_nome}) pelo valor de R$ ${data.valor_reais}
+    código: ${data.codigo}`;
 
-      document.getElementById("vipTexto").textContent = texto;
+          document.getElementById("vipTexto").textContent = texto;
 
-      // ✅ BUG FIX: estava quebrado aqui
-      const pagar = document.getElementById("vipPagar");
-      pagar.href = checkoutUrl;
-      pagar.onclick = () => { setButtonsDisabled(false); };
+          const pagar = document.getElementById("vipPagar");
+          pagar.href = checkoutUrl;
+          pagar.onclick = () => { setButtonsDisabled(false); };
 
-      document.getElementById("modalVip").style.display = "block";
-    } catch {
-      setButtonsDisabled(false);
-      alert("Falha ao iniciar compra. Tente novamente.");
-    }
-  }
+          document.getElementById("modalVip").style.display = "block";
+        } catch {
+          setButtonsDisabled(false);
+          alert("Falha ao iniciar compra. Tente novamente.");
+        }
+      }
 
-  async function copiarVip() {
-    const txt = document.getElementById("vipTexto").textContent || "";
-    try {
-      await navigator.clipboard.writeText(txt);
-      alert("Mensagem copiada ✅");
-    } catch {
-      alert("Não deu pra copiar automaticamente. Selecione e copie manualmente.");
-    }
-  }
+      async function copiarVip() {
+        const txt = document.getElementById("vipTexto").textContent || "";
+        try {
+          await navigator.clipboard.writeText(txt);
+          alert("Mensagem copiada ✅");
+        } catch {
+          alert("Não deu pra copiar automaticamente. Selecione e copie manualmente.");
+        }
+      }
 
   ensureLogin();
 </script>

@@ -59,7 +59,7 @@ body::before{
 .brand{
   display:flex;
   flex-direction:column;
-  gap:.3rem;
+  gap:.35rem;
 }
 .brand h1{
   font-family:'Orbitron',sans-serif;
@@ -68,7 +68,11 @@ body::before{
   text-shadow:0 0 25px rgba(255,0,43,.7);
   line-height:1.1;
 }
-.brand p{opacity:.85;font-size:.95rem}
+.brand p{
+  opacity:.92;
+  font-size:1rem;
+  line-height:1.35;
+}
 
 .userline{
   display:flex;
@@ -79,11 +83,11 @@ body::before{
 }
 
 .userpill{
-  padding:.5rem .75rem;
+  padding:.55rem .85rem;
   border-radius:999px;
   background:rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.12);
-  font-weight:700;
+  font-weight:800;
   letter-spacing:.3px;
   box-shadow:0 0 18px rgba(255,0,43,.15);
   display:flex;
@@ -125,16 +129,21 @@ body::before{
 
 .card h2{
   font-family:'Orbitron',sans-serif;
-  font-size:1.15rem;
-  margin-bottom:.55rem;
+  font-size:1.18rem;
+  margin-bottom:.6rem;
+  letter-spacing:.2px;
+  text-shadow:0 0 18px rgba(255,0,43,.25);
 }
 
+/* ✅ aqui é onde melhora a legibilidade das infos */
 .card p{
-  opacity:.9;
-  line-height:1.5;
-  font-size:.92rem;
+  opacity:.98;
+  line-height:1.6;
+  font-size:1rem;
   margin-bottom:1rem;
+  color:rgba(255,255,255,.92);
 }
+.card p b{ color:#fff; font-weight:800; }
 
 .card .cta{
   width:100%;
@@ -229,7 +238,11 @@ body::before{
   .panel{ padding:1.1rem; border-radius:22px; }
   .brand h1{ font-size:1.45rem; }
   .userline{ justify-content:flex-start; }
-  .card{ min-height:auto; }
+
+  /* ✅ menos “gigante” e mais destaque no mobile */
+  .grid{ gap:.85rem; }
+  .card{ min-height:auto; padding:1rem; border-radius:20px; }
+  .card p{ font-size:.98rem; }
   .card .cta{ padding:1rem; }
 }
 @media (max-width:420px){
@@ -285,18 +298,15 @@ body::before{
   </div>
 
   <div class="card">
-  <h2>IA <span aria-hidden="true">🧠</span></h2>
-
-  <p>
-    Assistente inteligente para <b>programação Pawn (SA-MP)</b>.<br>
-    Analisa erros, sugere correções e ajuda no desenvolvimento do servidor.
-  </p>
-
-  <button class="cta cta-normal" id="goIA">
-    ACESSAR IA
-  </button>
-</div>
-
+    <h2>IA <span aria-hidden="true">🧠</span></h2>
+    <p>
+      Assistente inteligente para <b>programação Pawn (SA-MP)</b>.<br>
+      Analisa erros, sugere correções e ajuda no desenvolvimento do servidor.
+    </p>
+    <button class="cta cta-normal" id="goIA">
+      ACESSAR IA
+    </button>
+  </div>
 
   <div class="card">
     <h2>Gerenciamento de Servidores <span aria-hidden="true">🖥️</span></h2>
@@ -304,7 +314,7 @@ body::before{
       Central para <b>Owners de servidores</b>.<br>
       Cadastro, gerenciamento e recursos especiais para <b>VIP Gold</b>.
       <br><br>
-      <span style="opacity:.7;font-size:.85rem">
+      <span style="opacity:.86;font-size:.95rem;line-height:1.5">
         Em breve: pagamentos, desban e ferramentas administrativas.
       </span>
     </p>
@@ -362,35 +372,19 @@ document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'gamemodesvip.html'
 })
 
-/**
- * ✅ Botão da IA (recomendado):
- * Vai para /ia.html e a própria página IA decide se precisa login
- * (ela chama /.netlify/functions/me_ia e redireciona para loginia.html se necessário)
- */
 document.getElementById('goIA')?.addEventListener('click', () => {
   window.location.href = '/ia.html'
 })
 
-/**
- * Se você AINDA quiser “forçar” login Discord direto ao clicar:
- * (descomente e use no lugar do de cima)
- *
- * document.getElementById('goIA')?.addEventListener('click', () => {
- *   window.location.href = "/.netlify/functions/discordloginia?return=" + encodeURIComponent("/ia.html");
- * })
- */
-
-// exemplo: botão desban (se ainda existir)
 document.getElementById('goDesban')?.addEventListener('click', () => {
   window.location.href = 'desban.html'
 })
 
-// exemplo: botão servidores (se existir)
 document.getElementById('goServidores')?.addEventListener('click', () => {
   window.location.href = 'servidores.html'
 })
 
-// logout painel (apaga cookie e sessão do painel)
+// logout painel
 document.getElementById('logoutBtn')?.addEventListener('click', async () => {
   try {
     await fetch("/.netlify/functions/logout_painel", {
@@ -402,7 +396,6 @@ document.getElementById('logoutBtn')?.addEventListener('click', async () => {
   window.location.href = "loginpainel.html"
 })
 </script>
-
 
 </body>
 </html>

@@ -261,80 +261,92 @@
     </div>
   </div>
 
-  <script>
-    async function ensureLogin() {
-      const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
+<script>
+  function mostrarPosPagamento() {
+    const qs = new URLSearchParams(location.search);
+    if (qs.get("pago") === "1") {
+      const box = document.getElementById("postpay");
+      if (box) box.style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  async function ensureLogin() {
+    const r = await fetch("/.netlify/functions/planos_me", { credentials: "include" });
+    if (!r.ok) {
+      location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
+      return;
+    }
+    document.getElementById("app").style.display = "block";
+    mostrarPosPagamento();
+  }
+
+  function setButtonsDisabled(disabled) {
+    document.querySelectorAll(".plans .btn").forEach((b) => (b.disabled = disabled));
+  }
+
+  function fecharModal(e) {
+    if (e.target && e.target.id === "modalVip") {
+      document.getElementById("modalVip").style.display = "none";
+    }
+  }
+
+  async function comprar(plano) {
+    try {
+      setButtonsDisabled(true);
+
+      const r = await fetch("/.netlify/functions/gerar_codigo_vip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ plano })
+      });
+
       if (!r.ok) {
-        location.href = "/.netlify/functions/discordlogin_planos?return=/planos.html";
+        setButtonsDisabled(false);
+        alert("Erro ao iniciar compra. Tente novamente.");
         return;
       }
-      document.getElementById("app").style.display = "block";
-    }
 
-    function setButtonsDisabled(disabled) {
-      document.querySelectorAll(".plans .btn").forEach((b) => (b.disabled = disabled));
-    }
+      const data = await r.json();
 
-    function fecharModal(e) {
-      if (e.target && e.target.id === "modalVip") {
-        document.getElementById("modalVip").style.display = "none";
-      }
-    }
+      // CHECKOUTS
+      const checkoutUrl =
+        plano === "vip_30d"
+          ? "https://checkout.infinitepay.io/siqueira-santos-12/2OfFTHkGsj"
+          : "https://checkout.infinitepay.io/maria-luiza-b19/7BshJTY0D3";
 
-    async function comprar(plano) {
-      try {
-        setButtonsDisabled(true);
-
-        const r = await fetch("/.netlify/functions/gerar_codigo_vip", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ plano })
-        });
-
-        if (!r.ok) {
-          setButtonsDisabled(false);
-          alert("Erro ao iniciar compra. Tente novamente.");
-          return;
-        }
-
-        const data = await r.json();
-
-        const checkoutUrl =
-          plano === "vip_30d"
-            ? "https://checkout.infinitepay.io/maria-luiza-b19/3awKyljP3b"
-            : "https://checkout.infinitepay.io/maria-luiza-b19/7BshJTY0D3";
-
-        const texto =
+      const texto =
 `Depois de pagar, abra um ticket no Discord e envie:
 
 olá, acabei de adquirir vip (${data.plano_nome}) pelo valor de R$ ${data.valor_reais}
 código: ${data.codigo}`;
 
-        document.getElementById("vipTexto").textContent = texto;
+      document.getElementById("vipTexto").textContent = texto;
 
-        const pagar = document.getElementById("vipPagar");
-        pagar.href = checkoutUrl;
-        pagar.onclick = () => { setButtonsDisabled(false); };
+      const pagar = document.getElementById("vipPagar");
+      pagar.href = checkoutUrl;
+      pagar.onclick = () => { setButtonsDisabled(false); };
 
-        document.getElementById("modalVip").style.display = "block";
-      } catch {
-        setButtonsDisabled(false);
-        alert("Falha ao iniciar compra. Tente novamente.");
-      }
+      document.getElementById("modalVip").style.display = "block";
+    } catch {
+      setButtonsDisabled(false);
+      alert("Falha ao iniciar compra. Tente novamente.");
     }
+  }
 
-    async function copiarVip() {
-      const txt = document.getElementById("vipTexto").textContent || "";
-      try {
-        await navigator.clipboard.writeText(txt);
-        alert("Mensagem copiada ✅");
-      } catch {
-        alert("Não deu pra copiar automaticamente. Selecione e copie manualmente.");
-      }
+  async function copiarVip() {
+    const txt = document.getElementById("vipTexto").textContent || "";
+    try {
+      await navigator.clipboard.writeText(txt);
+      alert("Mensagem copiada ✅");
+    } catch {
+      alert("Não deu pra copiar automaticamente. Selecione e copie manualmente.");
     }
+  }
 
-    ensureLogin();
-  </script>
+  ensureLogin();
+</script>
+
 </body>
 </html>

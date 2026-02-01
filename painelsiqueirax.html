@@ -133,9 +133,12 @@ body::before{
   margin-bottom:.6rem;
   letter-spacing:.2px;
   text-shadow:0 0 18px rgba(255,0,43,.25);
+
+  /* ✅ evita o badge ficar “colado” no título */
+  padding-right:96px;
+  line-height:1.2;
 }
 
-/* ✅ aqui é onde melhora a legibilidade das infos */
 .card p{
   opacity:.98;
   line-height:1.6;
@@ -182,7 +185,12 @@ body::before{
   border:1px solid rgba(255,0,43,.45);
   box-shadow:0 0 22px rgba(255,0,43,.35);
 }
-.card-premium{ box-shadow: inset 0 0 0 1px rgba(255,0,43,.18); }
+
+/* ✅ mais respiro no topo do card premium (badge não “espreme” nada) */
+.card-premium{
+  box-shadow: inset 0 0 0 1px rgba(255,0,43,.18);
+  padding-top:1.5rem;
+}
 .card-premium::before{
   content:"";
   position:absolute;
@@ -233,21 +241,38 @@ body::before{
 }
 @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.6)} }
 
+/* ✅ Mobile: tudo legível e 1 coluna */
 @media (max-width:900px){
   body{ padding:1rem .9rem; }
-  .panel{ padding:1.1rem; border-radius:22px; }
-  .brand h1{ font-size:1.45rem; }
-  .userline{ justify-content:flex-start; }
+  .panel{ padding:1.05rem; border-radius:22px; }
 
-  /* ✅ menos “gigante” e mais destaque no mobile */
-  .grid{ gap:.85rem; }
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.85rem;
+  }
+
+  .brand h1{ font-size:1.4rem; }
+
+  .userline{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .grid{
+    grid-template-columns: 1fr;
+    gap:.9rem;
+  }
+
   .card{ min-height:auto; padding:1rem; border-radius:20px; }
-  .card p{ font-size:.98rem; }
+  .card h2{ padding-right:88px; font-size:1.12rem; }
+  .card p{ font-size:1rem; }
   .card .cta{ padding:1rem; }
 }
+
 @media (max-width:420px){
   .btn{ width:100%; }
-  .userline{ width:100%; }
+  .userline{ width:100%; flex-direction:column; align-items:stretch; }
   .userpill{ width:100%; justify-content:center; }
 }
 </style>
@@ -272,59 +297,46 @@ body::before{
     </div>
   </div>
 
- <div class="grid">
+  <div class="grid">
 
-  <div class="card">
-    <h2>GameModes</h2>
-    <p>
-      Acesse os <b>GameModes disponíveis</b> no portal.<br>
-      Conteúdo organizado, atualizado e pronto para uso.
-    </p>
-    <button class="cta cta-normal" id="goGamemodes">
-      ACESSAR GAMEMODES
-    </button>
+    <div class="card">
+      <h2>GameModes</h2>
+      <p>
+        Acesse os <b>GameModes disponíveis</b> no portal.<br>
+        Conteúdo organizado, atualizado e pronto para uso.
+      </p>
+      <button class="cta cta-normal" id="goGamemodes">
+        ACESSAR GAMEMODES
+      </button>
+    </div>
+
+    <div class="card card-premium">
+      <div class="premium-badge">PREMIUM</div>
+      <h2>GameModes Premium</h2>
+      <p>
+        Área exclusiva para <b>usuários VIP</b>.<br>
+        Conteúdos premium, links diretos e suporte dedicado.
+      </p>
+      <button class="cta cta-premium" id="goPremium">
+        ENTRAR NO PREMIUM
+      </button>
+    </div>
+
+    <!-- ✅ IA removida -> Comprar VIP -->
+    <div class="card card-premium">
+      <div class="premium-badge">VIP</div>
+      <h2>Comprar VIP</h2>
+      <p>
+        Torne-se <b>VIP da comunidade</b> e desbloqueie acesso aos
+        <b>GameModes Premium</b>.<br>
+        Conteúdos exclusivos, atualizações antecipadas e benefícios especiais.
+      </p>
+      <button class="cta cta-premium" id="goVIP">
+        COMPRAR VIP
+      </button>
+    </div>
+
   </div>
-
-  <div class="card card-premium">
-    <div class="premium-badge">PREMIUM</div>
-    <h2>GameModes Premium</h2>
-    <p>
-      Área exclusiva para <b>usuários VIP</b>.<br>
-      Conteúdos premium, links diretos e suporte dedicado.
-    </p>
-    <button class="cta cta-premium" id="goPremium">
-      ENTRAR NO PREMIUM
-    </button>
-  </div>
-
-  <div class="card">
-    <h2>IA <span aria-hidden="true">🧠</span></h2>
-    <p>
-      Assistente inteligente para <b>programação Pawn (SA-MP)</b>.<br>
-      Analisa erros, sugere correções e ajuda no desenvolvimento do servidor.
-    </p>
-    <button class="cta cta-normal" id="goIA">
-      ACESSAR IA
-    </button>
-  </div>
-
-  <div class="card">
-    <h2>Gerenciamento de Servidores <span aria-hidden="true">🖥️</span></h2>
-    <p>
-      Central para <b>Owners de servidores</b>.<br>
-      Cadastro, gerenciamento e recursos especiais para <b>VIP Gold</b>.
-      <br><br>
-      <span style="opacity:.86;font-size:.95rem;line-height:1.5">
-        Em breve: pagamentos, desban e ferramentas administrativas.
-      </span>
-    </p>
-    <button class="cta cta-normal" id="goServidores">
-      EM BREVE
-    </button>
-  </div>
-
-</div>
-
 </div>
 
 <script type="module">
@@ -372,16 +384,9 @@ document.getElementById('goPremium')?.addEventListener('click', () => {
   window.location.href = 'gamemodesvip.html'
 })
 
-document.getElementById('goIA')?.addEventListener('click', () => {
-  window.location.href = '/ia.html'
-})
-
-document.getElementById('goDesban')?.addEventListener('click', () => {
-  window.location.href = 'desban.html'
-})
-
-document.getElementById('goServidores')?.addEventListener('click', () => {
-  window.location.href = 'servidores.html'
+// comprar vip (troque pro seu link real)
+document.getElementById('goVIP')?.addEventListener('click', () => {
+  window.location.href = 'planos.html'
 })
 
 // logout painel

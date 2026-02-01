@@ -183,29 +183,44 @@
     }
 
     /* ===== BOTÃO PRINCIPAL ===== */
+  .menu-btn.primary{
+    padding:1.15rem 1.35rem;
+    position:relative;
+    border:1px solid rgba(255,255,255,.22);
+    box-shadow:
+      0 22px 48px rgba(255,0,43,.35),
+      0 0 0 2px rgba(255,0,43,.25) inset;
+    transform-origin:center;
+    animation:pulsePanel 3s ease-in-out infinite;
+  }
+
+  @keyframes pulsePanel{
+    0%{
+      transform:scale(1);
+      box-shadow:0 22px 48px rgba(255,0,43,.35);
+    }
+    50%{
+      transform:scale(1.03);
+      box-shadow:0 26px 58px rgba(255,0,43,.55);
+    }
+    100%{
+      transform:scale(1);
+      box-shadow:0 22px 48px rgba(255,0,43,.35);
+    }
+  }
+
+  /* Mantém o glow externo */
+  .menu-btn.primary:hover::before{
+    opacity:1;
+  }
+
+  /* Acessibilidade */
+  @media (prefers-reduced-motion: reduce){
     .menu-btn.primary{
-      padding:1.05rem 1.25rem;
-      position:relative;
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow:
-        0 16px 38px rgba(0,0,0,.48),
-        0 0 0 1px rgba(255,0,43,.18) inset;
-      transform-origin:center;
+      animation:none;
     }
+  }
 
-    .menu-btn.primary::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      border-radius:calc(var(--radius) + 2px);
-      background:linear-gradient(120deg, rgba(255,0,43,.45), rgba(255,255,255,.06), rgba(176,0,28,.35));
-      filter:blur(10px);
-      opacity:.7;
-      z-index:-1;
-      transition:opacity var(--transition);
-    }
-
-    .menu-btn.primary:hover::before{opacity:1}
 
     .menu-btn.primary .tag{
       margin-left:auto;
@@ -343,10 +358,10 @@
 <body>
 
   <header class="wrap">
-    <img class="site-logo" src="https://i.imgur.com/eKjFtd1.png" alt="Ícone do Portal SiqueiraX">
-    <h1>Portal SiqueiraX</h1>
-    <p>Maior central de gamemodes do GTA SA:MP</p>
-  </header>
+  <img class="site-logo" src="https://i.imgur.com/eKjFtd1.png" alt="Ícone do Portal SiqueiraX">
+  <p>Maior central de gamemodes do GTA SA:MP</p>
+</header>
+
 
   <main class="wrap" aria-label="Conteúdo principal">
     <section class="stats" aria-label="Estatísticas">

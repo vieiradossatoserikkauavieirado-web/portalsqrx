@@ -368,9 +368,10 @@
       <i class="fa fa-registered"></i> Registro
     </a>
 
-    <a href="comprargm.html" class="menu-btn">
-      <i class="fas fa-cart-shopping"></i> Comprar GM
-    </a>
+    <a href="#" class="menu-btn" id="gmBtn">
+    <i class="fas fa-cart-shopping"></i> Comprar GM
+  </a>
+
 
     <!-- PRINCIPAL -->
     <a href="loginpainel.html" class="menu-btn primary" aria-label="Painel (principal)">
@@ -400,6 +401,27 @@
       <i class="fab fa-discord"></i> Discord
     </a>
   </nav>
+
+
+  <!-- MODAL COMPRAR GM -->
+<div class="modal" id="gmModal" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-label="Comprar GM">
+    <h2>🛒 Comprar GM</h2>
+    <ul>
+      <li>✅ <span>Quer comprar uma GM disponível?</span></li>
+      <li>📲 <span>Fale no WhatsApp e eu te envio as opções e valores.</span></li>
+      <li>⚡ <span>Atendimento rápido e direto.</span></li>
+    </ul>
+
+    <div class="btn-row">
+      <a class="action" id="whatsGM" target="_blank" rel="noopener noreferrer" href="#">
+        <i class="fab fa-whatsapp"></i> Chamar no WhatsApp
+      </a>
+      <button type="button" id="closeGM">Fechar</button>
+    </div>
+  </div>
+</div>
+
 
   <!-- MODAL VIP -->
   <div class="modal" id="vipModal" aria-hidden="true">
@@ -545,6 +567,40 @@
       if (event.target === desbanModal) closeDesbanModal();
     });
 
+    // ===== Modal COMPRAR GM =====
+    const gmModal = document.getElementById("gmModal");
+    const gmBtn = document.getElementById("gmBtn");
+    const closeGM = document.getElementById("closeGM");
+    const whatsGM = document.getElementById("whatsGM");
+
+    function setupWhatsGM(){
+      const phone = "558296963727"; // 55 + DDD + número (8296963727)
+      const msg = "Olá! Tem GM disponível à venda? Vim pelo site.";
+      const link = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      whatsGM.href = link;
+    }
+
+    function openGM(e){
+      if (e) e.preventDefault();
+      gmModal.style.display = "flex";
+      gmModal.setAttribute("aria-hidden", "false");
+      closeGM.focus();
+    }
+
+    function closeGMModal(){
+      gmModal.style.display = "none";
+      gmModal.setAttribute("aria-hidden", "true");
+      gmBtn.focus();
+    }
+
+    gmBtn.addEventListener("click", openGM);
+    closeGM.addEventListener("click", closeGMModal);
+
+    gmModal.addEventListener("click", (event) => {
+      if (event.target === gmModal) closeGMModal();
+    });
+
+
     // ESC fecha qualquer modal aberto
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -554,12 +610,15 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      setupWhats();
-      loadDiscord();
-      tempoOnline();
-      // Atualiza o contador 1x por dia (se a página ficar aberta)
-      setInterval(tempoOnline, 60 * 60 * 1000);
-    });
+    setupWhats();
+    setupWhatsGM();
+    loadDiscord();
+    tempoOnline();
+    setInterval(tempoOnline, 60 * 60 * 1000);
+  });
+
+
+
   </script>
 
 </body>

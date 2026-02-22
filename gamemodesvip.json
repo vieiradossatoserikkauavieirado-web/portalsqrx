@@ -84,5 +84,14 @@
     "linkText": "Mediafire",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": true
+  },
+  {
+    "order": 9,
+    "title": "SA-MP TextDraw Editor (open-omp/SA-MP padrão)",
+    "image": "https://i.imgur.com/3rRw1TZ.png",
+    "link": "https://www.mediafire.com/file/acyxzhkadgqffpb/samp-textdraw-editor-main.rar/file",
+    "linkText": "Mediafire",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
   }
 ]

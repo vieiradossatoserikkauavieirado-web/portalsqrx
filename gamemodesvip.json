@@ -93,5 +93,14 @@
     "linkText": "Mediafire",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": true
+  },
+  {
+    "order": 9,
+    "title": "Siga Bem Caminhoneiro ®",
+    "image": "https://i.imgur.com/B9Qq45Y.jpeg",
+    "link": "",
+    "linkText": "Em Breve...",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
   }
 ]

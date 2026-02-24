@@ -1,0 +1,14 @@
+[
+  {
+    "id": "como_compilar_pawn",
+    "title": "Como compilar um gamemode (.pwn -> .amx)",
+    "tags": ["compilar", "pawn", "amx", "pwn", "iniciante"],
+    "answer": "Pra o servidor rodar seu script, você precisa do .amx.\n\nPassos:\n1) Abra o .pwn no Pawno\n2) Clique em Compile (F5)\n3) Se não tiver erro, vai criar o arquivo .amx na pasta gamemodes\n\nSe aparecer erro vermelho: não gera .amx.\nSe aparecer warnings: geralmente gera, mas pode dar problemas."
+  },
+  {
+    "id": "upar_gm_host",
+    "title": "Como upar GM na host (exemplo LemeHost)",
+    "tags": ["upar", "host", "ftp", "lemehost", "gamemode"],
+    "answer": "Passos simples:\n1) Compile e pegue o .amx\n2) Conecte no FTP (FileZilla)\n3) Envie o .amx para /gamemodes\n4) No server.cfg, coloque:\n   gamemode0 NomeDoGM 1\n5) Reinicie o servidor no painel\n\nErros comuns:\n- Nome no server.cfg diferente do arquivo\n- Plugin faltando na host\n- Você esqueceu de enviar o .amx"
+  }
+]

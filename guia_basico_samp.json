@@ -1,0 +1,26 @@
+[
+  {
+    "id": "o_que_e_pawn",
+    "title": "O que é Pawn e o que é SA-MP?",
+    "tags": ["pawn", "samp", "iniciante", "linguagem", "o que e"],
+    "answer": "Pawn é a linguagem usada para criar scripts do SA-MP.\nNo SA-MP você cria um arquivo .pwn (código) e compila para virar .amx (gamemode pronto).\n\nResumo:\n- .pwn = seu código (você edita)\n- .amx = o servidor executa (você upa na host)\n- server.cfg = arquivo que diz qual gamemode rodar\n\nDica: se você upou só o .pwn, não funciona. O servidor precisa do .amx."
+  },
+  {
+    "id": "o_que_sao_includes",
+    "title": "O que são includes? (#include)",
+    "tags": ["include", "#include", "includes", "a_samp", "iniciante"],
+    "answer": "Includes são arquivos que trazem funções prontas para você usar.\n\nExemplos:\n- #include <a_samp> → básico do SA-MP (obrigatório)\n- #include <sscanf2> → leitura de parâmetros em comandos\n- #include <streamer> → objetos, pickups, checkpoints otimizados\n- #include <a_mysql> → conexão com MySQL (plugin BlueG)\n\nSe der 'undefined symbol', muitas vezes é include faltando."
+  },
+  {
+    "id": "o_que_sao_plugins",
+    "title": "O que são plugins no SA-MP?",
+    "tags": ["plugin", "plugins", "iniciante", "o que e", "server cfg"],
+    "answer": "Plugin é como um 'motor extra' do servidor.\nEle adiciona funções que o Pawn sozinho não tem (MySQL, streamer, crashdetect, etc).\n\nComo funciona:\n1) Você baixa o plugin (ex: mysql)\n2) Coloca o arquivo do plugin na pasta /plugins\n3) Coloca o nome dele no server.cfg em 'plugins'\n4) Coloca a include no seu script (pra poder usar as funções)\n\nImportante:\n- Include e plugin são coisas diferentes.\n- Include é pro compilador entender as funções.\n- Plugin é pro servidor executar as funções de verdade."
+  },
+  {
+    "id": "server_cfg_plugins",
+    "title": "Como configurar plugins no server.cfg (exemplo)",
+    "tags": ["server.cfg", "plugins", "como configurar", "windows", "linux"],
+    "answer": "No server.cfg você tem uma linha parecida com:\n\nWindows:\nplugins streamer sscanf mysql crashdetect\n\nLinux (geralmente precisa .so):\nplugins streamer.so sscanf.so mysql.so crashdetect.so\n\nDica:\n- Se o servidor iniciar e disser 'Failed to load plugin', o arquivo não está na pasta /plugins ou é versão errada.\n- Se compilar dá certo mas no servidor dá erro, pode ser plugin faltando no server.cfg."
+  }
+]

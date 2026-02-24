@@ -1,0 +1,8 @@
+[
+  {
+    "id": "lemehost_upar_gm",
+    "title": "Como upar Gamemode na LemeHost (SA-MP)",
+    "tags": ["lemehost", "host", "upar", "gamemode", "samp", "ftp"],
+    "answer": "Passo a passo:\n1) Compile o GM e gere o .amx\n2) Conecte no FTP (FileZilla)\n3) Envie o .amx para /gamemodes\n4) Confirme que o .pwn (opcional) e includes não precisam ir\n5) Edite server.cfg: linha gamemode0 NomeDoGM 1\n6) Reinicie o servidor no painel.\n\nErros comuns:\n- 'Unknown command' após upar: você subiu .pwn e esqueceu o .amx.\n- server.cfg apontando nome errado.\n- plugins/includes diferentes do ambiente local."
+  }
+]

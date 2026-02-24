@@ -1,0 +1,26 @@
+[
+  {
+    "id": "o_que_sao_callbacks",
+    "title": "O que são callbacks no SA-MP?",
+    "tags": ["callback", "callbacks", "iniciante", "evento", "funcao"],
+    "answer": "Callback é uma função que o SA-MP chama automaticamente quando algo acontece.\nPense como 'eventos'.\n\nExemplos de eventos:\n- Jogador entrou → OnPlayerConnect\n- Jogador saiu → OnPlayerDisconnect\n- Jogador morreu → OnPlayerDeath\n- Servidor ligou o GM → OnGameModeInit\n\nVocê não chama callback manualmente. O SA-MP chama sozinho."
+  },
+  {
+    "id": "callback_on_gamemode_init",
+    "title": "OnGameModeInit: quando o servidor inicia",
+    "tags": ["OnGameModeInit", "gamemode init", "iniciante"],
+    "answer": "O OnGameModeInit roda quando o gamemode carrega.\nÉ aqui que você cria:\n- veículos\n- pickups\n- checkpoints\n- textdraws\n- timers globais\n\nExemplo simples:\npublic OnGameModeInit()\n{\n    SetGameModeText(\"Meu Servidor\");\n    AddPlayerClass(0, 1958.3783, 1343.1572, 15.3746, 269.1415, 0, 0, 0, 0, 0, 0);\n    return 1;\n}"
+  },
+  {
+    "id": "callback_on_player_connect",
+    "title": "OnPlayerConnect: quando o player entra",
+    "tags": ["OnPlayerConnect", "player connect", "iniciante"],
+    "answer": "Roda quando o jogador conecta.\nAqui você normalmente:\n- zera variáveis do player\n- manda mensagem de boas-vindas\n- começa o sistema de login\n- carrega dados (se já tiver conta)\n\nExemplo:\npublic OnPlayerConnect(playerid)\n{\n    SendClientMessage(playerid, -1, \"Bem-vindo! Use /registrar ou /login\");\n    return 1;\n}"
+  },
+  {
+    "id": "callback_on_player_disconnect",
+    "title": "OnPlayerDisconnect: quando o player sai",
+    "tags": ["OnPlayerDisconnect", "player disconnect", "salvar conta", "iniciante"],
+    "answer": "Roda quando o jogador sai.\nAqui você normalmente:\n- salva dinheiro/level/skin no arquivo ou banco\n- limpa dados em memória\n\nDica de ouro:\nSalvar só no disconnect é arriscado se cair a internet. O ideal é salvar também de tempo em tempo (timer)."
+  }
+]

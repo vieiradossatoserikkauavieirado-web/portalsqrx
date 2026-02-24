@@ -1,0 +1,26 @@
+[
+  {
+    "id": "plugin_sscanf",
+    "title": "Plugin sscanf: para ler parâmetros de comandos",
+    "tags": ["sscanf", "sscanf2", "comandos", "parametros", "plugin"],
+    "answer": "O sscanf ajuda a ler valores digitados em comandos.\nEx: /setlevel 5 → você pega o número 5.\n\nExemplo com sscanf:\n- Se o jogador digitar errado, você mostra o jeito certo.\n\nDica:\nSem sscanf, iniciantes fazem muita gambiarra com strval e explode em erro."
+  },
+  {
+    "id": "plugin_streamer",
+    "title": "Plugin streamer: objetos e pickups otimizados",
+    "tags": ["streamer", "objetos", "pickups", "checkpoint", "plugin"],
+    "answer": "O streamer (Incognito) é usado para criar muitos objetos sem lagar.\nEle 'carrega' objetos por perto do player.\n\nVocê usa funções como:\n- CreateDynamicObject\n- CreateDynamicPickup\n- CreateDynamicCP\n\nSe você criar muitos objetos com funções normais, pode dar lag. O streamer resolve isso."
+  },
+  {
+    "id": "plugin_mysql",
+    "title": "Plugin MySQL (BlueG): salvar dados no banco",
+    "tags": ["mysql", "blueg", "banco de dados", "a_mysql", "plugin"],
+    "answer": "O plugin MySQL deixa seu script conversar com um banco de dados.\nVocê usa quando quer um sistema mais profissional: contas, carros, casas, logs.\n\nComo funciona (bem simples):\n1) Conecta no MySQL\n2) Faz SELECT pra carregar dados\n3) Faz INSERT/UPDATE pra salvar\n\nNo SA-MP é comum usar queries assíncronas (o servidor não trava esperando resposta)."
+  },
+  {
+    "id": "plugin_crashdetect",
+    "title": "Plugin crashdetect: ajuda a achar bugs",
+    "tags": ["crashdetect", "debug", "bugs", "plugin"],
+    "answer": "CrashDetect mostra no console onde o seu script quebrou.\nIsso é MUITO útil pra iniciante.\n\nQuando dá runtime error, ele mostra a linha e a função.\nDica: use crashdetect sempre em desenvolvimento."
+  }
+]

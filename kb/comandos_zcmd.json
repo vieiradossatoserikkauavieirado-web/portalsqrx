@@ -1,0 +1,26 @@
+[
+  {
+    "id": "o_que_e_cmd_zcmd",
+    "title": "O que é CMD: no SA-MP?",
+    "tags": ["cmd", "zcmd", "comando", "CMD:", "iniciante"],
+    "answer": "CMD: é usado junto com a include ZCMD para criar comandos de forma mais simples.\n\nExemplo:\nCMD:siqueirax(playerid, params[])\n{\n    SendClientMessage(playerid, -1, \"Você usou o comando /siqueirax\");\n    return 1;\n}\n\nQuando o jogador digita /siqueirax, essa função é chamada automaticamente."
+  },
+  {
+    "id": "explicando_cmd_parametros",
+    "title": "Explicando CMD:siqueirax(playerid, params[])",
+    "tags": ["cmd", "playerid", "params", "zcmd", "explicacao"],
+    "answer": "Vamos entender parte por parte:\n\nCMD:siqueirax → nome do comando (/siqueirax)\nplayerid → id do jogador que usou o comando\nparams[] → texto digitado depois do comando\n\nExemplo:\nSe o jogador digitar:\n/setlevel 5\n\nO número 5 estará dentro de params[].\n\nPara pegar esse número corretamente, usamos sscanf."
+  },
+  {
+    "id": "o_que_significa_return",
+    "title": "O que significa return 1; no comando?",
+    "tags": ["return", "return 1", "return 0", "cmd", "iniciante"],
+    "answer": "return 1; significa que o comando foi reconhecido e executado com sucesso.\n\nreturn 0; significa que o comando não foi tratado.\n\nNo ZCMD quase sempre usamos return 1; no final do comando.\n\nExemplo:\nCMD:teste(playerid, params[])\n{\n    SendClientMessage(playerid, -1, \"Funcionou!\");\n    return 1;\n}"
+  },
+  {
+    "id": "cmd_com_parametro_sscanf",
+    "title": "Exemplo de comando com parâmetro usando sscanf",
+    "tags": ["sscanf", "cmd", "parametro", "zcmd", "exemplo"],
+    "answer": "Exemplo: /setlevel 10\n\nCMD:setlevel(playerid, params[])\n{\n    new level;\n    if(sscanf(params, \"d\", level))\n        return SendClientMessage(playerid, -1, \"Use: /setlevel [numero]\");\n\n    SendClientMessage(playerid, -1, \"Level alterado!\");\n    return 1;\n}\n\n\"d\" significa número inteiro.\nSe o jogador não digitar número, mostra a mensagem de ajuda."
+  }
+]

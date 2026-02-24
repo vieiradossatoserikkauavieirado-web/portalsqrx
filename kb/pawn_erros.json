@@ -1,0 +1,8 @@
+[
+  {
+    "id": "erro_017",
+    "title": "Erro 017: undefined symbol",
+    "tags": ["erro 017", "undefined symbol", "pawn", "samp"],
+    "answer": "Isso acontece quando você usa uma função/variável que não existe (ou não foi incluída).\n\nChecklist:\n1) Confirme se você incluiu a include certa (#include <...>)\n2) Verifique se o nome está idêntico (maiúsculas/minúsculas)\n3) Se for função de plugin, confira se o plugin está carregado\n\nExemplo:\nSe 'DOF2_SetInt' dá undefined symbol → falta #include <DOF2> ou a include não está na pasta include."
+  }
+]

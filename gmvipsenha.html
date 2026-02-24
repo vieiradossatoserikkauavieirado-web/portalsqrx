@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Senhas GM VIP • Portal SiqueiraX</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#ff002b;
+  --red-dark:#b0001c;
+  --bg:#0b0b0b;
+  --glass:rgba(15,15,15,.78);
+  --vip1:#ff1a3d;
+  --vip2:#7a0014;
+  --ok:#2dff9c;
+  --warn:#ffcc66;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+  min-height:100vh;
+  color:#fff;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(12px);
+  z-index:-1;
+}
+
+/* ===== HEADER ===== */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:1rem 2rem;
+  background:var(--glass);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  gap:1rem;
+}
+
+header h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.6rem;
+  background:linear-gradient(90deg,var(--vip1),#ff6b6b);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.vip-actions{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+}
+
+.vip-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  padding:.55rem .95rem;
+  border-radius:16px;
+  font-size:.85rem;
+  font-weight:900;
+  letter-spacing:.5px;
+  color:#fff;
+  text-decoration:none;
+  background:linear-gradient(135deg,var(--vip1),var(--vip2));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 22px rgba(255,0,43,.55);
+  transition:.25s ease;
+  white-space:nowrap;
+}
+
+.vip-btn:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 0 34px rgba(255,0,43,.85);
+}
+
+.vip-btn .icon{
+  filter:drop-shadow(0 0 12px rgba(255,0,43,.65));
+}
+
+.user{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  background:rgba(0,0,0,.35);
+  padding:.45rem 1rem;
+  border-radius:30px;
+  font-weight:700;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 0 18px rgba(255,0,43,.18);
+}
+.user .diamond{
+  display:inline-block;
+  filter:drop-shadow(0 0 14px rgba(255,0,43,.65));
+}
+
+/* ===== SEARCH ===== */
+.search-box{
+  max-width:520px;
+  margin:1.4rem auto 0;
+  padding:0 1rem;
+}
+
+.search-box input{
+  width:100%;
+  padding:.85rem 1rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(0,0,0,.4);
+  color:#fff;
+}
+
+.search-box input:focus{
+  outline:none;
+  border-color:var(--red);
+  box-shadow:0 0 15px rgba(255,0,43,.6);
+}
+
+/* ===== GRID ===== */
+.pw-container{
+  max-width:1100px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:16px;
+  padding:1rem 1rem 2.5rem;
+}
+
+/* ===== CARD ===== */
+.pw-card{
+  background:var(--glass);
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 0 16px rgba(0,0,0,.6);
+  transition:.25s ease;
+  border:1px solid rgba(255,255,255,.08);
+  position:relative;
+  padding:16px 16px 14px;
+}
+
+.pw-card:hover{
+  transform:translateY(-5px) scale(1.02);
+  box-shadow:0 0 35px rgba(255,0,43,.55);
+  border-color:rgba(255,0,43,.25);
+}
+
+.pw-card::before{
+  content:"";
+  position:absolute;
+  inset:-120px -120px auto auto;
+  width:250px;
+  height:250px;
+  background:radial-gradient(circle at center, rgba(255,0,43,.28), transparent 62%);
+  transform:rotate(25deg);
+  pointer-events:none;
+}
+
+.pw-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  position:relative;
+}
+
+.pw-title{
+  font-weight:900;
+  font-size:1rem;
+  line-height:1.2;
+  padding-right:10px;
+}
+
+.badge{
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:1px;
+  padding:.35rem .6rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.35);
+  box-shadow:0 0 18px rgba(255,0,43,.18);
+  white-space:nowrap;
+}
+
+.pw-sub{
+  margin-top:10px;
+  font-size:.78rem;
+  opacity:.9;
+  line-height:1.5;
+  position:relative;
+}
+
+/* ===== PASSWORD REVEAL ===== */
+.pw-secret{
+  margin-top:12px;
+  position:relative;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.secret-text{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size:.92rem;
+  font-weight:800;
+  letter-spacing:.3px;
+  user-select:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  min-width:0;
+}
+
+.secret-text .hint{
+  font-family:'Inter',sans-serif;
+  font-size:.75rem;
+  font-weight:700;
+  opacity:.8;
+  white-space:nowrap;
+}
+
+.secret-value{
+  display:inline-block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width:260px;
+}
+
+.is-blurred .secret-value{
+  filter:blur(9px);
+  opacity:.85;
+}
+
+.is-blurred .secret-text:hover .secret-value{
+  filter:blur(7px);
+}
+
+.copy-btn{
+  border:none;
+  cursor:pointer;
+  padding:.55rem .8rem;
+  border-radius:14px;
+  font-weight:900;
+  color:#fff;
+  background:linear-gradient(135deg,var(--vip1),var(--vip2));
+  box-shadow:0 0 20px rgba(255,0,43,.6);
+  transition:.25s ease;
+  white-space:nowrap;
+}
+
+.copy-btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 34px rgba(255,0,43,.85);
+}
+
+.copy-btn:active{ transform:scale(.98); }
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  background:rgba(15,15,15,.92);
+  border:1px solid rgba(255,255,255,.12);
+  padding:12px 14px;
+  border-radius:16px;
+  box-shadow:0 0 40px rgba(255,0,43,.35);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  z-index:9999;
+  opacity:0;
+  pointer-events:none;
+  transition:.22s ease;
+}
+
+.toast.show{
+  opacity:1;
+  bottom:22px;
+}
+
+.toast .dot{
+  width:10px;height:10px;border-radius:999px;
+  background:var(--ok);
+  box-shadow:0 0 18px rgba(45,255,156,.5);
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  text-align:center;
+  padding-bottom:2rem;
+}
+
+.footer a{
+  color:#fff;
+  text-decoration:none;
+  background:linear-gradient(135deg,#ff002b,#b0001c);
+  padding:.8rem 2.2rem;
+  border-radius:14px;
+  font-weight:900;
+  box-shadow:0 0 22px rgba(255,0,43,.6);
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:600px){
+  header{
+    flex-direction:column;
+    gap:.7rem;
+    padding:1rem 1.2rem;
+  }
+  .vip-actions{
+    width:100%;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .vip-btn{
+    width:100%;
+    max-width:420px;
+  }
+  .user{
+    width:100%;
+    justify-content:center;
+  }
+  .secret-value{
+    max-width:190px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Senhas GM VIP</h1>
+
+  <div class="vip-actions">
+    <a class="vip-btn" href="gamemodesvip.html">
+      <span class="icon">🎮</span>
+      <span>Gamemodes VIP</span>
+    </a>
+
+    <div class="user">
+      <span class="diamond">💎</span>
+      <span id="userName">Usuário</span>
+      <span style="opacity:.85">• VIP</span>
+    </div>
+  </div>
+</header>
+
+<div class="search-box">
+  <input type="text" id="search" placeholder="🔍 Buscar senha por nome do GM...">
+</div>
+
+<div class="pw-container" id="pwContainer"></div>
+
+<div class="footer">
+  <a href="painelsiqueirax.html">Voltar ao Painel</a>
+</div>
+
+<div class="toast" id="toast">
+  <span class="dot"></span>
+  <span id="toastText">Copiado!</span>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const pwContainer = document.getElementById("pwContainer");
+  const search = document.getElementById("search");
+  const toast = document.getElementById("toast");
+  const toastText = document.getElementById("toastText");
+
+  /* ===============================
+     BOX PROFISSIONAL – NÃO VIP
+     =============================== */
+  function renderNoVipBox(reason) {
+    document.body.innerHTML = `
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
+        <div style="
+          max-width:760px;width:100%;
+          background:rgba(15,15,15,.85);
+          border:1px solid rgba(255,255,255,.12);
+          border-radius:28px;
+          padding:32px;
+          box-shadow:0 0 65px rgba(255,0,43,.45);
+          color:#fff;
+          position:relative;
+          overflow:hidden;
+        ">
+          <div style="
+            position:absolute;inset:-2px;
+            background:
+              radial-gradient(circle at 20% 10%, rgba(255,0,43,.22), transparent 55%),
+              radial-gradient(circle at 80% 80%, rgba(255,0,43,.16), transparent 55%);
+            pointer-events:none;
+          "></div>
+
+          <div style="position:relative;">
+            <h1 style="
+              font-family:Orbitron,sans-serif;
+              margin:0 0 12px 0;
+              font-size:2.1rem;
+              line-height:1.1;
+              text-align:center;
+              background:linear-gradient(90deg,#ff002b,#ff6b6b);
+              -webkit-background-clip:text;
+              -webkit-text-fill-color:transparent;
+              text-shadow:0 0 35px rgba(255,0,43,.7);
+            ">
+              Área VIP • Acesso restrito
+            </h1>
+
+            <p style="text-align:center;opacity:.9;margin-bottom:18px;line-height:1.6;">
+              Para acessar as <b>Senhas GM VIP</b>, você precisa possuir o
+              <b>cargo VIP</b> no servidor do Discord do <b>SiqueiraX</b>.
+            </p>
+
+            <div style="
+              background:rgba(0,0,0,.45);
+              border:1px solid rgba(255,255,255,.08);
+              border-radius:18px;
+              padding:16px;
+              margin-bottom:18px;
+              line-height:1.6;
+            ">
+              <b>Como liberar agora:</b><br>
+              • Assine o VIP no Discord oficial.<br>
+              • Dúvidas? Fale no WhatsApp: <b>82 9696-3727</b>.
+              ${reason ? `<div style="margin-top:10px;opacity:.85"><b>Detalhe:</b> ${reason}</div>` : ""}
+            </div>
+
+            <div style="display:grid;gap:12px;">
+              <a href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener"
+                 style="
+                   display:block;text-align:center;padding:1rem;
+                   border-radius:18px;
+                   font-weight:900;letter-spacing:1px;
+                   text-decoration:none;color:#fff;
+                   background:linear-gradient(135deg,#ff002b,#b0001c);
+                   box-shadow:0 0 30px rgba(255,0,43,.7);
+                   text-transform:uppercase;
+                 ">
+                Entrar no Discord
+              </a>
+
+              <a href="https://wa.me/558296963727" target="_blank" rel="noopener"
+                 style="
+                   display:block;text-align:center;padding:1rem;
+                   border-radius:18px;
+                   font-weight:900;letter-spacing:1px;
+                   text-decoration:none;color:#fff;
+                   background:rgba(255,255,255,.08);
+                   border:1px solid rgba(255,255,255,.15);
+                   box-shadow:0 0 22px rgba(0,0,0,.25);
+                   text-transform:uppercase;
+                 ">
+                Falar no WhatsApp
+              </a>
+
+              <button id="tryAgainBtn"
+                 style="
+                   width:100%;padding:1rem;
+                   border-radius:18px;
+                   border:1px solid rgba(255,255,255,.15);
+                   background:rgba(0,0,0,.35);
+                   color:#fff;
+                   font-weight:900;
+                   letter-spacing:1px;
+                   cursor:pointer;
+                   text-transform:uppercase;
+                 ">
+                Tentar novamente
+              </button>
+            </div>
+
+            <p style="text-align:center;opacity:.6;margin-top:16px;font-size:.85rem;">
+              © Portal SiqueiraX • Segurança VIP Ativa
+            </p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("tryAgainBtn").addEventListener("click", () => {
+      window.location.reload();
+    });
+  }
+
+  function showToast(msg, ok=true){
+    toastText.textContent = msg;
+    const dot = toast.querySelector(".dot");
+    dot.style.background = ok ? "var(--ok)" : "var(--warn)";
+    toast.classList.add("show");
+    clearTimeout(window.__toastT);
+    window.__toastT = setTimeout(() => toast.classList.remove("show"), 2200);
+  }
+
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Senha copiada com sucesso!");
+    }catch{
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try{
+        document.execCommand("copy");
+        showToast("Senha copiada com sucesso!");
+      }catch{
+        showToast("Não consegui copiar. Copie manualmente.", false);
+      }
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ===============================
+     1) VERIFICA VIP (SEMPRE)
+     =============================== */
+  try {
+    const r = await fetch("/.netlify/functions/vip-me", {
+      credentials: "include",
+      cache: "no-store"
+    });
+
+    if (!r.ok) {
+      const reason = await r.text().catch(() => "");
+      if (reason === "no_session" || reason === "invalid_session" || reason === "expired_session") {
+        window.location.href = "loginvip.html";
+        return;
+      }
+      renderNoVipBox(`Acesso VIP negado • ${reason || "sem_detalhe"}`);
+      return;
+    }
+  } catch {
+    renderNoVipBox("Não foi possível validar seu acesso VIP.");
+    return;
+  }
+
+  /* ===============================
+     2) RENDER SENHAS GM (JSON)
+     =============================== */
+  function render(list){
+    pwContainer.innerHTML = list.map((it, idx) => {
+      const name = it.name || it.title || `GM ${idx+1}`;
+      const pass = (it.password ?? it.senha ?? it.pass ?? "").toString();
+      const note = (it.note ?? it.obs ?? it.info ?? "").toString();
+      const tag = (it.tag ?? "VIP").toString();
+
+      // data-secret guarda a senha real, mas não printa ela "limpa" na tela.
+      // Ela só aparece quando o usuário clicar.
+      return `
+        <div class="pw-card" data-name="${encodeURIComponent(name.toLowerCase())}">
+          <div class="pw-top">
+            <div class="pw-title">${escapeHtml(name)}</div>
+            <div class="badge">💎 ${escapeHtml(tag)}</div>
+          </div>
+
+          ${note ? `<div class="pw-sub">${escapeHtml(note)}</div>` : `<div class="pw-sub" style="opacity:.75">Clique na senha borrada para revelar.</div>`}
+
+          <div class="pw-secret is-blurred" data-secret="${encodeURIComponent(pass)}">
+            <div class="secret-text" role="button" tabindex="0" aria-label="Revelar senha">
+              <span class="hint">🔒 senha:</span>
+              <span class="secret-value">${escapeHtml(pass || "—")}</span>
+            </div>
+            <button class="copy-btn" type="button">Copiar</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // bind events
+    pwContainer.querySelectorAll(".pw-secret").forEach(box => {
+      const secretText = box.querySelector(".secret-text");
+      const copyBtn = box.querySelector(".copy-btn");
+
+      const reveal = () => {
+        if (!box.classList.contains("is-blurred")) return;
+        box.classList.remove("is-blurred");
+        // quando revela, garante que o texto exibido é exatamente o secret armazenado
+        const raw = decodeURIComponent(box.getAttribute("data-secret") || "");
+        box.querySelector(".secret-value").textContent = raw || "—";
+        showToast("Senha revelada!");
+      };
+
+      secretText.addEventListener("click", reveal);
+      secretText.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          reveal();
+        }
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        const raw = decodeURIComponent(box.getAttribute("data-secret") || "");
+        if (!raw) {
+          showToast("Sem senha cadastrada.", false);
+          return;
+        }
+        // se estiver borrada, revela primeiro (fica premium)
+        reveal();
+        await copyText(raw);
+      });
+    });
+  }
+
+  function escapeHtml(str){
+    return (str ?? "").toString()
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  const res = await fetch(`/senhasgm.json?v=${Date.now()}`, { cache: "no-store" });
+  if (!res.ok) {
+    pwContainer.innerHTML = `
+      <div style="padding:1rem;opacity:.9">
+        Não achei <b>senhasgm.json</b> (HTTP ${res.status}).
+      </div>`;
+    return;
+  }
+
+  const all = await res.json();
+  render(all);
+
+  if (search) {
+    search.addEventListener("input", () => {
+      const v = (search.value || "").toLowerCase().trim();
+      if (!v) { render(all); return; }
+      render(all.filter(it => {
+        const name = (it.name || it.title || "").toLowerCase();
+        return name.includes(v);
+      }));
+    });
+  }
+});
+</script>
+
+</body>
+</html>

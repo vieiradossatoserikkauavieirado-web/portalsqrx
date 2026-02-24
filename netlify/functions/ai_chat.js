@@ -167,17 +167,13 @@ function searchKb(question, topK = 3) {
   return scored.slice(0, topK).map(x => x.it);
 }
 
-// --- simulação de auth/vip: você vai adaptar ao seu me_ia ---
-// aqui eu assumo que seu /me_ia já resolve cookie e retorna username/plan.
-// Como netlify function não chama outra function sem custo, você replica a validação aqui.
-// Por enquanto deixo um stub: aceita se cookie existir.
 function getSession(event) {
   const cookie = event.headers.cookie || "";
   // Exemplo: se você usa "sx_session=..."
   const has = cookie.includes("sx_session=");
   if (!has) return null;
 
-  // TODO: validar token real (JWT/HMAC/DB) igual no me_ia.js
+  
   return { username: "VIP", plan: "VIP GOLD" };
 }
 
@@ -191,10 +187,10 @@ export async function handler(event) {
     return json(null, 405, { error: "Method not allowed" });
   }
 
-  const session = getSession(event);
+ /* const session = getSession(event);
   if (!session) {
     return json(null, 401, { error: "Sem sessão. Faça login." });
-  }
+  }*/
 
   if (!hasVip(session)) {
     return json(null, 403, { error: "Recurso disponível apenas para VIP." });

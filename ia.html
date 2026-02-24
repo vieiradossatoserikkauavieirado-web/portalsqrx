@@ -354,8 +354,6 @@ async function send(){
 
   inputEl.value = ""
   addMsg(text, "user")
-  history.push({ role:"user", content:text })
-  while(history.length > 10) history.shift()
 
   setLoading(true)
   try{
@@ -363,22 +361,24 @@ async function send(){
       method:"POST",
       credentials:"include",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ message: text, history })
+      body: JSON.stringify({ message: text })
     })
 
-    const data = await r.json().catch(()=>null)
+    const raw = await r.text() // <-- pega bruto
+    console.log("ai_chat status:", r.status)
+    console.log("ai_chat raw:", raw)
+
+    let data = null
+    try { data = JSON.parse(raw) } catch {}
+
     if(!r.ok){
-      const msg = data?.error || "Falha ao chamar IA."
-      addMsg(msg, "bot")
-      setLoading(false)
+      addMsg(data?.error || `Erro ${r.status}: ${raw.slice(0,200)}`, "bot")
       return
     }
 
-    const answer = data?.answer || "(sem resposta)"
-    addMsg(answer, "bot")
-    history.push({ role:"assistant", content:answer })
-    while(history.length > 10) history.shift()
-  }catch{
+    addMsg(data?.answer || "(sem resposta)", "bot")
+  }catch(err){
+    console.error(err)
     addMsg("Erro de rede. Tente novamente.", "bot")
   }finally{
     setLoading(false)

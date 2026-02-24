@@ -220,14 +220,54 @@ header h1{
  font-weight:900;
  box-shadow:0 0 22px rgba(255,0,43,.6);
 }
-
-/* ===== MOBILE ===== */
-@media(max-width:600px){
- header{
-  flex-direction:column;
+/* ===== BOTÃO HEADER (Senhas GM) ===== */
+.vip-actions{
+  display:flex;
+  align-items:center;
   gap:.6rem;
- }
 }
+
+.vip-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  padding:.55rem .95rem;
+  border-radius:16px;
+  font-size:.85rem;
+  font-weight:900;
+  letter-spacing:.5px;
+  color:#fff;
+  text-decoration:none;
+  background:linear-gradient(135deg,var(--vip1),var(--vip2));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 22px rgba(255,0,43,.55);
+  transition:.25s ease;
+  white-space:nowrap;
+}
+
+.vip-btn:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 0 34px rgba(255,0,43,.85);
+}
+
+.vip-btn .icon{
+  filter:drop-shadow(0 0 12px rgba(255,0,43,.65));
+}
+
+/* ===== MOBILE HEADER ===== */
+@media(max-width:600px){
+  .vip-actions{
+    width:100%;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .vip-btn{
+    width:100%;
+    max-width:360px;
+  }
+}
+
 </style>
 </head>
 
@@ -235,10 +275,18 @@ header h1{
 
 <header>
   <h1>Gamemodes VIP</h1>
-  <div class="user">
-    <span class="diamond">💎</span>
-    <span id="userName">Usuário</span>
-    <span style="opacity:.85">• VIP</span>
+
+  <div class="vip-actions">
+    <a class="vip-btn" href="gmvipsenha.html">
+      <span class="icon">🔐</span>
+      <span>Senhas GM</span>
+    </a>
+
+    <div class="user">
+      <span class="diamond">💎</span>
+      <span id="userName">Usuário</span>
+      <span style="opacity:.85">• VIP</span>
+    </div>
   </div>
 </header>
 

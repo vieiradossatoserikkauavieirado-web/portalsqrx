@@ -1,153 +1,244 @@
-// netlify/functions/ai_chat.js
-const { createClient } = require("@supabase/supabase-js");
+import fs from "fs";
+import path from "path";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-function getCookie(name, headers) {
-  const cookieHeader = headers?.cookie || headers?.Cookie || headers?.COOKIE || "";
-  if (!cookieHeader) return null;
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
+function json(res, status, body) {
+  return {
+    statusCode: status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store"
+    },
+    body: JSON.stringify(body)
+  };
 }
 
-async function requireIaSession(event) {
-  const token = getCookie("sx_ia_session", event.headers);
-  if (!token) return { ok:false, statusCode: 401, error: "Sem sessão. Faça login." };
-
-  const { data: sess, error } = await supabase
-    .from("sessoes_ia")
-    .select("username, plan, expira_em")
-    .eq("token", token)
-    .maybeSingle();
-
-  if (error || !sess) return { ok:false, statusCode: 401, error: "Sessão inválida. Faça login." };
-
-  const exp = new Date(sess.expira_em).getTime();
-  if (!exp || Number.isNaN(exp) || exp < Date.now()) {
-    return { ok:false, statusCode: 401, error: "Sessão expirada. Faça login novamente." };
-  }
-
-  return { ok:true, sess };
+// --- util: normalização ---
+function norm(s) {
+  return (s || "")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
-function extractTextFromResponsesAPI(respJson) {
-  // Responses API pode retornar em "output_text" (quando disponível) ou por itens.
-  if (typeof respJson?.output_text === "string" && respJson.output_text.trim()) {
-    return respJson.output_text.trim();
-  }
-  const out = respJson?.output;
-  if (!Array.isArray(out)) return "";
+function tokenize(s) {
+  const stop = new Set([
+    "a","o","os","as","um","uma","de","da","do","das","dos","e","ou","pra","para","com","sem",
+    "no","na","nos","nas","em","por","como","que","quando","onde","isso","isso","ai","eh","é"
+  ]);
+  return norm(s)
+    .split(" ")
+    .filter(w => w.length >= 3 && !stop.has(w));
+}
 
-  // tenta achar mensagens
-  for (const item of out) {
-    if (item?.type === "message" && Array.isArray(item?.content)) {
-      const parts = item.content
-        .filter(p => p?.type === "output_text" || p?.type === "text")
-        .map(p => p?.text || "")
-        .join("");
-      if (parts.trim()) return parts.trim();
+// --- carregar KB ---
+let KB = null;
+
+function loadKbOnce() {
+  if (KB) return KB;
+
+  const kbDir = path.join(process.cwd(), "kb");
+  const files = fs.readdirSync(kbDir).filter(f => f.endsWith(".json"));
+
+  const items = [];
+  for (const f of files) {
+    const full = path.join(kbDir, f);
+    const content = fs.readFileSync(full, "utf8");
+    try {
+      const arr = JSON.parse(content);
+      for (const it of arr) items.push(it);
+    } catch {
+      // ignora arquivo quebrado
     }
   }
-  return "";
+
+  // pré-processa tokens para busca
+  KB = items.map(it => {
+    const text = `${it.title || ""} ${(it.tags || []).join(" ")} ${it.answer || ""}`;
+    return {
+      ...it,
+      _tokens: tokenize(text)
+    };
+  });
+
+  return KB;
 }
 
-exports.handler = async (event) => {
+// --- regras rápidas (intenção) ---
+function ruleBasedAnswer(qRaw) {
+  const q = norm(qRaw);
+
+  // erros do compilador
+  const mErr = q.match(/\b(erros?|error|warning)\s*(\d+)\b/);
+  if (mErr) {
+    const code = mErr[2];
+    return {
+      answer:
+`Você mencionou ${mErr[1]} ${code}.  
+Se você colar aqui **a linha do erro + 10-20 linhas do código perto**, eu te digo a correção exata.
+
+Enquanto isso, dica rápida:
+- Erro/Warning ${code} normalmente envolve nome errado, include faltando, callback incorreto ou parâmetro inválido.
+- Envie também: quais includes/plugins você usa (DOF2, sscanf, mysql, streamer).`
+    };
+  }
+
+  // lemehost / hospedagem
+  if (q.includes("lemehost") || (q.includes("upar") && (q.includes("gm") || q.includes("gamemode")))) {
+    return {
+      answer:
+`Se for **upar GM na LemeHost**, o básico é:
+1) Compile e gere o arquivo **.amx**  
+2) Envie por FTP (ex: FileZilla) para a pasta **/gamemodes**  
+3) Edite o **server.cfg**: \`gamemode0 NomeDoGM 1\`  
+4) Reinicie pelo painel da host
+
+Se você me disser:
+- nome do GM (.amx)
+- o que está no seu server.cfg (linha gamemode0)
+- qual erro aparece no console
+eu te passo o ajuste certinho.`
+    };
+  }
+
+  // salvamento: DOF2 / dini / mysql
+  if (q.includes("dof2") || q.includes("dini") || q.includes("mysql") || q.includes("salvar") || q.includes("salvamento")) {
+    return {
+      answer:
+`Salvamento no SA-MP funciona assim:  
+- **Arquivo (DOF2/dini):** grava dados em arquivos por player (rápido de começar, mas limita em servidor grande).  
+- **MySQL:** grava no banco (melhor pra servidor médio/grande, mais organizado e seguro).
+
+Se você me falar qual sistema você quer (DOF2, dini ou MySQL BlueG) e quais dados (level, money, skin...), eu te mando um modelo completo (connect + login + save + load).`
+    };
+    
+  }
+  // detectar CMD:
+  if (q.includes("cmd:")) {
+    return {
+      answer:
+  `Você está usando comando com ZCMD.
+
+  Estrutura básica:
+
+  CMD:nome(playerid, params[])
+  {
+      // código aqui
+      return 1;
+  }
+
+  Explicação:
+  - CMD:nome → cria o comando (/nome)
+  - playerid → jogador que usou
+  - params[] → texto digitado depois
+  - return 1; → comando executado com sucesso
+
+  Se quiser, me manda o comando completo que eu explico linha por linha.`
+    };
+  }
+
+  return null;
+}
+
+// --- busca simples (scoring por interseção de tokens) ---
+function searchKb(question, topK = 3) {
+  const kb = loadKbOnce();
+  const qTokens = tokenize(question);
+  if (!qTokens.length) return [];
+
+  const qSet = new Set(qTokens);
+
+  const scored = kb.map(it => {
+    let score = 0;
+    // pontua tokens em comum
+    for (const t of it._tokens) if (qSet.has(t)) score += 1;
+
+    // bônus se bater tag exatamente
+    const tags = (it.tags || []).map(norm);
+    for (const qt of qTokens) {
+      if (tags.includes(qt)) score += 2;
+    }
+
+    return { it, score };
+  }).filter(x => x.score > 0);
+
+  scored.sort((a,b) => b.score - a.score);
+  return scored.slice(0, topK).map(x => x.it);
+}
+
+// --- simulação de auth/vip: você vai adaptar ao seu me_ia ---
+// aqui eu assumo que seu /me_ia já resolve cookie e retorna username/plan.
+// Como netlify function não chama outra function sem custo, você replica a validação aqui.
+// Por enquanto deixo um stub: aceita se cookie existir.
+function getSession(event) {
+  const cookie = event.headers.cookie || "";
+  // Exemplo: se você usa "sx_session=..."
+  const has = cookie.includes("sx_session=");
+  if (!has) return null;
+
+  // TODO: validar token real (JWT/HMAC/DB) igual no me_ia.js
+  return { username: "VIP", plan: "VIP GOLD" };
+}
+
+function hasVip(session) {
+  const p = (session?.plan || "").toUpperCase();
+  return p.includes("VIP");
+}
+
+export async function handler(event) {
+  if (event.httpMethod !== "POST") {
+    return json(null, 405, { error: "Method not allowed" });
+  }
+
+  const session = getSession(event);
+  if (!session) {
+    return json(null, 401, { error: "Sem sessão. Faça login." });
+  }
+
+  if (!hasVip(session)) {
+    return json(null, 403, { error: "Recurso disponível apenas para VIP." });
+  }
+
+  let payload;
   try {
-    if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "method_not_allowed" };
-    }
-
-    const gate = await requireIaSession(event);
-    if (!gate.ok) {
-      return {
-        statusCode: gate.statusCode,
-        headers: { "Content-Type":"application/json", "Cache-Control":"no-store" },
-        body: JSON.stringify({ error: gate.error })
-      };
-    }
-
-    const key = process.env.OPENAI_API_KEY;
-    if (!key) {
-      return {
-        statusCode: 500,
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ error: "missing_env: OPENAI_API_KEY" })
-      };
-    }
-
-    const body = JSON.parse(event.body || "{}");
-    const message = String(body.message || "").trim();
-    const history = Array.isArray(body.history) ? body.history : [];
-
-    if (!message) {
-      return {
-        statusCode: 400,
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ error: "Mensagem vazia." })
-      };
-    }
-
-    // Prompt focado em Pawn / SA-MP
-    const system = [
-      "Você é um assistente de programação especializado em Pawn (SA-MP).",
-      "Responda com explicações curtas e práticas.",
-      "Quando sugerir código, use Pawn correto e com comentários curtos.",
-      "Se faltar contexto, faça 1-2 perguntas objetivas antes de supor.",
-      "Não invente includes/funções: se não tiver certeza, diga como verificar."
-    ].join(" ");
-
-    // Converte history (role/content) para um input simples
-    const compactHistory = history
-      .filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-      .slice(-10);
-
-    const input = [
-      { role: "system", content: system },
-      ...compactHistory.map(m => ({ role: m.role, content: m.content })),
-      { role: "user", content: message }
-    ];
-
-    // Responses API (oficial): POST https://api.openai.com/v1/responses :contentReference[oaicite:2]{index=2}
-    const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
-
-    const r = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        input
-      }),
-    });
-
-    if (!r.ok) {
-      const txt = await r.text().catch(()=> "");
-      return {
-        statusCode: 502,
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ error: `Falha na IA (${r.status}).`, details: txt.slice(0, 800) })
-      };
-    }
-
-    const respJson = await r.json();
-    const answer = extractTextFromResponsesAPI(respJson) || "Não consegui gerar uma resposta. Tente de novo com mais detalhes.";
-
-    return {
-      statusCode: 200,
-      headers: { "Content-Type":"application/json", "Cache-Control":"no-store" },
-      body: JSON.stringify({ answer })
-    };
-
+    payload = JSON.parse(event.body || "{}");
   } catch {
-    return {
-      statusCode: 500,
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ error: "internal_error" })
-    };
+    return json(null, 400, { error: "JSON inválido." });
   }
-};
+
+  const message = (payload.message || "").trim();
+  if (!message) return json(null, 400, { error: "Mensagem vazia." });
+
+  // 1) regras
+  const ruled = ruleBasedAnswer(message);
+  if (ruled) return json(null, 200, { answer: ruled.answer });
+
+  // 2) busca na KB
+  const hits = searchKb(message, 3);
+
+  if (!hits.length) {
+    return json(null, 200, {
+      answer:
+`Não achei isso na minha base ainda. 😅  
+Me manda:
+- qual seu objetivo (ex: "criar comando /cv", "salvar level", "corrigir warning 219")
+- e se tiver, o erro do compilador + trecho do código
+
+Aí eu te respondo e depois você pode adicionar essa resposta na KB pra ficar automático.`
+    });
+  }
+
+  // 3) monta resposta
+  const best = hits[0];
+  let answer = `**${best.title}**\n\n${best.answer}`;
+
+  if (hits.length > 1) {
+    answer += `\n\nOutros tópicos relacionados:\n`;
+    for (let i = 1; i < hits.length; i++) {
+      answer += `- ${hits[i].title}\n`;
+    }
+  }
+
+  return json(null, 200, { answer });
+}

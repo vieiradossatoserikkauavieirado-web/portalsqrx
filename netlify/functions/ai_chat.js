@@ -387,11 +387,23 @@ Quer um exemplo? Diga: "comando /setlevel com sscanf".`
     q.includes("como faz") || q.includes("como criar") || q.includes("criar sistema") || q.includes("fazer sistema") || q.includes("sistema de");
 
   if (wantsSystem && (q.includes("emprego") || q.includes("job"))) {
-    const storage = wantsMysql(q) ? "mysql" : (wantsDini(q) ? "dini" : "dof2");
-    const withCheckpoint = !(q.includes("sem checkpoint") || q.includes("so comando") || q.includes("só comando"));
-    // se citou fazendeiro ou qualquer job, gera fazendeiro como base (mais pedido)
-    return { answer: templateJobFarmer({ storage, commandSystem: "zcmd", withCheckpoint }) };
+  const storage = wantsMysql(q) ? "mysql" : (wantsDini(q) ? "dini" : "dof2");
+  const withCheckpoint = true;
+
+  const template = templateJobFarmer({ storage, commandSystem: "zcmd", withCheckpoint });
+
+  const hits = searchKb("sistema emprego fazendeiro", 2);
+  let extra = "";
+
+  if (hits.length) {
+    extra = "\n\n📚 Material de Estudo:\n";
+    hits.forEach(h => {
+      extra += `\n**${h.title}**\n${h.answer}\n`;
+    });
   }
+
+  return { answer: template + extra };
+}
 
   if (wantsSystem && (q.includes("login") || q.includes("registro") || q.includes("registrar") || q.includes("conta"))) {
     const storage = wantsMysql(q) ? "mysql" : (wantsDini(q) ? "dini" : "dof2");

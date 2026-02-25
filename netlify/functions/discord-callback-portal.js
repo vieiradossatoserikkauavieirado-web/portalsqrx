@@ -45,7 +45,17 @@ exports.handler = async (event) => {
     const code = url.searchParams.get("code");
     const state = url.searchParams.get("state"); // 👈 agora usamos state
 
-    const redirectTo = state || "/index.html";
+    let redirectTo = state || "/index.html";
+
+    // garante que vai ser caminho absoluto (evita /functions/index.html)
+    if (!redirectTo.startsWith("/") && !redirectTo.startsWith("http")) {
+    redirectTo = "/" + redirectTo;
+    }
+
+    // opcional: segurança (evita open redirect)
+    if (redirectTo.startsWith("http")) {
+    redirectTo = "/index.html";
+    }
 
     if (!code) {
       return {

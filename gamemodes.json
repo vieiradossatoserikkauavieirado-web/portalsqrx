@@ -58,14 +58,6 @@
     "vip": false
   },
   {
-    "title": "GM BRASIL PLAY SHOX 2024",
-    "image": "https://i.imgur.com/ZfBQXL3.jpeg",
-    "link": "https://dimagratis.com/Shoxgm2024",
-    "linkText": "Download",
-    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
-    "vip": false
-  },
-  {
     "title": "GM REDE PARADISE 2024",
     "image": "https://i.imgur.com/J6dsRAc.jpeg",
     "link": "https://dimagratis.com/paradise02",
@@ -112,6 +104,15 @@
     "linkText": "Download",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": false
+  },
+  {
+    "title": "GM BRASIL PLAY SLAYER",
+    "image": "https://i.imgur.com/LXTmBBd.jpeg",
+    "link": "https://dimagratis.com/slayer01",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
   }
+
 
 ]

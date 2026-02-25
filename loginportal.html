@@ -150,7 +150,6 @@
     const params = new URLSearchParams(window.location.search);
     const next = params.get("next") || "index.html#ranking-servidores";
 
-    // redirect para sua function (já cadastrada no Discord)
     const redirectUri = "https://portalsiqueirax.com.br/.netlify/functions/discord-callback-portal";
 
     // state carrega o "next" (pra callback te mandar de volta certinho)

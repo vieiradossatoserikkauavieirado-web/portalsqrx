@@ -54,28 +54,15 @@ let KB = null;
 function loadKbOnce() {
   if (KB) return KB;
 
-  const kbDir = path.join(process.cwd(), "kb");
+  const kbDir = path.join(__dirname, "../../kb");
+
   let files = [];
   try {
     files = fs.readdirSync(kbDir).filter(f => f.endsWith(".json"));
   } catch (err) {
-    // pasta kb não existe no deploy
+    console.log("Erro ao ler pasta KB:", err);
     KB = [];
     return KB;
-  }
-
-  const items = [];
-  for (const f of files) {
-    const full = path.join(kbDir, f);
-    try {
-      const content = fs.readFileSync(full, "utf8");
-      const arr = JSON.parse(content);
-      if (Array.isArray(arr)) {
-        for (const it of arr) items.push(it);
-      }
-    } catch {
-      // ignora JSON inválido
-    }
   }
 
   KB = items.map(it => {

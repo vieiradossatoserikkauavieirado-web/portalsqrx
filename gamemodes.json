@@ -23,7 +23,7 @@
     "link": "https://dimagratis.com/shox2025",
     "linkText": "Download",
     "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
-    "vip": true
+    "vip": false
   },
   {
     "title": "GM OS CRIAS ROLEPLAY 2025!",
@@ -31,22 +31,87 @@
     "link": "https://dimagratis.online/oscriasrp2025",
     "linkText": "Download",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
-    "vip": true
+    "vip": false
   },
   {
     "title": "GM BRASIL PLAY STARK",
     "image": "https://i.imgur.com/RxyJOm6.png",
-    "link": "https://dimagratis.online/starksiqueirax",
+    "link": "https://seulink.digital/stark2k25",
     "linkText": "Download",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
-    "vip": true
+    "vip": false
   },
   {
     "title": "GM BRASIL PLAY STARS V1.0 2025",
     "image": "https://i.imgur.com/Mf59jK0.png",
-    "link": "https://dimagratis.online/bstars2025v1",
+    "link": "https://seulink.digital/stars2025",
     "linkText": "Download",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
-    "vip": true
+    "vip": false
+  },
+  {
+    "title": "GM BRASIL PLAY SHOX 2024",
+    "image": "https://i.imgur.com/ZfBQXL3.jpeg",
+    "link": "https://dimagratis.com/Shoxgm2024",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "GM BRASIL PLAY SHOX 2024",
+    "image": "https://i.imgur.com/ZfBQXL3.jpeg",
+    "link": "https://dimagratis.com/Shoxgm2024",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "GM REDE PARADISE 2024",
+    "image": "https://i.imgur.com/J6dsRAc.jpeg",
+    "link": "https://dimagratis.com/paradise02",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "GM REDE PARADOX 2024",
+    "image": "https://i.imgur.com/OzfjS40.jpeg",
+    "link": "https://dimagratis.com/rp2024",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "GM Brasil Play Siqueira",
+    "image": "https://i.imgur.com/CbFWGGf.jpeg",
+    "link": "https://dimagratis.com/Brasilplaysiqueira0",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "GM ESPECIAL DE NATAL - REDE PARADOX 2024",
+    "image": "https://i.imgur.com/M6kz6XZ.jpeg",
+    "link": "https://dimagratis.online/rpnatal23",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "GM BRASIL PLAY SHOX 2023",
+    "image": "https://i.imgur.com/N5eBYNU.jpeg",
+    "link": "https://encurtalink.online/Bps3",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
+  },
+  {
+    "title": "GM SIQUEIRA ROLEPLAY",
+    "image": "https://i.imgur.com/Mmmjb3Y.jpeg",
+    "link": "https://seulink.net/sqr0",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
   }
+
 ]

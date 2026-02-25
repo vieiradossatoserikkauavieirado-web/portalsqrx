@@ -71,8 +71,11 @@ function loadKbOnce() {
     try {
       const content = fs.readFileSync(full, "utf8");
       const arr = JSON.parse(content);
+
       if (Array.isArray(arr)) {
         for (const it of arr) items.push(it);
+      } else {
+        console.log("KB arquivo não é array:", f);
       }
     } catch (err) {
       console.log("KB JSON inválido:", f, err?.message || err);
@@ -84,10 +87,9 @@ function loadKbOnce() {
     return { ...it, _tokens: tokenize(text) };
   });
 
-  console.log("KB carregada. Arquivos:", files.length, "Itens:", KB.length);
+  console.log("KB carregada. json_files:", files.length, "items:", items.length, "KB:", KB.length);
   return KB;
 }
-
 function searchKb(question, topK = 3) {
   const kb = loadKbOnce();
   const qTokens = tokenize(question);

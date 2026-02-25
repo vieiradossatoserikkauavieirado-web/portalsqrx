@@ -336,6 +336,19 @@ body::before{
       </button>
     </div>
 
+    <!-- ✅ Assistente SAMP IA (PREMIUM) -->
+  <div class="card card-premium">
+    <div class="premium-badge">PREMIUM</div>
+    <h2>Assistente SAMP IA</h2>
+    <p>
+      Um assistente para ajudar <b>iniciantes</b> a programar no <b>SA-MP</b>.<br>
+      Dicas, exemplos e suporte guiado para você evoluir mais rápido.
+    </p>
+    <button class="cta cta-premium" id="goIA">
+      ACESSAR IA
+    </button>
+  </div>
+
   </div>
 </div>
 
@@ -354,6 +367,7 @@ try {
     window.location.href = "loginpainel.html"
     throw new Error("no-session")
   }
+  
 
   me = await r.json()
 } catch {
@@ -387,6 +401,9 @@ document.getElementById('goPremium')?.addEventListener('click', () => {
 // comprar vip (troque pro seu link real)
 document.getElementById('goVIP')?.addEventListener('click', () => {
   window.location.href = 'planos.html'
+})
+document.getElementById('goIA')?.addEventListener('click', () => {
+  window.location.href = 'ia.html'
 })
 
 // logout painel

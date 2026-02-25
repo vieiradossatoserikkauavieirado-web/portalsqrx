@@ -143,32 +143,24 @@
     </div>
   </div>
 
-  <script>
-    // ✅ coloque seu client id aqui:
-    const DISCORD_CLIENT_ID = "1179849768638361722";
+<script>
+  const DISCORD_CLIENT_ID = "1179849768638361722";
 
-    const params = new URLSearchParams(window.location.search);
-    const next = params.get("next") || "index.html#ranking-servidores";
+  const redirectUri = "https://portalsiqueirax.com.br/.netlify/functions/discord-callback-portal";
 
-    const redirectUri = "https://portalsiqueirax.com.br/.netlify/functions/discord-callback-portal";
+  const next = "index.html#ranking-servidores";
 
-    // state carrega o "next" (pra callback te mandar de volta certinho)
-    const authUrl =
+  const authUrl =
     "https://discord.com/api/oauth2/authorize" +
-    `?client_id=${encodeURIComponent(DISCORD_CLIENT_ID)}` +
-    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-    `&response_type=code` +
-    `&scope=identify` +
-    `&state=${encodeURIComponent(next)}`;
+    "?client_id=" + DISCORD_CLIENT_ID +
+    "&redirect_uri=" + encodeURIComponent(redirectUri) +
+    "&response_type=code" +
+    "&scope=identify" +
+    "&state=" + encodeURIComponent(next);
 
-    document.getElementById("loginBtn").href = authUrl;
+  document.getElementById("loginBtn").href = authUrl;
 
-    const err = params.get("err");
-    if (err) {
-      const box = document.getElementById("errorBox");
-      box.style.display = "block";
-      box.textContent = "Erro ao fazer login com Discord. Tente novamente.";
-    }
-  </script>
+  console.log("AUTH URL:", authUrl);
+</script>
 </body>
 </html>

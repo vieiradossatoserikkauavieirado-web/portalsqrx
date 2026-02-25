@@ -41,11 +41,17 @@ async function getDiscordUser(accessToken) {
 exports.handler = async (event) => {
   try {
     const url = new URL(event.rawUrl);
+
     const code = url.searchParams.get("code");
-    const next = url.searchParams.get("next") || "/index.html";
+    const state = url.searchParams.get("state"); // 👈 agora usamos state
+
+    const redirectTo = state || "/index.html";
 
     if (!code) {
-      return { statusCode: 302, headers: { Location: "/loginportal.html?err=loginfail" } };
+      return {
+        statusCode: 302,
+        headers: { Location: "/loginportal.html?err=loginfail" },
+      };
     }
 
     const tokenData = await exchangeCodeForToken(code);
@@ -64,10 +70,11 @@ exports.handler = async (event) => {
       statusCode: 302,
       headers: {
         "Set-Cookie": setCookie(token),
-        Location: next,
+        Location: redirectTo,
       },
     };
-  } catch {
+
+  } catch (err) {
     return {
       statusCode: 302,
       headers: { Location: "/loginportal.html?err=loginfail" },

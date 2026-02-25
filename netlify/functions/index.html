@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal SiqueiraX</title>
+
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --red-main:#ff002b;
+      --red-dark:#b0001c;
+      --glass:rgba(15,15,15,.74);
+      --glass-2:rgba(18,18,18,.58);
+      --border:rgba(255,255,255,.10);
+      --radius:14px;
+      --radius-lg:18px;
+      --transition:.28s ease;
+      --shadow:0 18px 45px rgba(0,0,0,.45);
+      --shadow-soft:0 10px 26px rgba(0,0,0,.32);
+      --text-dim:rgba(255,255,255,.78);
+      --max:1040px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+
+    body{
+      font-family:'Inter',sans-serif;
+      background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
+      color:#fff;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.64);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      z-index:-1;
+    }
+
+    /* ===== LAYOUT BASE ===== */
+    .wrap{
+      width:min(var(--max), 100%);
+      margin:0 auto;
+      padding:0 1rem;
+    }
+
+    /* ===== TOPO ===== */
+    header{
+      text-align:center;
+      padding:3.2rem 1rem 1.6rem;
+    }
+
+    /* Logo arredondado (ícone do site) */
+    .site-logo{
+      width:64px;
+      height:64px;
+      border-radius:16px; /* "meio arredondado" */
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 14px 34px rgba(0,0,0,.38);
+      display:block;
+      margin:0 auto .9rem;
+      object-fit:cover;
+      background:rgba(0,0,0,.25);
+    }
+
+    header h1{
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(2.6rem, 5.2vw, 4.7rem);
+      letter-spacing:3px;
+      background:linear-gradient(90deg,#ff002b,#ff4d4d);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:0 12px 40px rgba(255,0,43,.14);
+    }
+
+    header p{
+      margin-top:.55rem;
+      color:var(--text-dim);
+      font-weight:500;
+      font-size:clamp(.95rem, 1.1vw, 1.05rem);
+    }
+
+    /* ===== STATS ===== */
+    .stats{
+      margin:1.4rem auto 1.8rem;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+      gap:1rem;
+    }
+
+    .stat{
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:1rem 1.1rem;
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+      box-shadow:var(--shadow-soft);
+      min-height:64px;
+    }
+
+    .stat i{
+      color:var(--red-main);
+      font-size:1.1rem;
+      width:28px;
+      display:grid;
+      place-items:center;
+      opacity:.95;
+    }
+
+    .stat span{
+      color:var(--text-dim);
+      font-weight:600;
+      font-size:.98rem;
+      line-height:1.2;
+    }
+
+    .stat strong{
+      color:#ff6b6b;
+      font-weight:800;
+    }
+
+    /* ===== MENUS ===== */
+    .side-menu{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      display:flex;
+      flex-direction:column;
+      gap:.85rem;
+      z-index:10;
+    }
+
+    .side-left{left:1rem}
+    .side-right{right:1rem}
+
+    .menu-btn{
+      background:linear-gradient(135deg,var(--red-main),var(--red-dark));
+      color:#fff;
+      padding:.95rem 1.15rem;
+      border-radius:var(--radius);
+      font-weight:700;
+      text-decoration:none;
+      display:flex;
+      align-items:center;
+      gap:.65rem;
+      transition:transform var(--transition), filter var(--transition), box-shadow var(--transition);
+      box-shadow:0 10px 24px rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      white-space:nowrap;
+      user-select:none;
+    }
+
+    .menu-btn i{opacity:.95}
+
+    .menu-btn:hover{
+      transform:translateY(-2px) scale(1.03);
+      filter:saturate(1.05);
+      box-shadow:0 14px 34px rgba(0,0,0,.38);
+    }
+
+    .menu-btn:active{transform:translateY(0) scale(.99)}
+
+    .menu-btn:focus-visible{
+      outline:3px solid rgba(255,0,43,.35);
+      outline-offset:3px;
+    }
+
+    /* ===== BOTÃO PRINCIPAL ===== */
+    .menu-btn.primary{
+      padding:1.05rem 1.25rem;
+      position:relative;
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:
+        0 16px 38px rgba(0,0,0,.48),
+        0 0 0 1px rgba(255,0,43,.18) inset;
+      transform-origin:center;
+    }
+
+    .menu-btn.primary::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius:calc(var(--radius) + 2px);
+      background:linear-gradient(120deg, rgba(255,0,43,.45), rgba(255,255,255,.06), rgba(176,0,28,.35));
+      filter:blur(10px);
+      opacity:.7;
+      z-index:-1;
+      transition:opacity var(--transition);
+    }
+
+    .menu-btn.primary:hover::before{opacity:1}
+
+    .menu-btn.primary .tag{
+      margin-left:auto;
+      font-size:.72rem;
+      font-weight:800;
+      padding:.2rem .5rem;
+      border-radius:999px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.14);
+      color:#fff;
+    }
+    /* ===== RANKING HOME ===== */
+  .ranking{
+    margin: .6rem auto 2.2rem;
+    background: linear-gradient(180deg,var(--glass),var(--glass-2));
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow-soft);
+    padding: 1.2rem 1.1rem 1.05rem;
+  }
+
+  .ranking-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+    margin-bottom:1rem;
+  }
+
+  .ranking h2{
+    font-family:'Orbitron',sans-serif;
+    letter-spacing:1px;
+    font-size:1.15rem;
+    color:#ff4d4d;
+  }
+
+  .ranking p{
+    margin-top:.35rem;
+    color: var(--text-dim);
+    font-weight:600;
+    font-size:.95rem;
+  }
+
+  .ranking-actions{
+    display:flex;
+    gap:.65rem;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:flex-end;
+  }
+
+  .menu-btn.mini{
+    padding:.75rem .95rem;
+    border-radius: 14px;
+    font-weight:800;
+  }
+
+  .menu-btn.primary.mini{
+    padding:.78rem 1.05rem;
+  }
+
+  .ranking-grid{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .85rem;
+  }
+
+  @media(max-width: 900px){
+    .ranking-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media(max-width: 520px){
+    .ranking-grid{ grid-template-columns: 1fr; }
+    .ranking-actions{ width:100%; justify-content:stretch; }
+    .ranking-actions .menu-btn{ flex:1 1 auto; justify-content:center; }
+  }
+
+  .rank-card{
+    position:relative;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 18px;
+    padding: .95rem .95rem .85rem;
+    background: rgba(0,0,0,.22);
+    box-shadow: 0 10px 26px rgba(0,0,0,.28);
+    overflow:hidden;
+    min-height: 120px;
+  }
+
+  .rank-card:hover{
+    transform: translateY(-1px);
+    transition: transform var(--transition);
+  }
+
+  .rank-top{
+    display:flex;
+    align-items:center;
+    gap:.75rem;
+    margin-bottom:.55rem;
+  }
+
+  .rank-logo{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    object-fit:cover;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.25);
+    flex:0 0 auto;
+  }
+
+  .rank-title{
+    display:flex;
+    flex-direction:column;
+    gap:.15rem;
+    min-width:0;
+  }
+
+  .rank-title strong{
+    font-weight:900;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .rank-title small{
+    color: var(--text-dim);
+    font-weight:700;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+    font-size:.72rem;
+    font-weight:900;
+    padding:.18rem .55rem;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.28);
+  }
+
+  .badge.premium{
+    background: rgba(255,0,43,.16);
+    border-color: rgba(255,0,43,.25);
+    color:#fff;
+  }
+
+  .badge.pos{
+    margin-left:auto;
+    color:#fff;
+    opacity:.92;
+  }
+
+  .rank-meta{
+    display:flex;
+    flex-direction:column;
+    gap:.35rem;
+    color: var(--text-dim);
+    font-weight:700;
+    font-size:.92rem;
+  }
+
+  .rank-meta .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.6rem;
+  }
+
+  .rank-actions{
+    margin-top:.65rem;
+    display:flex;
+    gap:.55rem;
+  }
+
+  .rank-actions a{
+    flex:1 1 auto;
+    text-decoration:none;
+    text-align:center;
+    padding:.6rem .7rem;
+    border-radius:14px;
+    font-weight:900;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.26);
+    color:#fff;
+  }
+
+  .rank-actions a:hover{
+    filter:saturate(1.05);
+  }
+
+  .rank-actions a.primary{
+    background: linear-gradient(135deg,var(--red-main),var(--red-dark));
+  }
+
+  .rank-card.cta{
+    border-color: rgba(255,0,43,.22);
+    background: radial-gradient(120% 120% at 0% 0%, rgba(255,0,43,.14), rgba(0,0,0,.24));
+  }
+
+  .cta-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    margin-bottom:.55rem;
+  }
+
+  .cta p{
+    color: var(--text-dim);
+    font-weight:700;
+    margin:.2rem 0 .8rem;
+  }
+
+  .cta-btn{
+    width:100%;
+    padding:.7rem .8rem;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.12);
+    background: linear-gradient(135deg,var(--red-main),var(--red-dark));
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.55rem;
+  }
+
+  .cta-note{
+    display:block;
+    margin-top:.55rem;
+    color: rgba(255,255,255,.70);
+    font-weight:700;
+    font-size:.82rem;
+  }
+
+  /* Skeleton */
+  .rank-card.skeleton{
+    background: rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.08);
+    min-height: 120px;
+    position:relative;
+  }
+  .rank-card.skeleton::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.10), rgba(255,255,255,.03));
+    transform: translateX(-100%);
+    animation: shimmer 1.2s infinite;
+  }
+  @keyframes shimmer{
+    100%{ transform: translateX(100%); }
+  }
+
+    /* ===== MOBILE: menus viram grid bonito ===== */
+    @media(max-width:768px){
+      header{padding:2.4rem 1rem 1rem}
+
+      .side-menu{
+        position:static;
+        transform:none;
+        flex-direction:row;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:.75rem;
+        padding:1.1rem 1rem 0;
+      }
+
+      .menu-btn{
+        flex:1 1 calc(50% - .75rem);
+        justify-content:center;
+        text-align:center;
+      }
+
+      .menu-btn.primary{
+        flex:1 1 100%;
+        order:-1; /* coloca ele em primeiro no mobile */
+      }
+    }
+
+    /* ===== MODAIS ===== */
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.75);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:200;
+      padding:1rem;
+    }
+
+    .modal-content{
+      width:min(560px, 100%);
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border:1px solid rgba(255,255,255,.12);
+      padding:1.55rem 1.4rem 1.2rem;
+      border-radius:22px;
+      box-shadow:var(--shadow);
+    }
+
+    .modal-content h2{
+      text-align:center;
+      color:#ff4d4d;
+      margin-bottom:.75rem;
+      font-family:'Orbitron',sans-serif;
+      letter-spacing:1px;
+      font-size:1.2rem;
+    }
+
+    .modal-content ul{
+      list-style:none;
+      line-height:1.8;
+      font-size:.95rem;
+      color:var(--text-dim);
+      padding:.4rem .1rem 0;
+    }
+
+    .modal-content li{
+      padding:.25rem 0;
+      display:flex;
+      gap:.55rem;
+      align-items:flex-start;
+    }
+
+    .modal-content .btn-row{
+      display:flex;
+      gap:.75rem;
+      margin-top:1.1rem;
+      flex-wrap:wrap;
+    }
+
+    .modal-content button,
+    .modal-content a.action{
+      width:100%;
+      padding:.8rem;
+      border:none;
+      border-radius:14px;
+      background:linear-gradient(135deg,var(--red-main),var(--red-dark));
+      color:#fff;
+      cursor:pointer;
+      font-weight:800;
+      transition:transform var(--transition), filter var(--transition);
+      border:1px solid rgba(255,255,255,.12);
+      text-decoration:none;
+      text-align:center;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:.6rem;
+    }
+
+    .modal-content button:hover,
+    .modal-content a.action:hover{transform:translateY(-1px); filter:saturate(1.05)}
+    .modal-content button:active,
+    .modal-content a.action:active{transform:translateY(0)}
+
+    /* ===== FOOTER ===== */
+    footer{
+      margin-top:auto;
+      text-align:center;
+      padding:1.2rem 1rem 1.35rem;
+      opacity:.65;
+      font-size:.9rem;
+      color:var(--text-dim);
+    }
+
+    /* Acessibilidade: reduzir animações */
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; scroll-behavior:auto}
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="wrap">
+    
+    <h1>Portal SiqueiraX</h1>
+    <p>Maior central de gamemodes do GTA SA:MP</p>
+  </header>
+
+  <main class="wrap" aria-label="Conteúdo principal">
+    <section class="stats" aria-label="Estatísticas">
+
+      <div class="ranking-foot" id="rankingFoot" hidden>
+        <span class="foot-muted">Atualiza automaticamente.</span>
+      </div>
+    </section>
+      <div class="stat" id="discordStats" role="status" aria-live="polite">
+        <i class="fab fa-discord"></i>
+        <span>Carregando Discord...</span>
+      </div>
+
+      <div class="stat" id="tempo-online" role="status" aria-live="polite">
+        <i class="fas fa-clock"></i>
+        <span>Online há <strong>...</strong></span>
+      </div>
+    </section>
+
+         <!-- ===== RANKING (HOME) ===== -->
+    <section class="ranking" id="ranking-servidores" aria-label="Ranking de servidores">
+      <div class="ranking-head">
+        <div>
+          <h2>🏆 Ranking de Servidores</h2>
+          <p>Top servidores em destaque + ranking da semana.</p>
+        </div>
+
+        <div class="ranking-actions">
+          <a class="menu-btn primary mini" id="btnCadastrarServidor" href="#">
+            <i class="fas fa-plus"></i> Cadastrar Servidor
+            <span class="tag">NOVO</span>
+          </a>
+
+          <a class="menu-btn mini" id="btnVerRanking" href="servidores.html">
+            <i class="fas fa-list"></i> Ver lista completa
+          </a>
+        </div>
+      </div>
+
+      <div class="ranking-grid" id="rankingGrid" aria-live="polite">
+        <!-- Skeleton / placeholder -->
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+
+        <!-- CTA card -->
+        <div class="rank-card cta" id="ctaDestaque">
+          <div class="cta-top">
+            <span class="badge premium">PREMIUM</span>
+            <strong>Destaque seu servidor</strong>
+          </div>
+          <p>Fique no topo e apareça na página inicial.</p>
+          <button class="cta-btn" type="button" id="btnDestaqueAgora">
+            <i class="fas fa-bolt"></i> Quero destaque
+          </button>
+          <small class="cta-note">Planos semanais e mensais acessíveis.</small>
+        </div>
+      </div>
+  </main>
+
+  <!-- MENU ESQUERDO -->
+  <nav class="side-menu side-left" aria-label="Menu esquerdo">
+    <a href="registro.html" class="menu-btn">
+      <i class="fa fa-registered"></i> Registro
+    </a>
+
+    <a href="#" class="menu-btn" id="gmBtn">
+    <i class="fas fa-cart-shopping"></i> Comprar GM
+  </a>
+
+
+    <!-- PRINCIPAL -->
+    <a href="loginpainel.html" class="menu-btn primary" aria-label="Painel (principal)">
+      <i class="fas fa-gamepad"></i> Painel
+      <span class="tag">PRINCIPAL</span>
+    </a>
+
+    <!-- DESBAN -->
+    <a href="desban.html" class="menu-btn" id="desbanBtn">
+      <i class="fas fa-unlock"></i> Desban
+    </a>
+
+    <a href="servidores.html" class="menu-btn">
+      <i class="fas fa-server"></i> Servidores
+    </a>
+  </nav>
+
+  <!-- MENU DIREITO -->
+  <nav class="side-menu side-right" aria-label="Menu direito">
+    <a href="menuvip.html" class="menu-btn" id="vipBtn">
+      <i class="fas fa-crown"></i> Benefícios VIP
+    </a>
+
+    <!-- REMOVIDO: Profissionais -->
+
+    <a href="https://discord.gg/HSd3YcWryb" target="_blank" rel="noopener noreferrer" class="menu-btn">
+      <i class="fab fa-discord"></i> Discord
+    </a>
+  </nav>
+
+
+  <!-- MODAL COMPRAR GM -->
+<div class="modal" id="gmModal" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-label="Comprar GM">
+    <h2>🛒 Comprar GM</h2>
+    <ul>
+      <li>✅ <span>Quer comprar uma GM disponível?</span></li>
+      <li>📲 <span>Fale no WhatsApp e eu te envio as opções e valores.</span></li>
+      <li>⚡ <span>Atendimento rápido e direto.</span></li>
+    </ul>
+
+    <div class="btn-row">
+      <a class="action" id="whatsGM" target="_blank" rel="noopener noreferrer" href="#">
+        <i class="fab fa-whatsapp"></i> Chamar no WhatsApp
+      </a>
+      <button type="button" id="closeGM">Fechar</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- MODAL VIP -->
+  <div class="modal" id="vipModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-label="Benefícios VIP">
+      <h2>✨ Benefícios VIP ✨</h2>
+      <ul>
+        <li>📢 <span>Marcação @everyone no canal de divulgação</span></li>
+        <li>🌐 <span>Acesso VIP ao site com todas as GMs</span></li>
+        <li>⏳ <span>GMs liberadas 1–2 meses antes</span></li>
+        <li>🚀 <span>Acesso antecipado com link direto</span></li>
+        <li>🏷️ <span>Tag exclusiva no Discord</span></li>
+        <li>🛠️ <span>Suporte priorizado</span></li>
+      </ul>
+      <button type="button" id="closeVip">Fechar</button>
+    </div>
+  </div>
+
+  <!-- MODAL DESBAN -->
+  <div class="modal" id="desbanModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-label="Desban SiqueiraX">
+      <h2>Banimento SiqueiraX Community</h2>
+      <ul>
+        <li>🚫 <span>Usuários que foram banidos da comunidade</span></li>
+        <li>💰 <span>Valor desban: <strong>R$ 50,00</strong></span></li>
+        <li>📲 <span>Caso tenha interesse, entre em contato via WhatsApp com SiqueiraX</span></li>
+      </ul>
+
+      <div class="btn-row">
+        <a class="action" id="whatsDesban" target="_blank" rel="noopener noreferrer" href="#">
+          <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+        </a>
+        <button type="button" id="closeDesban">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © SiqueiraX
+  </footer>
+
+  <script>
+    async function loadDiscord() {
+      const el = document.querySelector("#discordStats span");
+      try {
+        const r = await fetch("https://discord.com/api/v9/invites/HSd3YcWryb?with_counts=true", { cache: "no-store" });
+        const d = await r.json();
+        el.innerHTML = `Membros: <strong>${d.approximate_member_count ?? "—"}</strong> • Online: <strong>${d.approximate_presence_count ?? "—"}</strong>`;
+      } catch {
+        el.textContent = "Erro Discord";
+      }
+    }
+
+    // Conta tempo online desde 11/05/2025
+    function diffMonthsDays(fromDate, toDate){
+      // Normaliza horários pra evitar bug de fuso/horário
+      const start = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+      const end = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+
+      if (end < start) return { months: 0, days: 0 };
+
+      let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+      let anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
+
+      // Se passou do final do mês (ex: 31), ajusta o anchor
+      if (anchor > end){
+        months--;
+        anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
+      }
+
+      // Dias restantes
+      const msDay = 24 * 60 * 60 * 1000;
+      const days = Math.max(0, Math.round((end - anchor) / msDay));
+
+      return { months, days };
+    }
+
+    function tempoOnline() {
+      const createdAt = new Date(2025, 4, 11); // 11/05/2025 (mês 4 = Maio)
+      const now = new Date();
+      const { months, days } = diffMonthsDays(createdAt, now);
+
+      const mTxt = months === 1 ? "mês" : "meses";
+      const dTxt = days === 1 ? "dia" : "dias";
+
+      document.querySelector("#tempo-online strong").textContent = `${months} ${mTxt} ${days} ${dTxt}`;
+    }
+
+    // ===== Modal VIP (mais robusto) =====
+    const vipModal = document.getElementById("vipModal");
+    const vipBtn = document.getElementById("vipBtn");
+    const closeVip = document.getElementById("closeVip");
+
+    function openVip(e){
+      if (e) e.preventDefault();
+      vipModal.style.display = "flex";
+      vipModal.setAttribute("aria-hidden", "false");
+      closeVip.focus();
+    }
+
+    function closeVipModal(){
+      vipModal.style.display = "none";
+      vipModal.setAttribute("aria-hidden", "true");
+      vipBtn.focus();
+    }
+
+    vipBtn.addEventListener("click", openVip);
+    closeVip.addEventListener("click", closeVipModal);
+
+    vipModal.addEventListener("click", (event) => {
+      if (event.target === vipModal) closeVipModal();
+    });
+
+    // ===== Modal DESBAN =====
+    const desbanModal = document.getElementById("desbanModal");
+    const desbanBtn = document.getElementById("desbanBtn");
+    const closeDesban = document.getElementById("closeDesban");
+    const whatsDesban = document.getElementById("whatsDesban");
+
+    function setupWhats(){
+      const phone = "558296963727"; // 55 + DDD + número
+      const msg = "Ola tenho interesse no desban do site";
+      const link = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      whatsDesban.href = link;
+    }
+
+    function openDesban(e){
+      if (e) e.preventDefault();
+      desbanModal.style.display = "flex";
+      desbanModal.setAttribute("aria-hidden", "false");
+      closeDesban.focus();
+    }
+
+    function closeDesbanModal(){
+      desbanModal.style.display = "none";
+      desbanModal.setAttribute("aria-hidden", "true");
+      desbanBtn.focus();
+    }
+
+    desbanBtn.addEventListener("click", openDesban);
+    closeDesban.addEventListener("click", closeDesbanModal);
+
+    desbanModal.addEventListener("click", (event) => {
+      if (event.target === desbanModal) closeDesbanModal();
+    });
+
+    // ===== Modal COMPRAR GM =====
+    const gmModal = document.getElementById("gmModal");
+    const gmBtn = document.getElementById("gmBtn");
+    const closeGM = document.getElementById("closeGM");
+    const whatsGM = document.getElementById("whatsGM");
+
+    function setupWhatsGM(){
+      const phone = "558296963727"; // 55 + DDD + número (8296963727)
+      const msg = "Olá! Tem GM disponível à venda? Vim pelo site.";
+      const link = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      whatsGM.href = link;
+    }
+
+    function openGM(e){
+      if (e) e.preventDefault();
+      gmModal.style.display = "flex";
+      gmModal.setAttribute("aria-hidden", "false");
+      closeGM.focus();
+    }
+
+    function closeGMModal(){
+      gmModal.style.display = "none";
+      gmModal.setAttribute("aria-hidden", "true");
+      gmBtn.focus();
+    }
+
+    gmBtn.addEventListener("click", openGM);
+    closeGM.addEventListener("click", closeGMModal);
+
+    gmModal.addEventListener("click", (event) => {
+      if (event.target === gmModal) closeGMModal();
+    });
+
+
+    // ESC fecha qualquer modal aberto
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (vipModal.style.display === "flex") closeVipModal();
+        if (desbanModal.style.display === "flex") closeDesbanModal();
+      }
+    });
+
+    function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  async function isLoggedPortal(){
+    try{
+      // reaproveita sua function de sessão (depois você cria me_portal ou reaproveita a mesma)
+      const r = await fetch("/.netlify/functions/me_portal", {
+        credentials: "include",
+        cache: "no-store"
+      });
+      return r.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  function setupRankingButtons(){
+    const btnCad = document.getElementById("btnCadastrarServidor");
+    const btnDestaque = document.getElementById("btnDestaqueAgora");
+
+    async function goCadastro(mode){
+      const logged = await isLoggedPortal();
+      const next = encodeURIComponent("index.html#ranking-servidores");
+      if (!logged){
+        window.location.href = `loginportal.html?next=${next}${mode ? `&mode=${encodeURIComponent(mode)}` : ""}`;
+        return;
+      }
+      // logado: manda pra página de servidores/cadastro que você já tem
+      // (ajuste aqui pra sua URL real do cadastro)
+      window.location.href = `servidores.html#cadastrar${mode ? `?mode=${encodeURIComponent(mode)}` : ""}`;
+    }
+
+    btnCad?.addEventListener("click", (e)=>{ e.preventDefault(); goCadastro("free"); });
+    btnDestaque?.addEventListener("click", ()=> goCadastro("premium"));
+  }
+
+  function renderRankingCards(items){
+    const grid = document.getElementById("rankingGrid");
+    if (!grid) return;
+
+    // remove skeletons (mantém o CTA no final)
+    const cta = document.getElementById("ctaDestaque");
+    grid.innerHTML = "";
+    if (Array.isArray(items) && items.length){
+      for (const it of items.slice(0,5)){
+        const name = escapeHtml(it.name);
+        const ip = escapeHtml(it.ip);
+        const logoUrl = escapeHtml(it.logoUrl || "https://i.imgur.com/eKjFtd1.png");
+        const discord = escapeHtml(it.discord || "");
+        const isPremium = !!it.isPremium;
+        const pos = escapeHtml(it.position ?? "");
+
+        const linkJoin = discord || "#";
+        const premiumBadge = isPremium ? `<span class="badge premium">PREMIUM</span>` : `<span class="badge">RANK</span>`;
+
+        const card = document.createElement("div");
+        card.className = "rank-card";
+        card.innerHTML = `
+          <div class="rank-top">
+            <img class="rank-logo" src="${logoUrl}" alt="Logo do servidor" loading="lazy" referrerpolicy="no-referrer" />
+            <div class="rank-title">
+              <strong title="${name}">${name}</strong>
+              <small>${ip}</small>
+            </div>
+            <span class="badge pos">#${pos}</span>
+          </div>
+
+          <div class="rank-meta">
+            <div class="row">
+              <span>${premiumBadge}</span>
+              <span>${it.online != null ? `Online: <strong>${escapeHtml(it.online)}</strong>` : ""}</span>
+            </div>
+          </div>
+
+          <div class="rank-actions">
+            <a class="primary" href="${linkJoin}" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-discord"></i> Entrar
+            </a>
+            <a href="servidores.html">
+              <i class="fas fa-arrow-right"></i> Ver
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+    } else {
+      const empty = document.createElement("div");
+      empty.className = "rank-card";
+      empty.innerHTML = `
+        <div class="rank-title">
+          <strong>Nenhum servidor no ranking ainda</strong>
+          <small>Seja o primeiro a cadastrar e aparecer aqui.</small>
+        </div>
+        <div class="rank-actions" style="margin-top:.9rem">
+          <a class="primary" href="#" id="btnPrimeiroCadastro"><i class="fas fa-plus"></i> Cadastrar</a>
+          <a href="servidores.html"><i class="fas fa-list"></i> Lista</a>
+        </div>
+      `;
+      grid.appendChild(empty);
+
+      const b = empty.querySelector("#btnPrimeiroCadastro");
+      b?.addEventListener("click", async (e)=>{
+        e.preventDefault();
+        const logged = await isLoggedPortal();
+        const next = encodeURIComponent("index.html#ranking-servidores");
+        if (!logged) window.location.href = `loginportal.html?next=${next}&mode=free`;
+        else window.location.href = "servidores.html#cadastrar";
+      });
+    }
+
+    // recoloca CTA
+    if (cta) grid.appendChild(cta);
+
+    const foot = document.getElementById("rankingFoot");
+    if (foot) foot.hidden = false;
+  }
+
+  async function loadRankingHome(){
+    try{
+      const r = await fetch("/.netlify/functions/server_list?limit=5", {
+        cache: "no-store"
+      });
+      if (!r.ok) throw new Error("server_list_failed");
+      const data = await r.json();
+      // esperado: { items: [...] }
+      renderRankingCards(data.items || []);
+    } catch (e){
+      // fallback: remove skeleton e mostra erro leve
+      renderRankingCards([]);
+    }
+  }
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+    setupWhats();
+    setupWhatsGM();
+    loadDiscord();
+    tempoOnline();
+    setInterval(tempoOnline, 60 * 60 * 1000);
+    
+  });
+  document.addEventListener("DOMContentLoaded", () => {
+  setupWhats();
+  setupWhatsGM();
+  loadDiscord();
+  tempoOnline();
+  setInterval(tempoOnline, 60 * 60 * 1000);
+
+  setupRankingButtons();
+  loadRankingHome();
+});
+
+
+
+  </script>
+
+</body>
+</html>

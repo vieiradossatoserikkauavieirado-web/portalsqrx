@@ -1,0 +1,14 @@
+[
+  {
+    "id": "sistema_emprego_conceito",
+    "title": "Como funciona um sistema de emprego no SA-MP",
+    "tags": ["sistema emprego", "job", "emprego", "iniciante"],
+    "answer": "Um sistema de emprego normalmente funciona assim:\n\n1) O jogador pega o emprego (/emprego ou pickup)\n2) O jogador executa uma tarefa (checkpoint, comando, coleta)\n3) O servidor valida (tem job? cooldown ativo?)\n4) O jogador recebe pagamento\n5) Os dados são salvos (arquivo ou MySQL)\n\nEstrutura básica:\n- Variável pJob\n- Variável cooldown\n- Comando para trabalhar\n- Callback OnPlayerEnterCheckpoint (se usar checkpoint)"
+  },
+  {
+    "id": "sistema_emprego_fazendeiro_estudo",
+    "title": "Estudo: Sistema de Emprego Fazendeiro",
+    "tags": ["fazendeiro", "emprego fazendeiro", "job fazendeiro"],
+    "answer": "Fluxo recomendado:\n\n1) Jogador vira Fazendeiro\n2) Vai até plantação (checkpoint)\n3) Coleta produto\n4) Vai até entrega\n5) Recebe salário\n6) Entra cooldown (anti-farm)\n\nBoas práticas:\n- Usar enum para dados do player\n- Usar gettime() para cooldown\n- Validar se realmente tem o emprego\n- Não deixar o jogador farmar infinito\n\nErros comuns:\n- Esquecer cooldown\n- Não validar pJob\n- Não salvar no disconnect"
+  }
+]

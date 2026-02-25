@@ -65,11 +65,26 @@ function loadKbOnce() {
     return KB;
   }
 
+  const items = [];
+  for (const f of files) {
+    const full = path.join(kbDir, f);
+    try {
+      const content = fs.readFileSync(full, "utf8");
+      const arr = JSON.parse(content);
+      if (Array.isArray(arr)) {
+        for (const it of arr) items.push(it);
+      }
+    } catch (err) {
+      console.log("KB JSON inválido:", f, err?.message || err);
+    }
+  }
+
   KB = items.map(it => {
     const text = `${it.title || ""} ${(it.tags || []).join(" ")} ${it.answer || ""}`;
     return { ...it, _tokens: tokenize(text) };
   });
 
+  console.log("KB carregada. Arquivos:", files.length, "Itens:", KB.length);
   return KB;
 }
 

@@ -95,7 +95,7 @@ a{color:#fff}
   <div class="panel">
     <div class="brand">
       <h1>Login • IA</h1>
-      <p>Faça login com Discord. Acesso exclusivo <b>VIP GOLD</b>.</p>
+      <p>Faça login com Discord. Acesso exclusivo <b>VIP</b>.</p>
     </div>
 
     <div class="card">
@@ -104,7 +104,7 @@ a{color:#fff}
       <div id="msg" class="alert" style="display:none"></div>
 
       <div class="small">
-        Se você não tem acesso, adquira o <b>VIP GOLD</b> e pegue o cargo no Discord.
+        Se você não tem acesso, adquira o <b>VIP</b> e pegue o cargo no Discord.
       </div>
     </div>
   </div>
@@ -123,9 +123,9 @@ const qs = new URLSearchParams(location.search)
 const err = qs.get("err")
 
 if(err === "no_role"){
-  show("red", "Acesso negado: você precisa ser VIP GOLD (cargo no Discord) para usar a IA.")
+  show("red", "Acesso negado: você precisa ser VIP (cargo no Discord) para usar a IA.")
 }else if(err === "not_in_guild"){
-  show("red", "Você precisa estar no Discord do servidor para validar seu cargo VIP GOLD.")
+  show("red", "Você precisa estar no Discord do servidor para validar seu cargo VIP.")
 }else if(err){
   show("red", "Falha no login. Tente novamente.")
 }

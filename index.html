@@ -217,6 +217,251 @@
       border:1px solid rgba(255,255,255,.14);
       color:#fff;
     }
+    /* ===== RANKING HOME ===== */
+  .ranking{
+    margin: .6rem auto 2.2rem;
+    background: linear-gradient(180deg,var(--glass),var(--glass-2));
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow-soft);
+    padding: 1.2rem 1.1rem 1.05rem;
+  }
+
+  .ranking-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+    margin-bottom:1rem;
+  }
+
+  .ranking h2{
+    font-family:'Orbitron',sans-serif;
+    letter-spacing:1px;
+    font-size:1.15rem;
+    color:#ff4d4d;
+  }
+
+  .ranking p{
+    margin-top:.35rem;
+    color: var(--text-dim);
+    font-weight:600;
+    font-size:.95rem;
+  }
+
+  .ranking-actions{
+    display:flex;
+    gap:.65rem;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:flex-end;
+  }
+
+  .menu-btn.mini{
+    padding:.75rem .95rem;
+    border-radius: 14px;
+    font-weight:800;
+  }
+
+  .menu-btn.primary.mini{
+    padding:.78rem 1.05rem;
+  }
+
+  .ranking-grid{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .85rem;
+  }
+
+  @media(max-width: 900px){
+    .ranking-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media(max-width: 520px){
+    .ranking-grid{ grid-template-columns: 1fr; }
+    .ranking-actions{ width:100%; justify-content:stretch; }
+    .ranking-actions .menu-btn{ flex:1 1 auto; justify-content:center; }
+  }
+
+  .rank-card{
+    position:relative;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 18px;
+    padding: .95rem .95rem .85rem;
+    background: rgba(0,0,0,.22);
+    box-shadow: 0 10px 26px rgba(0,0,0,.28);
+    overflow:hidden;
+    min-height: 120px;
+  }
+
+  .rank-card:hover{
+    transform: translateY(-1px);
+    transition: transform var(--transition);
+  }
+
+  .rank-top{
+    display:flex;
+    align-items:center;
+    gap:.75rem;
+    margin-bottom:.55rem;
+  }
+
+  .rank-logo{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    object-fit:cover;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.25);
+    flex:0 0 auto;
+  }
+
+  .rank-title{
+    display:flex;
+    flex-direction:column;
+    gap:.15rem;
+    min-width:0;
+  }
+
+  .rank-title strong{
+    font-weight:900;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .rank-title small{
+    color: var(--text-dim);
+    font-weight:700;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+    font-size:.72rem;
+    font-weight:900;
+    padding:.18rem .55rem;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.28);
+  }
+
+  .badge.premium{
+    background: rgba(255,0,43,.16);
+    border-color: rgba(255,0,43,.25);
+    color:#fff;
+  }
+
+  .badge.pos{
+    margin-left:auto;
+    color:#fff;
+    opacity:.92;
+  }
+
+  .rank-meta{
+    display:flex;
+    flex-direction:column;
+    gap:.35rem;
+    color: var(--text-dim);
+    font-weight:700;
+    font-size:.92rem;
+  }
+
+  .rank-meta .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.6rem;
+  }
+
+  .rank-actions{
+    margin-top:.65rem;
+    display:flex;
+    gap:.55rem;
+  }
+
+  .rank-actions a{
+    flex:1 1 auto;
+    text-decoration:none;
+    text-align:center;
+    padding:.6rem .7rem;
+    border-radius:14px;
+    font-weight:900;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.26);
+    color:#fff;
+  }
+
+  .rank-actions a:hover{
+    filter:saturate(1.05);
+  }
+
+  .rank-actions a.primary{
+    background: linear-gradient(135deg,var(--red-main),var(--red-dark));
+  }
+
+  .rank-card.cta{
+    border-color: rgba(255,0,43,.22);
+    background: radial-gradient(120% 120% at 0% 0%, rgba(255,0,43,.14), rgba(0,0,0,.24));
+  }
+
+  .cta-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    margin-bottom:.55rem;
+  }
+
+  .cta p{
+    color: var(--text-dim);
+    font-weight:700;
+    margin:.2rem 0 .8rem;
+  }
+
+  .cta-btn{
+    width:100%;
+    padding:.7rem .8rem;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.12);
+    background: linear-gradient(135deg,var(--red-main),var(--red-dark));
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.55rem;
+  }
+
+  .cta-note{
+    display:block;
+    margin-top:.55rem;
+    color: rgba(255,255,255,.70);
+    font-weight:700;
+    font-size:.82rem;
+  }
+
+  /* Skeleton */
+  .rank-card.skeleton{
+    background: rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.08);
+    min-height: 120px;
+    position:relative;
+  }
+  .rank-card.skeleton::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.10), rgba(255,255,255,.03));
+    transform: translateX(-100%);
+    animation: shimmer 1.2s infinite;
+  }
+  @keyframes shimmer{
+    100%{ transform: translateX(100%); }
+  }
 
     /* ===== MOBILE: menus viram grid bonito ===== */
     @media(max-width:768px){
@@ -350,6 +595,11 @@
 
   <main class="wrap" aria-label="Conteúdo principal">
     <section class="stats" aria-label="Estatísticas">
+
+      <div class="ranking-foot" id="rankingFoot" hidden>
+        <span class="foot-muted">Atualiza automaticamente.</span>
+      </div>
+    </section>
       <div class="stat" id="discordStats" role="status" aria-live="polite">
         <i class="fab fa-discord"></i>
         <span>Carregando Discord...</span>
@@ -360,6 +610,48 @@
         <span>Online há <strong>...</strong></span>
       </div>
     </section>
+
+         <!-- ===== RANKING (HOME) ===== -->
+    <section class="ranking" id="ranking-servidores" aria-label="Ranking de servidores">
+      <div class="ranking-head">
+        <div>
+          <h2>🏆 Ranking de Servidores</h2>
+          <p>Top servidores em destaque + ranking da semana.</p>
+        </div>
+
+        <div class="ranking-actions">
+          <a class="menu-btn primary mini" id="btnCadastrarServidor" href="#">
+            <i class="fas fa-plus"></i> Cadastrar Servidor
+            <span class="tag">NOVO</span>
+          </a>
+
+          <a class="menu-btn mini" id="btnVerRanking" href="servidores.html">
+            <i class="fas fa-list"></i> Ver lista completa
+          </a>
+        </div>
+      </div>
+
+      <div class="ranking-grid" id="rankingGrid" aria-live="polite">
+        <!-- Skeleton / placeholder -->
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+        <div class="rank-card skeleton"></div>
+
+        <!-- CTA card -->
+        <div class="rank-card cta" id="ctaDestaque">
+          <div class="cta-top">
+            <span class="badge premium">PREMIUM</span>
+            <strong>Destaque seu servidor</strong>
+          </div>
+          <p>Fique no topo e apareça na página inicial.</p>
+          <button class="cta-btn" type="button" id="btnDestaqueAgora">
+            <i class="fas fa-bolt"></i> Quero destaque
+          </button>
+          <small class="cta-note">Planos semanais e mensais acessíveis.</small>
+        </div>
+      </div>
   </main>
 
   <!-- MENU ESQUERDO -->
@@ -615,7 +907,18 @@
     loadDiscord();
     tempoOnline();
     setInterval(tempoOnline, 60 * 60 * 1000);
+    
   });
+  document.addEventListener("DOMContentLoaded", () => {
+  setupWhats();
+  setupWhatsGM();
+  loadDiscord();
+  tempoOnline();
+  setInterval(tempoOnline, 60 * 60 * 1000);
+
+  setupRankingButtons();
+  loadRankingHome();
+});
 
 
 

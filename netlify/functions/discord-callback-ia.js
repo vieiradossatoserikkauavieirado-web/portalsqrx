@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 
 
-const VIP_GOLD_ROLE_ID = "1465103020617633997";
+const VIP_GOLD_ROLE_ID = "1374527798168911903";
 
 function setCookie(token) {
   return `sx_ia_session=${token}; HttpOnly; Path=/; Domain=.portalsiqueirax.com.br; SameSite=Lax; Max-Age=3600; Secure`;
@@ -136,7 +136,7 @@ exports.handler = async (event) => {
     const { error } = await supabase.from("sessoes_ia").insert({
       token,
       username: `discord:${user.id}`,
-      plan: "VIP GOLD",
+      plan: "VIP",
       expira_em: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
     });
 

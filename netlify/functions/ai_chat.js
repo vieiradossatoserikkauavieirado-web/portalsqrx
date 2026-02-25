@@ -501,12 +501,12 @@ async function getSession(event) {
     return { ok: false, code: "expired_session" };
   }
 
-  return { ok: true, username: sess.username, plan: sess.plan || "VIP GOLD" };
+  return { ok: true, username: sess.username, plan: sess.plan || "VIP" };
 }
 
 function isVip(plan) {
   // Ajuste aqui se você tiver planos específicos.
-  // Ex: "VIP GOLD", "VIP SILVER", etc.
+  // Ex: "VIP", "VIP SILVER", etc.
   const p = (plan || "").toUpperCase();
   return p.includes("VIP");
 }

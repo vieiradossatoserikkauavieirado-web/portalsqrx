@@ -37,7 +37,7 @@ exports.handler = async (event) => {
         "Content-Type": "application/json",
         "Cache-Control": "no-store",
       },
-      body: JSON.stringify({ ok: true, username: sess.username, plan: sess.plan || "VIP GOLD" }),
+      body: JSON.stringify({ ok: true, username: sess.username, plan: sess.plan || "VIP" }),
     };
   } catch {
     return { statusCode: 500, body: "internal_error" };

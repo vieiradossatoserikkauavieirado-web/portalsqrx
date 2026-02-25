@@ -155,12 +155,12 @@
 
     // state carrega o "next" (pra callback te mandar de volta certinho)
     const authUrl =
-      "https://discord.com/api/oauth2/authorize" +
-      `?client_id=${encodeURIComponent(DISCORD_CLIENT_ID)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&response_type=code` +
-      `&scope=identify` +
-      `&state=${encodeURIComponent(next)}`;
+    "https://discord.com/api/oauth2/authorize" +
+    `?client_id=${encodeURIComponent(DISCORD_CLIENT_ID)}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&response_type=code` +
+    `&scope=identify` +
+    `&state=${encodeURIComponent(next)}`;
 
     document.getElementById("loginBtn").href = authUrl;
 

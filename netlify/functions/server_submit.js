@@ -1,149 +1,94 @@
-// netlify/functions/server_submit.js
+const { createClient } = require("@supabase/supabase-js");
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
-async function discordSend({ token, channelId, content }) {
-  const url = `https://discord.com/api/v10/channels/${channelId}/messages`;
-
-  const r = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bot ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ content }),
-  });
-
-  const txt = await r.text();
-  if (!r.ok) throw new Error(`Discord POST failed (${r.status}): ${txt}`);
-  return JSON.parse(txt);
+function getCookie(name, headers) {
+  const cookieHeader = headers?.cookie || "";
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
-function makeServerId() {
-  // no mesmo estilo do seu exemplo: srv_<timestamp>_<rand>
-  const ts = Date.now();
-  const rnd = Math.floor(1000 + Math.random() * 9000);
-  return `srv_${ts}_${rnd}`;
+async function getUserFromSession(event) {
+  const token = getCookie("sx_portal_session", event.headers);
+  if (!token) return null;
+
+  const { data } = await supabase
+    .from("sessoes_portal")
+    .select("discord_id, username, expira_em")
+    .eq("token", token)
+    .maybeSingle();
+
+  if (!data) return null;
+  if (new Date(data.expira_em).getTime() < Date.now()) return null;
+
+  return data;
 }
 
 exports.handler = async (event) => {
   try {
-    if (event.httpMethod === "OPTIONS") {
-      return { statusCode: 204, headers: corsHeaders, body: "" };
-    }
+    if (event.httpMethod !== "POST")
+      return { statusCode: 405 };
 
-    if (event.httpMethod !== "POST") {
-      return {
-        statusCode: 405,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: false, error: "Method not allowed" }),
-      };
-    }
+    const user = await getUserFromSession(event);
+    if (!user)
+      return { statusCode: 401, body: "not_logged" };
 
-    let body = {};
-    try {
-      body = JSON.parse(event.body || "{}");
-    } catch {
-      return {
-        statusCode: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: false, error: "Body inválido (JSON)" }),
-      };
-    }
+    const body = JSON.parse(event.body || "{}");
 
-    // ✅ campos do seu frontend
-    const name = (body.name || "").trim();
-    const discord = (body.discord || "").trim(); // ex: @SiqueiraX ✓ (igual seu exemplo)
-    const ip = (body.ip || "").trim();           // opcional
-    const logoUrl = (body.logoUrl || "").trim(); // opcional
+    const { name, ip, discord, logoUrl } = body;
 
-    // ✅ mínimo obrigatório (pra não virar 400 “do nada”)
-    if (!name || !discord) {
-      return {
-        statusCode: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ok: false,
-          error: "Campos obrigatórios faltando",
-          required: ["name", "discord"],
-          received: { name: !!name, discord: !!discord, ip: !!ip, logoUrl: !!logoUrl },
-        }),
-      };
-    }
+    if (!name || !ip)
+      return { statusCode: 400, body: "invalid_fields" };
 
-    const TOKEN = process.env.DISCORD_BOT_TOKEN;
-    const DB_CHANNEL_ID = process.env.DB_CHANNEL_ID;
-    const LOG_CHANNEL_ID = process.env.LOG_CHANNEL_LOGS_ID || process.env.LOG_CHANNEL_ID;
+    const serverId = `srv_${Date.now()}_${Math.floor(Math.random() * 9999)}`;
 
-    if (!TOKEN || !DB_CHANNEL_ID) {
-      return {
-        statusCode: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ok: false,
-          error: "ENV faltando no Netlify",
-          missing: [
-            !TOKEN ? "DISCORD_BOT_TOKEN" : null,
-            !DB_CHANNEL_ID ? "DB_CHANNEL_ID" : null,
-          ].filter(Boolean),
-        }),
-      };
-    }
+    const serverData = {
+      serverId,
+      ownerId: user.discord_id,
+      name,
+      ip,
+      discord: discord || "",
+      logoUrl: logoUrl || "",
+      status: "pending",
+      votes: 0,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
 
-    const serverId = makeServerId();
-
-    // ✅ mensagem exatamente no formato que você mostrou
-    const dbContent =
-`📥 Novo servidor cadastrado
-ID: ${serverId}
-Nome: ${name}
-Owner: ${discord}`;
-
-    // Envia pro "banco" (canal DB)
-    const dbMsg = await discordSend({
-      token: TOKEN,
-      channelId: DB_CHANNEL_ID,
-      content: dbContent,
+    // envia pro canal DB
+    await fetch(`https://discord.com/api/v10/channels/${process.env.DB_CHANNEL_ID}/messages`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        content: "```json\n" + JSON.stringify(serverData, null, 2) + "\n```"
+      })
     });
 
-    // Log (se existir canal)
-    if (LOG_CHANNEL_ID) {
-      const logContent =
-`🧾 LOG: server_submit
-✅ Servidor enviado para análise
-ID: ${serverId}
-Nome: ${name}
-Owner: ${discord}
-DB msgId: ${dbMsg?.id || "n/a"}
-Hora: ${new Date().toISOString()}`;
+    // envia log
+    await fetch(`https://discord.com/api/v10/channels/${process.env.LOG_CHANNEL_ID}/messages`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        content: `📥 Novo servidor cadastrado\nID: ${serverId}\nNome: ${name}\nOwner: <@${user.discord_id}>`
+      })
+    });
 
-      try {
-        await discordSend({ token: TOKEN, channelId: LOG_CHANNEL_ID, content: logContent });
-      } catch (e) {
-        // não derruba o fluxo por falha no log
-        console.log("LOG CHANNEL FAILED:", e?.message || String(e));
-      }
-    }
-
-    // (Opcional) você pode salvar ip/logoUrl depois quando for padronizar JSON
     return {
       statusCode: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({ ok: true, serverId, discord_message_id: dbMsg?.id }),
+      body: JSON.stringify({ ok: true })
     };
-  } catch (e) {
-    return {
-      statusCode: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ok: false,
-        error: "server_submit failed",
-        details: e?.message || String(e),
-      }),
-    };
+
+  } catch (err) {
+    return { statusCode: 500, body: "internal_error" };
   }
 };

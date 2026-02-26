@@ -577,7 +577,40 @@
       font-size:.9rem;
       color:var(--text-dim);
     }
+    .premium-card{
+  border-color: rgba(255,0,43,.35);
+  box-shadow: 0 16px 44px rgba(255,0,43,.10), 0 10px 26px rgba(0,0,0,.30);
+}
 
+.premium-banner{
+  height: 64px;
+  border-radius: 14px;
+  margin-bottom: .7rem;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255,255,255,.10);
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-banner::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 100%);
+}
+
+.copy-ip{
+  flex:1 1 auto;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.26);
+  color:#fff;
+  font-weight:900;
+  padding:.6rem .7rem;
+  cursor:pointer;
+}
+.copy-ip:hover{ filter:saturate(1.05); }
     /* Acessibilidade: reduzir animações */
     @media (prefers-reduced-motion: reduce){
       *{transition:none !important; scroll-behavior:auto}
@@ -959,6 +992,17 @@ function renderRankingCards(items){
     if(cta) grid.appendChild(cta);
     return;
   }
+  const banner = it.isPremium && it.bannerUrl
+  ? `<div class="premium-banner" style="background-image:url('${escapeHtml(it.bannerUrl)}')"></div>`
+  : "";
+
+  card.className = `rank-card ${it.isPremium ? "premium-card" : ""}`;
+  card.querySelector(".copy-ip")?.addEventListener("click", async (e)=>{
+  const ip = e.currentTarget.getAttribute("data-ip");
+  if(!ip) return;
+  await navigator.clipboard.writeText(ip);
+  alert("IP copiado!");
+});
 
   items.slice(0,5).forEach(it=>{
   const card=document.createElement("div");
@@ -981,6 +1025,22 @@ function renderRankingCards(items){
     <div class="rank-actions">
       ${it.discord ? `<a class="primary js-enter" href="${escapeHtml(it.discord)}" data-server-id="${escapeHtml(it.serverId)}" target="_blank" rel="noopener">Entrar</a>`:""}
       <a class="js-ver" href="servidores.html" data-server-id="${escapeHtml(it.serverId)}">Ver</a>
+       ${banner}
+  <div class="rank-top">
+    <img class="rank-logo" src="${escapeHtml(it.logoUrl || "https://i.imgur.com/eKjFtd1.png")}" />
+    <div class="rank-title">
+      <strong>${escapeHtml(it.name)}</strong>
+      <small class="ip-line" data-ip="${escapeHtml(it.ip)}">${escapeHtml(it.ip)}</small>
+    </div>
+    <span class="badge pos">${it.position || ""}</span>
+  </div>
+
+  ${it.isPremium ? `<div class="badge premium">✨ PARCEIRO PREMIUM</div>` : ""}
+
+    <div class="rank-actions">
+      <a class="primary js-enter" href="${escapeHtml(it.discord)}" data-server-id="${escapeHtml(it.serverId)}" target="_blank">Entrar</a>
+      ${it.isPremium ? `<button class="copy-ip" data-ip="${escapeHtml(it.ip)}">Copiar IP</button>` : ""}
+    </div>
     </div>
   `;
 

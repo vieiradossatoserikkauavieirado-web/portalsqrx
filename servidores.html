@@ -651,22 +651,25 @@
       if(btn) btn.disabled = false;
     }
 
-function premiumContinuar(){
-  if(!premiumState.serverId || !premiumState.plano) return;
+  function premiumContinuar(){
+    if(!premiumState.serverId || !premiumState.plano) return;
 
-  const LINKS = {
-    weekly: "https://checkout.infinitepay.io/siqueira-santos-12/1TEUt4U8zr?redirect_url=" + encodeURIComponent(window.location.origin + "/servidores.html?paid=1"),
-    monthly: "https://checkout.infinitepay.io/siqueira-santos-12/3APAPjFI5?redirect_url=" + encodeURIComponent(window.location.origin + "/servidores.html?paid=1")
-  };
+    const LINKS = {
+      weekly: "https://checkout.infinitepay.io/siqueira-santos-12/7MAQ2klqHZ",
+      monthly: "https://checkout.infinitepay.io/siqueira-santos-12/3APAPjFI5"
+    };
 
-  const url = LINKS[premiumState.plano];
-  if(!url){
-    alert("Plano inválido.");
-    return;
+    const days = premiumState.plano === "weekly" ? 7 : 30;
+
+    // guarda contexto para o retorno (?paid=1)
+    sessionStorage.setItem("sx_pending_premium", JSON.stringify({
+      serverId: premiumState.serverId,
+      days,
+      ts: Date.now()
+    }));
+
+    window.location.href = LINKS[premiumState.plano];
   }
-
-  window.location.href = url;
-}
 
     // fechar clicando fora + ESC
     document.addEventListener("click", (e) => {
@@ -708,18 +711,39 @@ function premiumContinuar(){
         .replaceAll("\r","\\r");
     }
 
-      // ===== DETECTAR RETORNO DE PAGAMENTO =====
-  (function(){
-    const params = new URLSearchParams(window.location.search);
-    if(params.get("paid") !== "1") return;
+   
+    // ===== DETECTAR RETORNO DE PAGAMENTO (LOG + UX) =====
+(async function(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get("paid") !== "1") return;
 
-    fetch("/.netlify/functions/log-premium-purchase", {
-      method: "POST",
-      credentials: "include"
-    }).catch(()=>{});
+  let pending = null;
+  try { pending = JSON.parse(sessionStorage.getItem("sx_pending_premium") || "null"); } catch {}
 
-    alert("Pagamento recebido! Aguarde ativação pelo staff.");
-  })();
+  // limpa para não reenviar
+  sessionStorage.removeItem("sx_pending_premium");
+
+  // loga com contexto (se houver)
+  fetch("/.netlify/functions/log-premium-purchase", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify({
+      serverId: pending?.serverId || null,
+      days: pending?.days || null,
+      ts: pending?.ts || Date.now()
+    })
+  }).catch(()=>{});
+
+  alert("Pagamento recebido! Aguarde ativação pelo staff.");
+
+  params.delete("paid");
+  const clean = `${location.pathname}${params.toString() ? "?" + params.toString() : ""}`;
+  history.replaceState(null, "", clean);
+})();
+
+
+
     // ===== INIT =====
     (async () => {
       const ok = await checkLogin();

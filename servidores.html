@@ -123,6 +123,53 @@ form input{
   </div>
 </div>
 
+
+<!-- ===== MODAL DESTACAR SERVIDOR ===== -->
+<div id="premiumModal" class="modal-backdrop" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="premiumTitle">
+    <button class="modal-close" onclick="fecharPremiumModal()" aria-label="Fechar">✕</button>
+
+    <div class="modal-head">
+      <div class="modal-badge">🔥 Premium Servers</div>
+      <h2 id="premiumTitle">Destacar servidor</h2>
+      <p id="premiumSubtitle">Escolha um plano para subir seu servidor no topo do ranking.</p>
+    </div>
+
+    <div class="plan-grid">
+      <button class="plan" onclick="premiumSelecionar('7d')" type="button">
+        <div class="plan-top">
+          <div class="plan-name">7 dias</div>
+          <div class="plan-price">R$ 15,00</div>
+        </div>
+        <div class="plan-desc">Ideal para testar e ganhar tráfego rápido.</div>
+        <div class="plan-cta">Selecionar</div>
+      </button>
+
+      <button class="plan plan-featured" onclick="premiumSelecionar('30d')" type="button">
+        <div class="plan-top">
+          <div class="plan-name">30 dias</div>
+          <div class="plan-price">R$ 39,90</div>
+        </div>
+        <div class="plan-desc">Melhor custo-benefício para crescer constante.</div>
+        <div class="plan-cta">Selecionar</div>
+      </button>
+    </div>
+
+    <div class="modal-foot">
+      <div class="modal-meta">
+        <span>Servidor:</span>
+        <strong id="premiumServerLabel">—</strong>
+      </div>
+
+      <button class="btn-primary" id="premiumContinuarBtn" onclick="premiumContinuar()" disabled>
+        Continuar para pagamento
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
 <script>
 // ===== VERIFICAR LOGIN =====
 async function checkLogin(){

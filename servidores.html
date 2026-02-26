@@ -649,70 +649,21 @@
       if(btn) btn.disabled = false;
     }
 
-   async function premiumContinuar(){
-  if(premiumState.busy) return;
+function premiumContinuar(){
   if(!premiumState.serverId || !premiumState.plano) return;
 
-  premiumState.busy = true;
-
-  const btn = document.getElementById("premiumContinuarBtn");
-  const setBtn = (text, disabled) => {
-    if(!btn) return;
-    btn.textContent = text;
-    btn.disabled = disabled;
+  const LINKS = {
+    weekly: "https://checkout.infinitepay.io/siqueira-santos-12/1TEUt4U8zr" + encodeURIComponent(window.location.origin + "/servidores.html?paid=1"),
+    monthly: "https://checkout.infinitepay.io/siqueira-santos-12/3APAPjFI5?redirect_url=" + encodeURIComponent(window.location.origin + "/servidores.html?paid=1")
   };
 
-  setBtn("Gerando checkout...", true);
-
-  try{
-    const r = await fetch("/.netlify/functions/criar-checkout-server",{
-      method:"POST",
-      credentials:"include",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        plano: premiumState.plano,
-        serverId: premiumState.serverId
-      })
-    });
-
-    if(r.status === 401){
-      window.location.href = "loginportal.html";
-      return;
-    }
-
-    const raw = await r.text();
-    console.log("checkout status:", r.status);
-    console.log("checkout body:", raw);
-
-    if(!r.ok){
-      alert("Erro ao criar checkout.");
-      return;
-    }
-
-    let data = null;
-    try { data = JSON.parse(raw); } catch {}
-
-    const url =
-      data?.checkout_url ||
-      data?.url ||
-      data?.checkoutUrl ||
-      data?.checkout?.url ||
-      data?.data?.checkout_url ||
-      data?.data?.url;
-
-    if(url){
-      window.location.href = url;
-      return;
-    }
-
-    alert("Erro ao criar checkout.");
-  }catch(err){
-    console.error(err);
-    alert("Erro ao criar checkout.");
-  }finally{
-    premiumState.busy = false;
-    setBtn("Continuar para pagamento", false);
+  const url = LINKS[premiumState.plano];
+  if(!url){
+    alert("Plano inválido.");
+    return;
   }
+
+  window.location.href = url;
 }
 
     // fechar clicando fora + ESC

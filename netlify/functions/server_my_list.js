@@ -30,7 +30,7 @@ async function fetchAllMessages(channelId, max = 2000) {
 
 function parseJson(content) {
   try {
-    // Extrai bloco ```json ... ```
+    
     const match = content.match(/```json\s*([\s\S]*?)\s*```/i);
     let jsonText = match ? match[1].trim() : content.trim();
 

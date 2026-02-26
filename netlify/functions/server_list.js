@@ -35,30 +35,47 @@ function parseJsonFromMessage(content) {
   }
 }
 
+function toMillis(v) {
+  if (typeof v === "number") return v;
+  if (typeof v === "string") {
+    const t = Date.parse(v);
+    return Number.isFinite(t) ? t : null;
+  }
+  return null;
+}
+
 exports.handler = async (event) => {
   try {
-    const limit =
-      parseInt(new URL(event.rawUrl).searchParams.get("limit")) || 5;
+    const limit = parseInt(new URL(event.rawUrl).searchParams.get("limit")) || 5;
 
     const dbMessages = await fetchAllMessages(process.env.DB_CHANNEL_ID, 3000);
     const premiumMessages = await fetchAllMessages(process.env.DB_PREMIUM_CHANNEL_ID, 3000);
 
     const servers = [];
-    const premiumMap = new Map();
+    const premiumMap = new Map(); // serverId -> expiresMs
 
-    // premium ativos
+    // premium ativos (suporta payload antigo/novo)
     for (const msg of premiumMessages) {
       const data = parseJsonFromMessage(msg.content);
-      if (!data || !data.serverId) continue;
+      if (!data) continue;
 
-      const exp =
-        typeof data.expiresAt === "number"
-          ? data.expiresAt
-          : Date.parse(data.expiresAt);
+      const sid = data.serverId || data.server_id;
+      if (!sid) continue;
 
-      if (data.isActive && exp && exp > Date.now()) {
-        premiumMap.set(data.serverId, exp);
-      }
+      const expMs =
+        toMillis(data.expiresAt) ??
+        toMillis(data.expires_at);
+
+      if (!expMs || expMs <= Date.now()) continue;
+
+      // aceita: status active OU isActive true (mantém compatibilidade)
+      const active =
+        data.status ? data.status === "active" : !!data.isActive;
+
+      if (!active) continue;
+
+      const prev = premiumMap.get(sid);
+      if (!prev || expMs > prev) premiumMap.set(sid, expMs);
     }
 
     // servidores aprovados
@@ -66,14 +83,18 @@ exports.handler = async (event) => {
       const data = parseJsonFromMessage(msg.content);
       if (!data || data.status !== "approved") continue;
 
+      const sid = data.serverId || data.server_id;
+      if (!sid) continue;
+
       servers.push({
-        serverId: data.serverId,
+        serverId: sid,
         name: data.name,
         ip: data.ip,
         logoUrl: data.logoUrl,
         discord: data.discord,
         votes: data.votes || 0,
-        isPremium: premiumMap.has(data.serverId)
+        isPremium: premiumMap.has(sid),
+        premiumExpiresAt: premiumMap.get(sid) || null
       });
     }
 
@@ -90,7 +111,10 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store"
+      },
       body: JSON.stringify({ items: result })
     };
   } catch (err) {

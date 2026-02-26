@@ -1072,13 +1072,27 @@ function renderRankingCards(items){
   if(cta) grid.appendChild(cta);
 }
 
-async function loadRankingHome(){
-  try{
-    const r=await fetch("/.netlify/functions/server_list?limit=5",{cache:"no-store"});
-    if(!r.ok) throw new Error();
-    const data=await r.json();
-    renderRankingCards(data.items||[]);
-  }catch{
+async function loadRankingHome() {
+  try {
+    const url = new URL("/.netlify/functions/server_list", window.location.origin);
+    url.searchParams.set("limit", "5");
+    url.searchParams.set("_ts", Date.now().toString()); // bypass cache
+
+    const r = await fetch(url.toString(), {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache"
+      }
+    });
+
+    if (!r.ok) throw new Error(`server_list_http_${r.status}`);
+    const data = await r.json();
+
+    renderRankingCards(Array.isArray(data.items) ? data.items : []);
+  } catch (e) {
+    console.error("loadRankingHome error:", e);
     renderRankingCards([]);
   }
 }

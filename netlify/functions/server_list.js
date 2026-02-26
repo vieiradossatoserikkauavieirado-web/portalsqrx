@@ -8,12 +8,13 @@ async function fetchAllMessages(channelId, max = 2000) {
     url.searchParams.set("limit", "100");
     if (before) url.searchParams.set("before", before);
 
-    if (!r.ok) {
-  console.log("fetchAllMessages fail", channelId, r.status);
-  break;
-}
     const r = await fetch(url.toString(), { headers });
-    if (!r.ok) break;
+
+    if (!r.ok) {
+      const t = await r.text().catch(() => "");
+      console.log("fetchAllMessages fail", { channelId, status: r.status, body: t.slice(0, 200) });
+      break;
+    }
 
     const batch = await r.json();
     if (!batch.length) break;
@@ -21,7 +22,7 @@ async function fetchAllMessages(channelId, max = 2000) {
     all.push(...batch);
     before = batch[batch.length - 1].id;
   }
-  
+
   return all;
 }
 

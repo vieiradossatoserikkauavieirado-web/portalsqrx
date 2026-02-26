@@ -6,44 +6,9 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-function parseIpAndPort(ipRaw) {
-  const ip = (ipRaw || "").trim();
-
-  // aceita "1.2.3.4:7777" ou "1.2.3.4"
-  if (ip.includes(":")) {
-    const [host, portStr] = ip.split(":");
-    const port = Number(portStr);
-    return { host: (host || "").trim(), port: Number.isFinite(port) ? port : 7777 };
-  }
-
-  return { host: ip, port: 7777 };
-}
-
-async function discordPostMessage({ token, channelId, content, filename, fileText }) {
+async function discordSend({ token, channelId, content }) {
   const url = `https://discord.com/api/v10/channels/${channelId}/messages`;
 
-  // Se tiver arquivo, manda multipart/form-data (evita limite 2000 chars)
-  if (filename && typeof fileText === "string") {
-    const form = new FormData();
-    form.append("payload_json", JSON.stringify({ content }));
-    form.append(
-      "files[0]",
-      new Blob([fileText], { type: "application/json" }),
-      filename
-    );
-
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { Authorization: `Bot ${token}` },
-      body: form,
-    });
-
-    const txt = await r.text();
-    if (!r.ok) throw new Error(`Discord POST failed (${r.status}): ${txt}`);
-    return JSON.parse(txt);
-  }
-
-  // Sem arquivo, JSON normal
   const r = await fetch(url, {
     method: "POST",
     headers: {
@@ -56,6 +21,13 @@ async function discordPostMessage({ token, channelId, content, filename, fileTex
   const txt = await r.text();
   if (!r.ok) throw new Error(`Discord POST failed (${r.status}): ${txt}`);
   return JSON.parse(txt);
+}
+
+function makeServerId() {
+  // no mesmo estilo do seu exemplo: srv_<timestamp>_<rand>
+  const ts = Date.now();
+  const rnd = Math.floor(1000 + Math.random() * 9000);
+  return `srv_${ts}_${rnd}`;
 }
 
 exports.handler = async (event) => {
@@ -72,29 +44,37 @@ exports.handler = async (event) => {
       };
     }
 
-    const body = JSON.parse(event.body || "{}");
+    let body = {};
+    try {
+      body = JSON.parse(event.body || "{}");
+    } catch {
+      return {
+        statusCode: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        body: JSON.stringify({ ok: false, error: "Body inválido (JSON)" }),
+      };
+    }
 
-    // ✅ Campos vindos do seu servidores.html
+    // ✅ campos do seu frontend
     const name = (body.name || "").trim();
-    const ipRaw = (body.ip || "").trim();
-    const discord = (body.discord || "").trim(); // pode ser ID, @, tag, etc
-    const logoUrl = (body.logoUrl || "").trim();
+    const discord = (body.discord || "").trim(); // ex: @SiqueiraX ✓ (igual seu exemplo)
+    const ip = (body.ip || "").trim();           // opcional
+    const logoUrl = (body.logoUrl || "").trim(); // opcional
 
-    if (!name || !ipRaw || !discord) {
+    // ✅ mínimo obrigatório (pra não virar 400 “do nada”)
+    if (!name || !discord) {
       return {
         statusCode: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         body: JSON.stringify({
           ok: false,
-          error: "Missing required fields",
-          required: ["name", "ip", "discord"],
+          error: "Campos obrigatórios faltando",
+          required: ["name", "discord"],
+          received: { name: !!name, discord: !!discord, ip: !!ip, logoUrl: !!logoUrl },
         }),
       };
     }
 
-    const { host, port } = parseIpAndPort(ipRaw);
-
-    // IDs / token
     const TOKEN = process.env.DISCORD_BOT_TOKEN;
     const DB_CHANNEL_ID = process.env.DB_CHANNEL_ID;
     const LOG_CHANNEL_ID = process.env.LOG_CHANNEL_LOGS_ID || process.env.LOG_CHANNEL_ID;
@@ -105,7 +85,7 @@ exports.handler = async (event) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         body: JSON.stringify({
           ok: false,
-          error: "Missing env vars",
+          error: "ENV faltando no Netlify",
           missing: [
             !TOKEN ? "DISCORD_BOT_TOKEN" : null,
             !DB_CHANNEL_ID ? "DB_CHANNEL_ID" : null,
@@ -114,40 +94,23 @@ exports.handler = async (event) => {
       };
     }
 
-    // serverId simples e estável (sem libs)
-    const serverId = `srv_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+    const serverId = makeServerId();
 
-    // JSON “banco” (igual sua arquitetura)
-    const serverData = {
-      serverId,
-      ownerId: discord,     // ⚠️ aqui vai o que você mandou no form
-      name,
-      ip: host,
-      port,
-      logo: logoUrl || null,
-      status: "pending",
-      createdAt: new Date().toISOString(),
-    };
-
+    // ✅ mensagem exatamente no formato que você mostrou
     const dbContent =
-`📥 Novo servidor cadastrado (PENDING)
+`📥 Novo servidor cadastrado
 ID: ${serverId}
 Nome: ${name}
-Owner: ${discord}
-IP: ${host}:${port}`;
+Owner: ${discord}`;
 
-    const jsonText = JSON.stringify(serverData, null, 2);
-
-    // Envia pro canal DB
-    const dbMsg = await discordPostMessage({
+    // Envia pro "banco" (canal DB)
+    const dbMsg = await discordSend({
       token: TOKEN,
       channelId: DB_CHANNEL_ID,
       content: dbContent,
-      filename: `server-${serverId}.json`,
-      fileText: jsonText,
     });
 
-    // Log (se canal configurado)
+    // Log (se existir canal)
     if (LOG_CHANNEL_ID) {
       const logContent =
 `🧾 LOG: server_submit
@@ -159,25 +122,18 @@ DB msgId: ${dbMsg?.id || "n/a"}
 Hora: ${new Date().toISOString()}`;
 
       try {
-        await discordPostMessage({
-          token: TOKEN,
-          channelId: LOG_CHANNEL_ID,
-          content: logContent,
-        });
+        await discordSend({ token: TOKEN, channelId: LOG_CHANNEL_ID, content: logContent });
       } catch (e) {
+        // não derruba o fluxo por falha no log
         console.log("LOG CHANNEL FAILED:", e?.message || String(e));
       }
     }
 
+    // (Opcional) você pode salvar ip/logoUrl depois quando for padronizar JSON
     return {
       statusCode: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ok: true,
-        message: "Servidor enviado para análise!",
-        serverId,
-        discord_message_id: dbMsg?.id,
-      }),
+      body: JSON.stringify({ ok: true, serverId, discord_message_id: dbMsg?.id }),
     };
   } catch (e) {
     return {

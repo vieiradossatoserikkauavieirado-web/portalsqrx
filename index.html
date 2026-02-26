@@ -611,7 +611,7 @@
       </div>
     </section>
 
-         <!-- ===== RANKING (HOME) ===== -->
+        <!-- ===== RANKING (HOME) ===== -->
     <section class="ranking" id="ranking-servidores" aria-label="Ranking de servidores">
       <div class="ranking-head">
         <div>
@@ -910,155 +910,71 @@
       .replaceAll("'","&#039;");
   }
 
-  async function isLoggedPortal(){
-    try{
-      // reaproveita sua function de sessão (depois você cria me_portal ou reaproveita a mesma)
-      const r = await fetch("/.netlify/functions/me_portal", {
-        credentials: "include",
-        cache: "no-store"
-      });
-      return r.ok;
-    } catch {
-      return false;
-    }
-  }
+ async function loadRanking(){
+  const grid = document.getElementById("rankingGrid");
 
-  function setupRankingButtons(){
-    const btnCad = document.getElementById("btnCadastrarServidor");
-    const btnDestaque = document.getElementById("btnDestaqueAgora");
+  try{
+    const r = await fetch("/.netlify/functions/server_list");
+    const data = await r.json();
 
-    async function goCadastro(mode){
-      const logged = await isLoggedPortal();
-      const next = encodeURIComponent("index.html#ranking-servidores");
-      if (!logged){
-        window.location.href = `loginportal.html?next=${next}${mode ? `&mode=${encodeURIComponent(mode)}` : ""}`;
-        return;
-      }
-      // logado: manda pra página de servidores/cadastro que você já tem
-      // (ajuste aqui pra sua URL real do cadastro)
-      window.location.href = `servidores.html#cadastrar${mode ? `?mode=${encodeURIComponent(mode)}` : ""}`;
-    }
-
-    btnCad?.addEventListener("click", (e)=>{ e.preventDefault(); goCadastro("free"); });
-    btnDestaque?.addEventListener("click", ()=> goCadastro("premium"));
-  }
-
-  function renderRankingCards(items){
-    const grid = document.getElementById("rankingGrid");
-    if (!grid) return;
-
-    // remove skeletons (mantém o CTA no final)
-    const cta = document.getElementById("ctaDestaque");
     grid.innerHTML = "";
-    if (Array.isArray(items) && items.length){
-      for (const it of items.slice(0,5)){
-        const name = escapeHtml(it.name);
-        const ip = escapeHtml(it.ip);
-        const logoUrl = escapeHtml(it.logoUrl || "https://i.imgur.com/eKjFtd1.png");
-        const discord = escapeHtml(it.discord || "");
-        const isPremium = !!it.isPremium;
-        const pos = escapeHtml(it.position ?? "");
 
-        const linkJoin = discord || "#";
-        const premiumBadge = isPremium ? `<span class="badge premium">PREMIUM</span>` : `<span class="badge">RANK</span>`;
+    if(!data.items || !data.items.length){
+      grid.innerHTML = "<p>Nenhum servidor cadastrado ainda.</p>";
+      return;
+    }
 
-        const card = document.createElement("div");
-        card.className = "rank-card";
-        card.innerHTML = `
-          <div class="rank-top">
-            <img class="rank-logo" src="${logoUrl}" alt="Logo do servidor" loading="lazy" referrerpolicy="no-referrer" />
-            <div class="rank-title">
-              <strong title="${name}">${name}</strong>
-              <small>${ip}</small>
-            </div>
-            <span class="badge pos">#${pos}</span>
-          </div>
+    data.items.slice(0,5).forEach(s => {
 
-          <div class="rank-meta">
-            <div class="row">
-              <span>${premiumBadge}</span>
-              <span>${it.online != null ? `Online: <strong>${escapeHtml(it.online)}</strong>` : ""}</span>
-            </div>
-          </div>
+      const card = document.createElement("div");
+      card.className = "rank-card";
 
-          <div class="rank-actions">
-            <a class="primary" href="${linkJoin}" target="_blank" rel="noopener noreferrer">
-              <i class="fab fa-discord"></i> Entrar
-            </a>
-            <a href="servidores.html">
-              <i class="fas fa-arrow-right"></i> Ver
-            </a>
-          </div>
-        `;
-        grid.appendChild(card);
-      }
-    } else {
-      const empty = document.createElement("div");
-      empty.className = "rank-card";
-      empty.innerHTML = `
-        <div class="rank-title">
-          <strong>Nenhum servidor no ranking ainda</strong>
-          <small>Seja o primeiro a cadastrar e aparecer aqui.</small>
+      card.innerHTML = `
+        <div class="rank-top">
+          ${s.isPremium ? `<span class="badge premium">PREMIUM</span>` : ""}
+          <strong>${s.name}</strong>
         </div>
-        <div class="rank-actions" style="margin-top:.9rem">
-          <a class="primary" href="#" id="btnPrimeiroCadastro"><i class="fas fa-plus"></i> Cadastrar</a>
-          <a href="servidores.html"><i class="fas fa-list"></i> Lista</a>
+
+        <p>${s.ip}</p>
+
+        <div class="rank-footer">
+          <span>Votos: ${s.votes || 0}</span>
         </div>
       `;
-      grid.appendChild(empty);
 
-      const b = empty.querySelector("#btnPrimeiroCadastro");
-      b?.addEventListener("click", async (e)=>{
-        e.preventDefault();
-        const logged = await isLoggedPortal();
-        const next = encodeURIComponent("index.html#ranking-servidores");
-        if (!logged) window.location.href = `loginportal.html?next=${next}&mode=free`;
-        else window.location.href = "servidores.html#cadastrar";
-      });
-    }
+      grid.appendChild(card);
+    });
 
-    // recoloca CTA
-    if (cta) grid.appendChild(cta);
+    // Recoloca CTA no final
+    const cta = document.getElementById("ctaDestaque");
+    if(cta) grid.appendChild(cta);
 
-    const foot = document.getElementById("rankingFoot");
-    if (foot) foot.hidden = false;
+  }catch{
+    grid.innerHTML = "Erro ao carregar ranking.";
   }
+}
 
-  async function loadRankingHome(){
-    try{
-      const r = await fetch("/.netlify/functions/server_list?limit=5", {
-        cache: "no-store"
-      });
-      if (!r.ok) throw new Error("server_list_failed");
-      const data = await r.json();
-      // esperado: { items: [...] }
-      renderRankingCards(data.items || []);
-    } catch (e){
-      // fallback: remove skeleton e mostra erro leve
-      renderRankingCards([]);
-    }
-  }
+// ===== BOTÕES =====
 
+document.getElementById("btnCadastrarServidor")?.addEventListener("click", async e=>{
+  e.preventDefault();
 
-
-    document.addEventListener("DOMContentLoaded", () => {
-    setupWhats();
-    setupWhatsGM();
-    loadDiscord();
-    tempoOnline();
-    setInterval(tempoOnline, 60 * 60 * 1000);
-    
+  const r = await fetch("/.netlify/functions/me_portal", {
+    credentials:"include"
   });
-  document.addEventListener("DOMContentLoaded", () => {
-  setupWhats();
-  setupWhatsGM();
-  loadDiscord();
-  tempoOnline();
-  setInterval(tempoOnline, 60 * 60 * 1000);
 
-  setupRankingButtons();
-  loadRankingHome();
+  if(r.status === 401){
+    window.location.href = "loginportal.html?next=servidores.html";
+  } else {
+    window.location.href = "servidores.html";
+  }
 });
+
+document.getElementById("btnDestaqueAgora")?.addEventListener("click", ()=>{
+  window.location.href = "servidores.html";
+});
+
+loadRanking();
 
 
 

@@ -8,6 +8,10 @@ async function fetchAllMessages(channelId, max = 2000) {
     url.searchParams.set("limit", "100");
     if (before) url.searchParams.set("before", before);
 
+    if (!r.ok) {
+  console.log("fetchAllMessages fail", channelId, r.status);
+  break;
+}
     const r = await fetch(url.toString(), { headers });
     if (!r.ok) break;
 
@@ -17,7 +21,7 @@ async function fetchAllMessages(channelId, max = 2000) {
     all.push(...batch);
     before = batch[batch.length - 1].id;
   }
-
+  
   return all;
 }
 

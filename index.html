@@ -980,7 +980,7 @@ function renderRankingCards(items){
       </div>
       <div class="rank-actions">
       ${it.discord ? `<a class="primary js-enter" href="${escapeHtml(it.discord)}" data-server-id="${escapeHtml(it.serverId)}" target="_blank" rel="noopener">Entrar</a>`:""}
-      <a href="servidores.html">Ver</a>
+      <a class="js-ver" href="servidores.html" data-server-id="...">Ver</a>
     </div>
     `;
     grid.appendChild(card);

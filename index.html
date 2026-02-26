@@ -754,231 +754,242 @@
     © SiqueiraX
   </footer>
 
-  <script>
-    async function loadDiscord() {
-      const el = document.querySelector("#discordStats span");
-      try {
-        const r = await fetch("https://discord.com/api/v9/invites/HSd3YcWryb?with_counts=true", { cache: "no-store" });
-        const d = await r.json();
-        el.innerHTML = `Membros: <strong>${d.approximate_member_count ?? "—"}</strong> • Online: <strong>${d.approximate_presence_count ?? "—"}</strong>`;
-      } catch {
-        el.textContent = "Erro Discord";
-      }
-    }
+<script>
+/* =========================
+   UTIL
+========================= */
 
-    // Conta tempo online desde 11/05/2025
-    function diffMonthsDays(fromDate, toDate){
-      // Normaliza horários pra evitar bug de fuso/horário
-      const start = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-      const end = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
-      if (end < start) return { months: 0, days: 0 };
-
-      let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-      let anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
-
-      // Se passou do final do mês (ex: 31), ajusta o anchor
-      if (anchor > end){
-        months--;
-        anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
-      }
-
-      // Dias restantes
-      const msDay = 24 * 60 * 60 * 1000;
-      const days = Math.max(0, Math.round((end - anchor) / msDay));
-
-      return { months, days };
-    }
-
-    function tempoOnline() {
-      const createdAt = new Date(2025, 4, 11); // 11/05/2025 (mês 4 = Maio)
-      const now = new Date();
-      const { months, days } = diffMonthsDays(createdAt, now);
-
-      const mTxt = months === 1 ? "mês" : "meses";
-      const dTxt = days === 1 ? "dia" : "dias";
-
-      document.querySelector("#tempo-online strong").textContent = `${months} ${mTxt} ${days} ${dTxt}`;
-    }
-
-    // ===== Modal VIP (mais robusto) =====
-    const vipModal = document.getElementById("vipModal");
-    const vipBtn = document.getElementById("vipBtn");
-    const closeVip = document.getElementById("closeVip");
-
-    function openVip(e){
-      if (e) e.preventDefault();
-      vipModal.style.display = "flex";
-      vipModal.setAttribute("aria-hidden", "false");
-      closeVip.focus();
-    }
-
-    function closeVipModal(){
-      vipModal.style.display = "none";
-      vipModal.setAttribute("aria-hidden", "true");
-      vipBtn.focus();
-    }
-
-    vipBtn.addEventListener("click", openVip);
-    closeVip.addEventListener("click", closeVipModal);
-
-    vipModal.addEventListener("click", (event) => {
-      if (event.target === vipModal) closeVipModal();
-    });
-
-    // ===== Modal DESBAN =====
-    const desbanModal = document.getElementById("desbanModal");
-    const desbanBtn = document.getElementById("desbanBtn");
-    const closeDesban = document.getElementById("closeDesban");
-    const whatsDesban = document.getElementById("whatsDesban");
-
-    function setupWhats(){
-      const phone = "558296963727"; // 55 + DDD + número
-      const msg = "Ola tenho interesse no desban do site";
-      const link = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-      whatsDesban.href = link;
-    }
-
-    function openDesban(e){
-      if (e) e.preventDefault();
-      desbanModal.style.display = "flex";
-      desbanModal.setAttribute("aria-hidden", "false");
-      closeDesban.focus();
-    }
-
-    function closeDesbanModal(){
-      desbanModal.style.display = "none";
-      desbanModal.setAttribute("aria-hidden", "true");
-      desbanBtn.focus();
-    }
-
-    desbanBtn.addEventListener("click", openDesban);
-    closeDesban.addEventListener("click", closeDesbanModal);
-
-    desbanModal.addEventListener("click", (event) => {
-      if (event.target === desbanModal) closeDesbanModal();
-    });
-
-    // ===== Modal COMPRAR GM =====
-    const gmModal = document.getElementById("gmModal");
-    const gmBtn = document.getElementById("gmBtn");
-    const closeGM = document.getElementById("closeGM");
-    const whatsGM = document.getElementById("whatsGM");
-
-    function setupWhatsGM(){
-      const phone = "558296963727"; // 55 + DDD + número (8296963727)
-      const msg = "Olá! Tem GM disponível à venda? Vim pelo site.";
-      const link = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-      whatsGM.href = link;
-    }
-
-    function openGM(e){
-      if (e) e.preventDefault();
-      gmModal.style.display = "flex";
-      gmModal.setAttribute("aria-hidden", "false");
-      closeGM.focus();
-    }
-
-    function closeGMModal(){
-      gmModal.style.display = "none";
-      gmModal.setAttribute("aria-hidden", "true");
-      gmBtn.focus();
-    }
-
-    gmBtn.addEventListener("click", openGM);
-    closeGM.addEventListener("click", closeGMModal);
-
-    gmModal.addEventListener("click", (event) => {
-      if (event.target === gmModal) closeGMModal();
-    });
-
-
-    // ESC fecha qualquer modal aberto
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (vipModal.style.display === "flex") closeVipModal();
-        if (desbanModal.style.display === "flex") closeDesbanModal();
-      }
-    });
-
-    function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
- async function loadRanking(){
-  const grid = document.getElementById("rankingGrid");
-
+async function isLoggedPortal(){
   try{
-    const r = await fetch("/.netlify/functions/server_list");
-    const data = await r.json();
-
-    grid.innerHTML = "";
-
-    if(!data.items || !data.items.length){
-      grid.innerHTML = "<p>Nenhum servidor cadastrado ainda.</p>";
-      return;
-    }
-
-    data.items.slice(0,5).forEach(s => {
-
-      const card = document.createElement("div");
-      card.className = "rank-card";
-
-      card.innerHTML = `
-        <div class="rank-top">
-          ${s.isPremium ? `<span class="badge premium">PREMIUM</span>` : ""}
-          <strong>${s.name}</strong>
-        </div>
-
-        <p>${s.ip}</p>
-
-        <div class="rank-footer">
-          <span>Votos: ${s.votes || 0}</span>
-        </div>
-      `;
-
-      grid.appendChild(card);
+    const r = await fetch("/.netlify/functions/me_portal", {
+      credentials: "include",
+      cache: "no-store"
     });
-
-    // Recoloca CTA no final
-    const cta = document.getElementById("ctaDestaque");
-    if(cta) grid.appendChild(cta);
-
-  }catch{
-    grid.innerHTML = "Erro ao carregar ranking.";
+    return r.ok;
+  } catch {
+    return false;
   }
 }
 
-// ===== BOTÕES =====
+/* =========================
+   DISCORD STATS
+========================= */
 
-document.getElementById("btnCadastrarServidor")?.addEventListener("click", async e=>{
-  e.preventDefault();
+async function loadDiscord() {
+  const el = document.querySelector("#discordStats span");
+  if(!el) return;
 
-  const r = await fetch("/.netlify/functions/me_portal", {
-    credentials:"include"
+  try {
+    const r = await fetch(
+      "https://discord.com/api/v9/invites/HSd3YcWryb?with_counts=true",
+      { cache: "no-store" }
+    );
+    const d = await r.json();
+    el.innerHTML =
+      `Membros: <strong>${d.approximate_member_count ?? "—"}</strong> • ` +
+      `Online: <strong>${d.approximate_presence_count ?? "—"}</strong>`;
+  } catch {
+    el.textContent = "Erro Discord";
+  }
+}
+
+/* =========================
+   TEMPO ONLINE
+========================= */
+
+function diffMonthsDays(fromDate, toDate){
+  const start = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+  const end = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+  if (end < start) return { months: 0, days: 0 };
+
+  let months =
+    (end.getFullYear() - start.getFullYear()) * 12 +
+    (end.getMonth() - start.getMonth());
+
+  let anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
+
+  if (anchor > end){
+    months--;
+    anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
+  }
+
+  const msDay = 24 * 60 * 60 * 1000;
+  const days = Math.max(0, Math.round((end - anchor) / msDay));
+
+  return { months, days };
+}
+
+function tempoOnline() {
+  const el = document.querySelector("#tempo-online strong");
+  if(!el) return;
+
+  const createdAt = new Date(2025, 4, 11);
+  const now = new Date();
+  const { months, days } = diffMonthsDays(createdAt, now);
+
+  el.textContent = `${months} ${months === 1 ? "mês" : "meses"} ${days} ${days === 1 ? "dia" : "dias"}`;
+}
+
+/* =========================
+   MODAIS
+========================= */
+
+function setupModals(){
+  function bindModal(btnId, modalId, closeId){
+    const btn = document.getElementById(btnId);
+    const modal = document.getElementById(modalId);
+    const close = document.getElementById(closeId);
+    if(!btn || !modal || !close) return;
+
+    btn.addEventListener("click", e=>{
+      e.preventDefault();
+      modal.style.display="flex";
+    });
+
+    close.addEventListener("click", ()=>{
+      modal.style.display="none";
+    });
+
+    modal.addEventListener("click", e=>{
+      if(e.target===modal) modal.style.display="none";
+    });
+  }
+
+  bindModal("vipBtn","vipModal","closeVip");
+  bindModal("desbanBtn","desbanModal","closeDesban");
+  bindModal("gmBtn","gmModal","closeGM");
+
+  document.addEventListener("keydown", e=>{
+    if(e.key==="Escape"){
+      document.querySelectorAll(".modal").forEach(m=>{
+        if(m.style.display==="flex") m.style.display="none";
+      });
+    }
+  });
+}
+
+/* =========================
+   WHATSAPP LINKS
+========================= */
+
+function setupWhats(){
+  const phone="558296963727";
+  const w1=document.getElementById("whatsDesban");
+  const w2=document.getElementById("whatsGM");
+
+  if(w1)
+    w1.href=`https://wa.me/${phone}?text=${encodeURIComponent("Ola tenho interesse no desban do site")}`;
+
+  if(w2)
+    w2.href=`https://wa.me/${phone}?text=${encodeURIComponent("Olá! Tem GM disponível à venda? Vim pelo site.")}`;
+}
+
+/* =========================
+   RANKING HOME
+========================= */
+
+function setupRankingButtons(){
+  const btnCad = document.getElementById("btnCadastrarServidor");
+  const btnDestaque = document.getElementById("btnDestaqueAgora");
+
+  async function goCadastro(mode){
+    const logged = await isLoggedPortal();
+    const next = encodeURIComponent("index.html#ranking-servidores");
+
+    if (!logged){
+      window.location.href = `loginportal.html?next=${next}&mode=${mode}`;
+      return;
+    }
+
+    window.location.href = `servidores.html#cadastrar`;
+  }
+
+  btnCad?.addEventListener("click", e=>{
+    e.preventDefault();
+    goCadastro("free");
   });
 
-  if(r.status === 401){
-    window.location.href = "loginportal.html?next=servidores.html";
-  } else {
-    window.location.href = "servidores.html";
+  btnDestaque?.addEventListener("click", ()=>{
+    goCadastro("premium");
+  });
+}
+
+function renderRankingCards(items){
+  const grid = document.getElementById("rankingGrid");
+  if(!grid) return;
+
+  const cta = document.getElementById("ctaDestaque");
+  grid.innerHTML="";
+
+  if(!items.length){
+    grid.innerHTML="<p>Nenhum servidor no ranking ainda.</p>";
+    if(cta) grid.appendChild(cta);
+    return;
   }
+
+  items.slice(0,5).forEach(it=>{
+    const card=document.createElement("div");
+    card.className="rank-card";
+
+    card.innerHTML=`
+      <div class="rank-top">
+        <img class="rank-logo"
+          src="${escapeHtml(it.logoUrl || "https://i.imgur.com/eKjFtd1.png")}"
+          loading="lazy" />
+        <div class="rank-title">
+          <strong>${escapeHtml(it.name)}</strong>
+          <small>${escapeHtml(it.ip)}</small>
+        </div>
+        <span class="badge">${it.position || ""}</span>
+      </div>
+      <div class="rank-meta">
+        ${it.isPremium ? `<span class="badge premium">PREMIUM</span>`:""}
+      </div>
+      <div class="rank-actions">
+        ${it.discord ? `<a class="primary" href="${escapeHtml(it.discord)}" target="_blank">Entrar</a>`:""}
+        <a href="servidores.html">Ver</a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  if(cta) grid.appendChild(cta);
+}
+
+async function loadRankingHome(){
+  try{
+    const r=await fetch("/.netlify/functions/server_list?limit=5",{cache:"no-store"});
+    if(!r.ok) throw new Error();
+    const data=await r.json();
+    renderRankingCards(data.items||[]);
+  }catch{
+    renderRankingCards([]);
+  }
+}
+
+/* =========================
+   INIT ÚNICO
+========================= */
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  loadDiscord();
+  tempoOnline();
+  setInterval(tempoOnline,60*60*1000);
+
+  setupModals();
+  setupWhats();
+  setupRankingButtons();
+  loadRankingHome();
 });
-
-document.getElementById("btnDestaqueAgora")?.addEventListener("click", ()=>{
-  window.location.href = "servidores.html";
-});
-
-loadRanking();
-
-
-
-  </script>
-
+</script>
 </body>
 </html>

@@ -12,7 +12,28 @@ function parseJson(content) {
     return JSON.parse(content.replace(/```json|```/g, "").trim());
   } catch { return null; }
 }
+async function fetchAllMessages(channelId, max = 1000) {
+  const headers = { Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}` };
+  let all = [];
+  let before = null;
 
+  while (all.length < max) {
+    const url = new URL(`https://discord.com/api/v10/channels/${channelId}/messages`);
+    url.searchParams.set("limit", "100");
+    if (before) url.searchParams.set("before", before);
+
+    const r = await fetch(url.toString(), { headers });
+    if (!r.ok) break;
+
+    const batch = await r.json();
+    if (!batch.length) break;
+
+    all.push(...batch);
+    before = batch[batch.length - 1].id;
+  }
+
+  return all;
+}
 exports.handler = async (event) => {
   try {
     const token = event.headers.cookie?.match(/sx_portal_session=([^;]+)/)?.[1];
@@ -33,15 +54,16 @@ exports.handler = async (event) => {
 
     if (!data) return { statusCode: 401 };
 
-    const msgs = await fetchMessages(process.env.DB_CHANNEL_ID);
-    const premiumMsgs = await fetchMessages(process.env.DB_PREMIUM_CHANNEL_ID);
+  const msgs = await fetchAllMessages(process.env.DB_CHANNEL_ID, 2000);
+  const premiumMsgs = await fetchAllMessages(process.env.DB_PREMIUM_CHANNEL_ID, 2000);
 
     const premiumMap = new Map();
     for (const m of premiumMsgs) {
       const p = parseJson(m.content);
-      if (p && p.isActive && p.expiresAt > Date.now()) {
-        premiumMap.set(p.serverId, p.expiresAt);
-      }
+      const exp = typeof p.expiresAt === "number" ? p.expiresAt : Date.parse(p.expiresAt);
+      if (p && p.isActive && exp && exp > Date.now()) {
+        premiumMap.set(p.serverId, exp);
+}
     }
 
     const servers = [];

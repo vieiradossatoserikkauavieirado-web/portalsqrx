@@ -498,6 +498,20 @@
     </div>
   </div>
 
+  // ===== DETECTAR RETORNO DE PAGAMENTO =====
+  (function(){
+    const params = new URLSearchParams(window.location.search);
+    if(params.get("paid") !== "1") return;
+
+    fetch("/.netlify/functions/log-premium-purchase", {
+      method: "POST",
+      credentials: "include"
+    }).catch(()=>{});
+
+    alert("Pagamento recebido! Aguarde ativação pelo staff.");
+  })();
+
+
   <script>
     // ===== VERIFICAR LOGIN =====
     async function checkLogin(){

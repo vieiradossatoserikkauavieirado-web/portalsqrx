@@ -1,414 +1,744 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Servidores - Portal SiqueiraX</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Servidores - Portal SiqueiraX</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-<style>
-body{
-  font-family:'Inter',sans-serif;
-  background:#0e0e0e;
-  color:#fff;
-  margin:0;
-}
+  <style>
+    :root{
+      --red-main:#ff002b;
+      --red-dark:#b0001c;
+      --glass:rgba(15,15,15,.74);
+      --glass-2:rgba(18,18,18,.58);
+      --border:rgba(255,255,255,.10);
+      --radius:14px;
+      --radius-lg:18px;
+      --transition:.22s ease;
+      --shadow:0 18px 45px rgba(0,0,0,.45);
+      --shadow-soft:0 10px 26px rgba(0,0,0,.32);
+      --text-dim:rgba(255,255,255,.78);
+      --max:1040px;
+    }
 
-.container{
-  max-width:1000px;
-  margin:40px auto;
-  padding:20px;
-}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
 
-h1{
-  font-family:'Orbitron',sans-serif;
-  text-align:center;
-  color:#ff2b2b;
-}
+    body{
+      font-family:'Inter',sans-serif;
+      background:#0e0e0e;
+      color:#fff;
+      min-height:100vh;
+    }
 
-.tabs{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  margin:30px 0;
-}
+    /* fundo opcional glass (se quiser manter liso, remova esse bloco e o ::before) */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:radial-gradient(circle at 25% 15%, rgba(255,0,43,.12), transparent 55%),
+                 radial-gradient(circle at 75% 10%, rgba(255,77,77,.10), transparent 60%),
+                 rgba(0,0,0,.62);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      z-index:-1;
+    }
 
-.tab-btn{
-  padding:10px 20px;
-  background:#1a1a1a;
-  border:1px solid #333;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:700;
-}
+    .container{
+      width:min(var(--max), 100%);
+      margin:28px auto;
+      padding:0 14px;
+    }
 
-.tab-btn.active{
-  background:#ff002b;
-}
+    .panel{
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-soft);
+      padding:18px;
+    }
 
-.section{ display:none; }
-.section.active{ display:block; }
+    header{
+      text-align:center;
+      padding:14px 10px 6px;
+    }
 
-.card{
-  background:#1a1a1a;
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:15px;
-  border:1px solid #333;
-}
+    h1{
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(1.8rem, 3.2vw, 2.4rem);
+      letter-spacing:1.6px;
+      background:linear-gradient(90deg,var(--red-main),#ff4d4d);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:0 12px 40px rgba(255,0,43,.14);
+    }
 
-.badge{
-  display:inline-block;
-  padding:5px 10px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:800;
-  margin-right:5px;
-}
+    .tabs{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin:16px 0 6px;
+      flex-wrap:wrap;
+    }
 
-.badge.approved{ background:green; }
-.badge.pending{ background:orange; }
-.badge.rejected{ background:red; }
-.badge.premium{ background:#ff002b; }
+    .tab-btn{
+      user-select:none;
+      padding:10px 14px;
+      background:rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:800;
+      color:var(--text-dim);
+      transition:var(--transition);
+    }
 
-button{
-  padding:8px 15px;
-  margin-top:10px;
-  background:#ff002b;
-  border:none;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  border-radius:6px;
-}
+    .tab-btn:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.18); }
+    .tab-btn.active{
+      background:linear-gradient(90deg,var(--red-main),#ff4d4d);
+      border-color:rgba(255,0,43,.45);
+      color:#fff;
+      box-shadow:0 16px 40px rgba(255,0,43,.12);
+    }
 
-form input{
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  background:#1a1a1a;
-  border:1px solid #333;
-  color:#fff;
-  border-radius:6px;
-}
-</style>
+    .section{ display:none; padding:14px 0 6px; }
+    .section.active{ display:block; }
+
+    #serverList{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+      align-items:stretch;
+    }
+
+    @media (max-width: 860px){
+      #serverList{ grid-template-columns:1fr; }
+    }
+
+    .card{
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius-lg);
+      padding:14px;
+      box-shadow:var(--shadow-soft);
+    }
+
+    .card-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .card-title{
+      font-weight:900;
+      font-size:1.05rem;
+      line-height:1.25;
+      word-break:break-word;
+    }
+
+    .card-ip{
+      color:var(--text-dim);
+      font-weight:700;
+      margin-top:6px;
+      word-break:break-word;
+    }
+
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:10px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+    }
+
+    .badge.approved{ background:rgba(0,128,0,.30); border-color:rgba(0,255,0,.18); }
+    .badge.pending{ background:rgba(255,165,0,.22); border-color:rgba(255,165,0,.18); }
+    .badge.rejected{ background:rgba(255,0,0,.20); border-color:rgba(255,0,0,.18); }
+    .badge.premium{ background:rgba(255,0,43,.22); border-color:rgba(255,0,43,.35); }
+
+    .card-actions{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      padding:10px 14px;
+      background:linear-gradient(90deg,var(--red-main),#ff4d4d);
+      border:none;
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      border-radius:12px;
+      transition:var(--transition);
+      box-shadow:0 16px 40px rgba(255,0,43,.12);
+    }
+    button:hover{ transform:translateY(-1px); }
+    button:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .btn-ghost{
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:none;
+    }
+
+    form{
+      display:grid;
+      gap:10px;
+      max-width:640px;
+      margin:0 auto;
+    }
+
+    form input{
+      width:100%;
+      padding:12px 12px;
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.12);
+      color:#fff;
+      border-radius:12px;
+      outline:none;
+      transition:var(--transition);
+    }
+    form input:focus{ border-color:rgba(255,0,43,.45); box-shadow:0 0 0 3px rgba(255,0,43,.12); }
+
+    #formMsg{
+      text-align:center;
+      color:var(--text-dim);
+      font-weight:800;
+      padding-top:6px;
+      min-height:22px;
+    }
+
+    /* ===== MODAL PREMIUM ===== */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+      background:rgba(0,0,0,.62);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      z-index:9999;
+    }
+
+    .modal-backdrop.show{ display:flex; }
+
+    .modal-card{
+      width:min(860px, 100%);
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .modal-card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:radial-gradient(circle at 30% 10%, rgba(255,0,43,.22), transparent 45%),
+                 radial-gradient(circle at 75% 20%, rgba(255,77,77,.16), transparent 50%);
+      pointer-events:none;
+    }
+
+    .modal-close{
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);
+      color:#fff;
+      cursor:pointer;
+      transition:var(--transition);
+      z-index:2;
+      box-shadow:none;
+    }
+    .modal-close:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.22); }
+
+    .modal-head{ position:relative; z-index:1; padding:6px 4px 12px; }
+
+    .modal-badge{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.24);
+      color:var(--text-dim);
+      font-weight:900;
+      font-size:.85rem;
+    }
+
+    .modal-head h2{
+      margin-top:10px;
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(1.4rem, 2.6vw, 2.0rem);
+      letter-spacing:1.2px;
+      background:linear-gradient(90deg,var(--red-main),#ff4d4d);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .modal-head p{
+      margin-top:6px;
+      color:var(--text-dim);
+      font-weight:700;
+      line-height:1.35;
+    }
+
+    .plan-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:10px;
+    }
+
+    @media (max-width:700px){
+      .plan-grid{ grid-template-columns:1fr; }
+    }
+
+    .plan{
+      text-align:left;
+      cursor:pointer;
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.22);
+      padding:14px;
+      transition:var(--transition);
+      box-shadow:var(--shadow-soft);
+      position:relative;
+      overflow:hidden;
+      color:#fff;
+    }
+
+    .plan::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, rgba(255,0,43,.12), transparent 55%);
+      opacity:0;
+      transition:var(--transition);
+      pointer-events:none;
+    }
+
+    .plan:hover{ transform:translateY(-2px); border-color:rgba(255,255,255,.20); }
+    .plan:hover::after{ opacity:1; }
+
+    .plan-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .plan-name{ font-weight:1000; font-size:1.05rem; }
+    .plan-price{ font-weight:1000; color:#ff6b6b; }
+
+    .plan-desc{
+      margin-top:10px;
+      color:var(--text-dim);
+      font-weight:700;
+      line-height:1.35;
+    }
+
+    .plan-cta{
+      margin-top:12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:9px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.26);
+      font-weight:900;
+    }
+
+    .plan-featured{ border-color:rgba(255,0,43,.35); }
+    .plan-featured .plan-cta{ border-color:rgba(255,0,43,.38); }
+
+    .plan.selected{
+      border-color:rgba(255,0,43,.65);
+      box-shadow:0 20px 55px rgba(255,0,43,.12);
+    }
+    .plan.selected::after{ opacity:1; }
+
+    .modal-foot{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px solid rgba(255,255,255,.10);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .modal-meta{
+      color:var(--text-dim);
+      font-weight:900;
+      display:flex;
+      gap:6px;
+      align-items:center;
+      word-break:break-word;
+    }
+
+    .btn-primary{
+      border:none;
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:1000;
+      letter-spacing:.2px;
+      color:#fff;
+      background:linear-gradient(90deg,var(--red-main),#ff4d4d);
+      box-shadow:0 18px 45px rgba(255,0,43,.18);
+      transition:var(--transition);
+    }
+    .btn-primary:hover{ transform:translateY(-1px); }
+  </style>
 </head>
 
 <body>
+  <div class="container">
+    <div class="panel">
+      <header>
+        <h1>Gerenciar Servidores</h1>
+      </header>
 
-<div class="container">
-  <h1>Gerenciar Servidores</h1>
-
-  <div class="tabs">
-    <div class="tab-btn active" onclick="switchTab(event,'meus')">📂 Meus Servidores</div>
-    <div class="tab-btn" onclick="switchTab(event,'novo')">➕ Cadastrar Novo</div>
-  </div>
-
-  <!-- MEUS SERVIDORES -->
-  <div id="meus" class="section active">
-    <div id="serverList">Carregando...</div>
-  </div>
-
-  <!-- NOVO SERVIDOR -->
-  <div id="novo" class="section">
-    <form id="serverForm">
-      <input type="text" name="name" placeholder="Nome do Servidor" required>
-      <input type="text" name="ip" placeholder="IP:PORTA (ex: 51.222.1.1:7777)" required>
-      <input type="text" name="discord" placeholder="Link Discord (opcional)">
-      <input type="text" name="logoUrl" placeholder="URL da Logo (Imgur)">
-      <button type="submit">Cadastrar</button>
-    </form>
-    <div id="formMsg"></div>
-  </div>
-</div>
-
-
-<!-- ===== MODAL DESTACAR SERVIDOR ===== -->
-<div id="premiumModal" class="modal-backdrop" aria-hidden="true">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="premiumTitle">
-    <button class="modal-close" onclick="fecharPremiumModal()" aria-label="Fechar">✕</button>
-
-    <div class="modal-head">
-      <div class="modal-badge">🔥 Premium Servers</div>
-      <h2 id="premiumTitle">Destacar servidor</h2>
-      <p id="premiumSubtitle">Escolha um plano para subir seu servidor no topo do ranking.</p>
-    </div>
-
-    <div class="plan-grid">
-      <button class="plan" onclick="premiumSelecionar('7d')" type="button">
-        <div class="plan-top">
-          <div class="plan-name">7 dias</div>
-          <div class="plan-price">R$ 15,00</div>
-        </div>
-        <div class="plan-desc">Ideal para testar e ganhar tráfego rápido.</div>
-        <div class="plan-cta">Selecionar</div>
-      </button>
-
-      <button class="plan plan-featured" onclick="premiumSelecionar('30d')" type="button">
-        <div class="plan-top">
-          <div class="plan-name">30 dias</div>
-          <div class="plan-price">R$ 39,90</div>
-        </div>
-        <div class="plan-desc">Melhor custo-benefício para crescer constante.</div>
-        <div class="plan-cta">Selecionar</div>
-      </button>
-    </div>
-
-    <div class="modal-foot">
-      <div class="modal-meta">
-        <span>Servidor:</span>
-        <strong id="premiumServerLabel">—</strong>
+      <div class="tabs">
+        <div class="tab-btn active" onclick="switchTab(event,'meus')">📂 Meus Servidores</div>
+        <div class="tab-btn" onclick="switchTab(event,'novo')">➕ Cadastrar Novo</div>
       </div>
 
-      <button class="btn-primary" id="premiumContinuarBtn" onclick="premiumContinuar()" disabled>
-        Continuar para pagamento
-      </button>
+      <!-- MEUS SERVIDORES -->
+      <div id="meus" class="section active">
+        <div id="serverList">Carregando...</div>
+      </div>
+
+      <!-- NOVO SERVIDOR -->
+      <div id="novo" class="section">
+        <form id="serverForm">
+          <input type="text" name="name" placeholder="Nome do Servidor" required />
+          <input type="text" name="ip" placeholder="IP:PORTA (ex: 51.222.1.1:7777)" required />
+          <input type="text" name="discord" placeholder="Link Discord (opcional)" />
+          <input type="text" name="logoUrl" placeholder="URL da Logo (Imgur)" />
+          <button type="submit">Cadastrar</button>
+        </form>
+        <div id="formMsg"></div>
+      </div>
     </div>
   </div>
-</div>
 
+  <!-- ===== MODAL DESTACAR SERVIDOR ===== -->
+  <div id="premiumModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="premiumTitle">
+      <button class="modal-close" onclick="fecharPremiumModal()" aria-label="Fechar">✕</button>
 
+      <div class="modal-head">
+        <div class="modal-badge">🔥 Premium Servers</div>
+        <h2 id="premiumTitle">Destacar servidor</h2>
+        <p id="premiumSubtitle">Escolha um plano para subir seu servidor no topo do ranking.</p>
+      </div>
 
-<script>
-// ===== VERIFICAR LOGIN =====
-async function checkLogin(){
-  const r = await fetch("/.netlify/functions/me_portal", { credentials:"include" });
+      <div class="plan-grid">
+        <button class="plan" onclick="premiumSelecionar('7d')" type="button">
+          <div class="plan-top">
+            <div class="plan-name">7 dias</div>
+            <div class="plan-price">R$ 15,00</div>
+          </div>
+          <div class="plan-desc">Ideal para testar e ganhar tráfego rápido.</div>
+          <div class="plan-cta">Selecionar</div>
+        </button>
 
-  if(r.status === 401){
-    window.location.href = "loginportal.html";
-    return false;
-  }
-  return true;
-}
+        <button class="plan plan-featured" onclick="premiumSelecionar('30d')" type="button">
+          <div class="plan-top">
+            <div class="plan-name">30 dias</div>
+            <div class="plan-price">R$ 39,90</div>
+          </div>
+          <div class="plan-desc">Melhor custo-benefício para crescer constante.</div>
+          <div class="plan-cta">Selecionar</div>
+        </button>
+      </div>
 
-// ===== TROCAR ABA =====
-function switchTab(e,tab){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+      <div class="modal-foot">
+        <div class="modal-meta">
+          <span>Servidor:</span>
+          <strong id="premiumServerLabel">—</strong>
+        </div>
 
-  document.getElementById(tab).classList.add("active");
-  e.target.classList.add("active");
-}
+        <button class="btn-primary" id="premiumContinuarBtn" onclick="premiumContinuar()" disabled>
+          Continuar para pagamento
+        </button>
+      </div>
+    </div>
+  </div>
 
-// ===== CARREGAR SERVIDORES =====
-async function loadServers(){
-  const r = await fetch("/.netlify/functions/server_my_list", { credentials:"include" });
-
-  if(r.status === 401){
-    window.location.href = "loginportal.html";
-    return;
-  }
-
-  const data = await r.json();
-  const list = document.getElementById("serverList");
-  list.innerHTML = "";
-
-  if(!data.items || !data.items.length){
-    list.innerHTML = "Você ainda não cadastrou servidores.";
-    return;
-  }
-
-  data.items.forEach(s=>{
-    const div = document.createElement("div");
-    div.className = "card";
-
-    const statusClass = s.status || "pending";
-
-    div.innerHTML = `
-      <strong>${escapeHtml(s.name || "")}</strong><br>
-      ${escapeHtml(s.ip || "")}<br><br>
-
-      <span class="badge ${escapeAttr(statusClass)}">
-        ${escapeHtml(String(statusClass).toUpperCase())}
-      </span>
-
-      ${s.isPremium ? `<span class="badge premium">🔥 PREMIUM</span>` : ""}
-
-      <br>
-      ${!s.isPremium && s.status === "approved"
-        ? `<button onclick="destacar('${escapeJsStr(s.serverId)}', '${escapeJsStr(s.name || s.serverId)}')">🔥 Destacar</button>`
-        : ""
+  <script>
+    // ===== VERIFICAR LOGIN =====
+    async function checkLogin(){
+      const r = await fetch("/.netlify/functions/me_portal", { credentials:"include" });
+      if(r.status === 401){
+        window.location.href = "loginportal.html";
+        return false;
       }
-    `;
+      return true;
+    }
 
-    list.appendChild(div);
-  });
-}
+    // ===== TROCAR ABA =====
+    function switchTab(e, tab){
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
 
-// ===== CADASTRAR SERVIDOR =====
-document.getElementById("serverForm").addEventListener("submit", async e=>{
-  e.preventDefault();
+      document.getElementById(tab).classList.add("active");
+      e.target.classList.add("active");
+    }
 
-  const form = new FormData(e.target);
+    // ===== CARREGAR SERVIDORES =====
+    async function loadServers(){
+      const r = await fetch("/.netlify/functions/server_my_list", { credentials:"include" });
 
-  const r = await fetch("/.netlify/functions/server_submit",{
-    method:"POST",
-    credentials:"include",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      name: form.get("name"),
-      ip: form.get("ip"),
-      discord: form.get("discord"),
-      logoUrl: form.get("logoUrl")
-    })
-  });
+      if(r.status === 401){
+        window.location.href = "loginportal.html";
+        return;
+      }
 
-  const txt = await r.text();
-  console.log("STATUS:", r.status);
-  console.log("BODY:", txt);
+      const data = await r.json();
+      const list = document.getElementById("serverList");
+      list.innerHTML = "";
 
-  if(r.status === 401){
-    window.location.href = "loginportal.html";
-    return;
-  }
+      if(!data.items || !data.items.length){
+        list.innerHTML = "Você ainda não cadastrou servidores.";
+        return;
+      }
 
-  document.getElementById("formMsg").innerText = "Servidor enviado para análise!";
-  e.target.reset();
-  loadServers();
-});
+      data.items.forEach(s => {
+        const div = document.createElement("div");
+        div.className = "card";
 
-// ===== PREMIUM MODAL (STATE + UI) =====
-const premiumState = {
-  serverId: null,
-  serverName: null,
-  plano: null,        // 'weekly' | 'monthly'
-  busy: false
-};
+        const statusClass = s.status || "pending";
+        const canHighlight = !s.isPremium && s.status === "approved";
 
-function abrirPremiumModal(serverId, serverName){
-  premiumState.serverId = serverId;
-  premiumState.serverName = serverName || serverId;
-  premiumState.plano = null;
-  premiumState.busy = false;
+        div.innerHTML = `
+          <div class="card-top">
+            <div>
+              <div class="card-title">${escapeHtml(s.name || "")}</div>
+              <div class="card-ip">${escapeHtml(s.ip || "")}</div>
+            </div>
+          </div>
 
-  const modal = document.getElementById("premiumModal");
-  const label = document.getElementById("premiumServerLabel");
-  const btn = document.getElementById("premiumContinuarBtn");
+          <div class="badges">
+            <span class="badge ${escapeAttr(statusClass)}">${escapeHtml(String(statusClass).toUpperCase())}</span>
+            ${s.isPremium ? `<span class="badge premium">🔥 PREMIUM</span>` : ""}
+          </div>
 
-  if(label) label.textContent = premiumState.serverName;
+          ${canHighlight ? `
+            <div class="card-actions">
+              <button onclick="destacar('${escapeJsStr(s.serverId)}', '${escapeJsStr(s.name || s.serverId)}')">🔥 Destacar</button>
+            </div>
+          ` : ""}
+        `;
 
-  document.querySelectorAll("#premiumModal .plan").forEach(p => p.classList.remove("selected"));
+        list.appendChild(div);
+      });
+    }
 
-  if(btn){
-    btn.disabled = true;
-    btn.textContent = "Continuar para pagamento";
-  }
+    // ===== CADASTRAR SERVIDOR =====
+    document.getElementById("serverForm").addEventListener("submit", async e => {
+      e.preventDefault();
 
-  modal.classList.add("show");
-  modal.setAttribute("aria-hidden","false");
-}
+      const form = new FormData(e.target);
 
-function fecharPremiumModal(){
-  const modal = document.getElementById("premiumModal");
-  modal.classList.remove("show");
-  modal.setAttribute("aria-hidden","true");
-}
+      const r = await fetch("/.netlify/functions/server_submit",{
+        method:"POST",
+        credentials:"include",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          name: form.get("name"),
+          ip: form.get("ip"),
+          discord: form.get("discord"),
+          logoUrl: form.get("logoUrl")
+        })
+      });
 
-function premiumSelecionar(planoUI){
-  // planoUI: '7d' | '30d'
-  premiumState.plano = (planoUI === "7d") ? "weekly" : "monthly";
+      if(r.status === 401){
+        window.location.href = "loginportal.html";
+        return;
+      }
 
-  const plans = document.querySelectorAll("#premiumModal .plan");
-  plans.forEach(p => p.classList.remove("selected"));
-  const idx = (planoUI === "7d") ? 0 : 1;
-  if(plans[idx]) plans[idx].classList.add("selected");
+      // mantém para debug rápido (se não quiser, remova)
+      const txt = await r.text();
+      console.log("STATUS:", r.status);
+      console.log("BODY:", txt);
 
-  const btn = document.getElementById("premiumContinuarBtn");
-  if(btn) btn.disabled = false;
-}
-
-async function premiumContinuar(){
-  if(premiumState.busy) return;
-  if(!premiumState.serverId || !premiumState.plano) return;
-
-  premiumState.busy = true;
-
-  const btn = document.getElementById("premiumContinuarBtn");
-  if(btn){
-    btn.disabled = true;
-    btn.textContent = "Gerando checkout...";
-  }
-
-  try{
-    const r = await fetch("/.netlify/functions/criar-checkout-server",{
-      method:"POST",
-      credentials:"include",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ plano: premiumState.plano, serverId: premiumState.serverId })
+      document.getElementById("formMsg").innerText = "Servidor enviado para análise!";
+      e.target.reset();
+      loadServers();
     });
 
-    if(r.status === 401){
-      window.location.href = "loginportal.html";
-      return;
+    // ===== PREMIUM MODAL (STATE + UI) =====
+    const premiumState = {
+      serverId: null,
+      serverName: null,
+      plano: null,        // 'weekly' | 'monthly'
+      busy: false
+    };
+
+    function abrirPremiumModal(serverId, serverName){
+      premiumState.serverId = serverId;
+      premiumState.serverName = serverName || serverId;
+      premiumState.plano = null;
+      premiumState.busy = false;
+
+      const modal = document.getElementById("premiumModal");
+      const label = document.getElementById("premiumServerLabel");
+      const btn = document.getElementById("premiumContinuarBtn");
+
+      if(label) label.textContent = premiumState.serverName;
+      document.querySelectorAll("#premiumModal .plan").forEach(p => p.classList.remove("selected"));
+
+      if(btn){
+        btn.disabled = true;
+        btn.textContent = "Continuar para pagamento";
+      }
+
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
     }
 
-    const data = await r.json().catch(()=>null);
-
-    if(data?.checkout_url){
-      window.location.href = data.checkout_url;
-      return;
+    function fecharPremiumModal(){
+      const modal = document.getElementById("premiumModal");
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
     }
 
-    alert("Erro ao criar checkout.");
-  }catch(err){
-    console.error(err);
-    alert("Erro ao criar checkout.");
-  }finally{
-    premiumState.busy = false;
-    if(btn){
-      btn.textContent = "Continuar para pagamento";
-      btn.disabled = false;
+    function premiumSelecionar(planoUI){
+      premiumState.plano = (planoUI === "7d") ? "weekly" : "monthly";
+
+      const plans = document.querySelectorAll("#premiumModal .plan");
+      plans.forEach(p => p.classList.remove("selected"));
+
+      const idx = (planoUI === "7d") ? 0 : 1;
+      if(plans[idx]) plans[idx].classList.add("selected");
+
+      const btn = document.getElementById("premiumContinuarBtn");
+      if(btn) btn.disabled = false;
     }
-  }
-}
 
-// fechar clicando fora + ESC
-document.addEventListener("click", (e)=>{
-  const modal = document.getElementById("premiumModal");
-  if(!modal?.classList.contains("show")) return;
-  if(e.target === modal) fecharPremiumModal();
-});
+    async function premiumContinuar(){
+      if(premiumState.busy) return;
+      if(!premiumState.serverId || !premiumState.plano) return;
 
-document.addEventListener("keydown", (e)=>{
-  if(e.key !== "Escape") return;
-  const modal = document.getElementById("premiumModal");
-  if(modal?.classList.contains("show")) fecharPremiumModal();
-});
+      premiumState.busy = true;
 
-// ===== DESTACAR (abre modal) =====
-function destacar(serverId, serverName){
-  abrirPremiumModal(serverId, serverName);
-}
+      const btn = document.getElementById("premiumContinuarBtn");
+      if(btn){
+        btn.disabled = true;
+        btn.textContent = "Gerando checkout...";
+      }
 
-// ===== utils (escape mínimo p/ innerHTML + onclick) =====
-function escapeHtml(s){
-  return String(s)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#39;");
-}
+      try{
+        const r = await fetch("/.netlify/functions/criar-checkout-server",{
+          method:"POST",
+          credentials:"include",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ plano: premiumState.plano, serverId: premiumState.serverId })
+        });
 
-function escapeAttr(s){
-  return String(s).replaceAll('"',"&quot;").replaceAll("'","&#39;");
-}
+        if(r.status === 401){
+          window.location.href = "loginportal.html";
+          return;
+        }
 
-function escapeJsStr(s){
-  return String(s)
-    .replaceAll("\\","\\\\")
-    .replaceAll("'","\\'")
-    .replaceAll("\n","\\n")
-    .replaceAll("\r","\\r");
-}
+        const data = await r.json().catch(() => null);
 
-// ===== INIT =====
-(async ()=>{
-  const ok = await checkLogin();
-  if(ok) loadServers();
-})();
-</script>
+        if(data?.checkout_url){
+          window.location.href = data.checkout_url;
+          return;
+        }
 
+        alert("Erro ao criar checkout.");
+      }catch(err){
+        console.error(err);
+        alert("Erro ao criar checkout.");
+      }finally{
+        premiumState.busy = false;
+        if(btn){
+          btn.textContent = "Continuar para pagamento";
+          btn.disabled = false;
+        }
+      }
+    }
+
+    // fechar clicando fora + ESC
+    document.addEventListener("click", (e) => {
+      const modal = document.getElementById("premiumModal");
+      if(!modal || !modal.classList.contains("show")) return;
+      if(e.target === modal) fecharPremiumModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key !== "Escape") return;
+      const modal = document.getElementById("premiumModal");
+      if(modal && modal.classList.contains("show")) fecharPremiumModal();
+    });
+
+    // ===== DESTACAR (abre modal) =====
+    function destacar(serverId, serverName){
+      abrirPremiumModal(serverId, serverName);
+    }
+
+    // ===== utils (escape mínimo p/ innerHTML + onclick) =====
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    function escapeAttr(s){
+      return String(s).replaceAll('"',"&quot;").replaceAll("'","&#39;");
+    }
+
+    function escapeJsStr(s){
+      return String(s)
+        .replaceAll("\\","\\\\")
+        .replaceAll("'","\\'")
+        .replaceAll("\n","\\n")
+        .replaceAll("\r","\\r");
+    }
+
+    // ===== INIT =====
+    (async () => {
+      const ok = await checkLogin();
+      if(ok) loadServers();
+    })();
+  </script>
 </body>
 </html>

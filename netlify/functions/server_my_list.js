@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+
 
 async function fetchAllMessages(channelId, max = 2000) {
   const headers = {

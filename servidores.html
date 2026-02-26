@@ -653,7 +653,7 @@ function premiumContinuar(){
   if(!premiumState.serverId || !premiumState.plano) return;
 
   const LINKS = {
-    weekly: "https://checkout.infinitepay.io/siqueira-santos-12/1TEUt4U8zr" + encodeURIComponent(window.location.origin + "/servidores.html?paid=1"),
+    weekly: "https://checkout.infinitepay.io/siqueira-santos-12/1TEUt4U8zr?redirect_url=" + encodeURIComponent(window.location.origin + "/servidores.html?paid=1"),
     monthly: "https://checkout.infinitepay.io/siqueira-santos-12/3APAPjFI5?redirect_url=" + encodeURIComponent(window.location.origin + "/servidores.html?paid=1")
   };
 

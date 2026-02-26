@@ -649,50 +649,71 @@
       if(btn) btn.disabled = false;
     }
 
-    async function premiumContinuar(){
-      if(premiumState.busy) return;
-      if(!premiumState.serverId || !premiumState.plano) return;
+   async function premiumContinuar(){
+  if(premiumState.busy) return;
+  if(!premiumState.serverId || !premiumState.plano) return;
 
-      premiumState.busy = true;
+  premiumState.busy = true;
 
-      const btn = document.getElementById("premiumContinuarBtn");
-      if(btn){
-        btn.disabled = true;
-        btn.textContent = "Gerando checkout...";
-      }
+  const btn = document.getElementById("premiumContinuarBtn");
+  const setBtn = (text, disabled) => {
+    if(!btn) return;
+    btn.textContent = text;
+    btn.disabled = disabled;
+  };
 
-      try{
-        const r = await fetch("/.netlify/functions/criar-checkout-server",{
-          method:"POST",
-          credentials:"include",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ plano: premiumState.plano, serverId: premiumState.serverId })
-        });
+  setBtn("Gerando checkout...", true);
 
-        if(r.status === 401){
-          window.location.href = "loginportal.html";
-          return;
-        }
+  try{
+    const r = await fetch("/.netlify/functions/criar-checkout-server",{
+      method:"POST",
+      credentials:"include",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        plano: premiumState.plano,
+        serverId: premiumState.serverId
+      })
+    });
 
-        const data = await r.json().catch(() => null);
-
-        if(data?.checkout_url){
-          window.location.href = data.checkout_url;
-          return;
-        }
-
-        alert("Erro ao criar checkout.");
-      }catch(err){
-        console.error(err);
-        alert("Erro ao criar checkout.");
-      }finally{
-        premiumState.busy = false;
-        if(btn){
-          btn.textContent = "Continuar para pagamento";
-          btn.disabled = false;
-        }
-      }
+    if(r.status === 401){
+      window.location.href = "loginportal.html";
+      return;
     }
+
+    const raw = await r.text();
+    console.log("checkout status:", r.status);
+    console.log("checkout body:", raw);
+
+    if(!r.ok){
+      alert("Erro ao criar checkout.");
+      return;
+    }
+
+    let data = null;
+    try { data = JSON.parse(raw); } catch {}
+
+    const url =
+      data?.checkout_url ||
+      data?.url ||
+      data?.checkoutUrl ||
+      data?.checkout?.url ||
+      data?.data?.checkout_url ||
+      data?.data?.url;
+
+    if(url){
+      window.location.href = url;
+      return;
+    }
+
+    alert("Erro ao criar checkout.");
+  }catch(err){
+    console.error(err);
+    alert("Erro ao criar checkout.");
+  }finally{
+    premiumState.busy = false;
+    setBtn("Continuar para pagamento", false);
+  }
+}
 
     // fechar clicando fora + ESC
     document.addEventListener("click", (e) => {

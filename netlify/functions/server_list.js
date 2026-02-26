@@ -122,7 +122,19 @@ exports.handler = async (event) => {
       body: JSON.stringify({ items: result })
     };
   } catch (err) {
-    console.error("server_list error:", err);
-    return { statusCode: 500, body: "internal_error" };
-  }
+  console.error("server_list error:", err);
+  return {
+    statusCode: 500,
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    body: JSON.stringify({
+      error: "internal_error",
+      message: err?.message || String(err),
+      stack: err?.stack || null
+    })
+  };
+}
+  
 };
+
+
+

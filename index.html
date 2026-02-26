@@ -986,13 +986,20 @@ function renderRankingCards(items){
   const cta = document.getElementById("ctaDestaque");
   grid.innerHTML = "";
 
-  if(!Array.isArray(items) || !items.length){
-    grid.innerHTML = "<p>Nenhum servidor no ranking ainda.</p>";
-    if(cta) grid.appendChild(cta);
-    return;
-  }
+  const premiumItems = Array.isArray(items)
+  ? items.filter(it => it.isPremium)
+  : [];
 
-  items.slice(0,5).forEach((it)=>{
+if(!premiumItems.length){
+  grid.innerHTML = "<p>Nenhum servidor premium em destaque.</p>";
+  if(cta) grid.appendChild(cta);
+  return;
+}
+
+  items
+  .filter(it => it.isPremium)   // <-- somente premium
+  .slice(0,5)
+  .forEach((it)=>{
     const card = document.createElement("div");
 
     const banner = it.isPremium && it.bannerUrl

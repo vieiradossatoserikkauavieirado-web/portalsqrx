@@ -767,7 +767,31 @@ function escapeHtml(s){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
+function postMetric(url, payload){
+  try{
+    // mais confiável ao sair da página
+    if (navigator.sendBeacon){
+      const blob = new Blob([JSON.stringify(payload)], {type:"application/json"});
+      navigator.sendBeacon(url, blob);
+      return;
+    }
+  }catch{}
+  // fallback normal
+  fetch(url, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true
+  }).catch(()=>{});
+}
 
+function trackView(serverId){
+  postMetric("/.netlify/functions/server_view", { serverId });
+}
+
+function trackClick(serverId){
+  postMetric("/.netlify/functions/server_click", { serverId });
+}
 async function isLoggedPortal(){
   try{
     const r = await fetch("/.netlify/functions/me_portal", {
@@ -955,11 +979,24 @@ function renderRankingCards(items){
         ${it.isPremium ? `<span class="badge premium">PREMIUM</span>`:""}
       </div>
       <div class="rank-actions">
-        ${it.discord ? `<a class="primary" href="${escapeHtml(it.discord)}" target="_blank">Entrar</a>`:""}
-        <a href="servidores.html">Ver</a>
-      </div>
+      ${it.discord ? `<a class="primary js-enter" href="${escapeHtml(it.discord)}" data-server-id="${escapeHtml(it.serverId)}" target="_blank" rel="noopener">Entrar</a>`:""}
+      <a href="servidores.html">Ver</a>
+    </div>
     `;
     grid.appendChild(card);
+
+    // VIEW: contou como exibido na home
+    if (it.serverId) trackView(it.serverId);
+
+    // CLICK: quando clicar em "Entrar"
+    const enter = card.querySelector(".js-enter");
+    if (enter){
+      enter.addEventListener("click", (e)=>{
+        const sid = enter.getAttribute("data-server-id");
+        if (sid) trackClick(sid);
+        // deixa abrir normal (target=_blank)
+      });
+}
   });
 
   if(cta) grid.appendChild(cta);

@@ -961,43 +961,53 @@ function renderRankingCards(items){
   }
 
   items.slice(0,5).forEach(it=>{
-    const card=document.createElement("div");
-    card.className="rank-card";
+  const card=document.createElement("div");
+  card.className="rank-card";
 
-    card.innerHTML=`
-      <div class="rank-top">
-        <img class="rank-logo"
-          src="${escapeHtml(it.logoUrl || "https://i.imgur.com/eKjFtd1.png")}"
-          loading="lazy" />
-        <div class="rank-title">
-          <strong>${escapeHtml(it.name)}</strong>
-          <small>${escapeHtml(it.ip)}</small>
-        </div>
-        <span class="badge">${it.position || ""}</span>
+  card.innerHTML=`
+    <div class="rank-top">
+      <img class="rank-logo"
+        src="${escapeHtml(it.logoUrl || "https://i.imgur.com/eKjFtd1.png")}"
+        loading="lazy" />
+      <div class="rank-title">
+        <strong>${escapeHtml(it.name)}</strong>
+        <small>${escapeHtml(it.ip)}</small>
       </div>
-      <div class="rank-meta">
-        ${it.isPremium ? `<span class="badge premium">PREMIUM</span>`:""}
-      </div>
-      <div class="rank-actions">
-      ${it.discord ? `<a class="primary js-enter" href="${escapeHtml(it.discord)}" data-server-id="${escapeHtml(it.serverId)}" target="_blank" rel="noopener">Entrar</a>`:""}
-      <a class="js-ver" href="servidores.html" data-server-id="...">Ver</a>
+      <span class="badge">${it.position || ""}</span>
     </div>
-    `;
-    grid.appendChild(card);
+    <div class="rank-meta">
+      ${it.isPremium ? `<span class="badge premium">PREMIUM</span>`:""}
+    </div>
+    <div class="rank-actions">
+      ${it.discord ? `<a class="primary js-enter" href="${escapeHtml(it.discord)}" data-server-id="${escapeHtml(it.serverId)}" target="_blank" rel="noopener">Entrar</a>`:""}
+      <a class="js-ver" href="servidores.html" data-server-id="${escapeHtml(it.serverId)}">Ver</a>
+    </div>
+  `;
 
-    // VIEW: contou como exibido na home
-    if (it.serverId) trackView(it.serverId);
+  grid.appendChild(card);
 
-    // CLICK: quando clicar em "Entrar"
-    const enter = card.querySelector(".js-enter");
-    if (enter){
-      enter.addEventListener("click", (e)=>{
-        const sid = enter.getAttribute("data-server-id");
-        if (sid) trackClick(sid);
-        // deixa abrir normal (target=_blank)
-      });
-}
-  });
+  // VIEW
+  if (it.serverId) trackView(it.serverId);
+
+  // CLICK: Entrar
+  const enter = card.querySelector(".js-enter");
+  if (enter){
+    enter.addEventListener("click", ()=>{
+      const sid = enter.getAttribute("data-server-id");
+      if (sid) trackClick(sid);
+    });
+  }
+
+  // Se NÃO tiver server_detail_click, apaga esse bloco:
+  // const ver = card.querySelector(".js-ver");
+  // if (ver){
+  //   ver.addEventListener("click", ()=>{
+  //     const sid = ver.getAttribute("data-server-id");
+  //     if (sid) postMetric("/.netlify/functions/server_detail_click", { serverId: sid });
+  //   });
+  // }
+});
+
 
   if(cta) grid.appendChild(cta);
 }

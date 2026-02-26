@@ -124,35 +124,29 @@ form input{
 </div>
 
 <script>
-
 // ===== VERIFICAR LOGIN =====
 async function checkLogin(){
-  const r = await fetch("/.netlify/functions/me_portal", {
-    credentials:"include"
-  });
+  const r = await fetch("/.netlify/functions/me_portal", { credentials:"include" });
 
   if(r.status === 401){
     window.location.href = "loginportal.html";
     return false;
   }
-
   return true;
 }
 
 // ===== TROCAR ABA =====
 function switchTab(e,tab){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
 
-  document.getElementById(tab).classList.add('active');
-  e.target.classList.add('active');
+  document.getElementById(tab).classList.add("active");
+  e.target.classList.add("active");
 }
 
 // ===== CARREGAR SERVIDORES =====
 async function loadServers(){
-  const r = await fetch("/.netlify/functions/server_my_list", {
-    credentials:"include"
-  });
+  const r = await fetch("/.netlify/functions/server_my_list", { credentials:"include" });
 
   if(r.status === 401){
     window.location.href = "loginportal.html";
@@ -175,18 +169,18 @@ async function loadServers(){
     const statusClass = s.status || "pending";
 
     div.innerHTML = `
-      <strong>${s.name}</strong><br>
-      ${s.ip}<br><br>
+      <strong>${escapeHtml(s.name || "")}</strong><br>
+      ${escapeHtml(s.ip || "")}<br><br>
 
-      <span class="badge ${statusClass}">
-        ${statusClass.toUpperCase()}
+      <span class="badge ${escapeAttr(statusClass)}">
+        ${escapeHtml(String(statusClass).toUpperCase())}
       </span>
 
       ${s.isPremium ? `<span class="badge premium">🔥 PREMIUM</span>` : ""}
 
       <br>
-      ${!s.isPremium && s.status === "approved" ? 
-        `<button onclick="destacar('${s.serverId}')">🔥 Destacar</button>` 
+      ${!s.isPremium && s.status === "approved"
+        ? `<button onclick="destacar('${escapeJsStr(s.serverId)}', '${escapeJsStr(s.name || s.serverId)}')">🔥 Destacar</button>`
         : ""
       }
     `;
@@ -205,13 +199,17 @@ document.getElementById("serverForm").addEventListener("submit", async e=>{
     method:"POST",
     credentials:"include",
     headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({
+    body: JSON.stringify({
       name: form.get("name"),
       ip: form.get("ip"),
       discord: form.get("discord"),
       logoUrl: form.get("logoUrl")
     })
   });
+
+  const txt = await r.text();
+  console.log("STATUS:", r.status);
+  console.log("BODY:", txt);
 
   if(r.status === 401){
     window.location.href = "loginportal.html";
@@ -223,29 +221,139 @@ document.getElementById("serverForm").addEventListener("submit", async e=>{
   loadServers();
 });
 
-// ===== DESTACAR =====
-async function destacar(serverId){
+// ===== PREMIUM MODAL (STATE + UI) =====
+const premiumState = {
+  serverId: null,
+  serverName: null,
+  plano: null,        // 'weekly' | 'monthly'
+  busy: false
+};
 
-  const escolha = confirm(
-    "OK = 7 dias (R$15,00)\nCancelar = 30 dias (R$39,90)"
-  );
+function abrirPremiumModal(serverId, serverName){
+  premiumState.serverId = serverId;
+  premiumState.serverName = serverName || serverId;
+  premiumState.plano = null;
+  premiumState.busy = false;
 
-  const plano = escolha ? "weekly" : "monthly";
+  const modal = document.getElementById("premiumModal");
+  const label = document.getElementById("premiumServerLabel");
+  const btn = document.getElementById("premiumContinuarBtn");
 
-  const r = await fetch("/.netlify/functions/criar-checkout-server",{
-    method:"POST",
-    credentials:"include",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ plano, serverId })
-  });
+  if(label) label.textContent = premiumState.serverName;
 
-  const data = await r.json();
+  document.querySelectorAll("#premiumModal .plan").forEach(p => p.classList.remove("selected"));
 
-  if(data.checkout_url){
-    window.location.href = data.checkout_url;
-  }else{
-    alert("Erro ao criar checkout.");
+  if(btn){
+    btn.disabled = true;
+    btn.textContent = "Continuar para pagamento";
   }
+
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden","false");
+}
+
+function fecharPremiumModal(){
+  const modal = document.getElementById("premiumModal");
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden","true");
+}
+
+function premiumSelecionar(planoUI){
+  // planoUI: '7d' | '30d'
+  premiumState.plano = (planoUI === "7d") ? "weekly" : "monthly";
+
+  const plans = document.querySelectorAll("#premiumModal .plan");
+  plans.forEach(p => p.classList.remove("selected"));
+  const idx = (planoUI === "7d") ? 0 : 1;
+  if(plans[idx]) plans[idx].classList.add("selected");
+
+  const btn = document.getElementById("premiumContinuarBtn");
+  if(btn) btn.disabled = false;
+}
+
+async function premiumContinuar(){
+  if(premiumState.busy) return;
+  if(!premiumState.serverId || !premiumState.plano) return;
+
+  premiumState.busy = true;
+
+  const btn = document.getElementById("premiumContinuarBtn");
+  if(btn){
+    btn.disabled = true;
+    btn.textContent = "Gerando checkout...";
+  }
+
+  try{
+    const r = await fetch("/.netlify/functions/criar-checkout-server",{
+      method:"POST",
+      credentials:"include",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ plano: premiumState.plano, serverId: premiumState.serverId })
+    });
+
+    if(r.status === 401){
+      window.location.href = "loginportal.html";
+      return;
+    }
+
+    const data = await r.json().catch(()=>null);
+
+    if(data?.checkout_url){
+      window.location.href = data.checkout_url;
+      return;
+    }
+
+    alert("Erro ao criar checkout.");
+  }catch(err){
+    console.error(err);
+    alert("Erro ao criar checkout.");
+  }finally{
+    premiumState.busy = false;
+    if(btn){
+      btn.textContent = "Continuar para pagamento";
+      btn.disabled = false;
+    }
+  }
+}
+
+// fechar clicando fora + ESC
+document.addEventListener("click", (e)=>{
+  const modal = document.getElementById("premiumModal");
+  if(!modal?.classList.contains("show")) return;
+  if(e.target === modal) fecharPremiumModal();
+});
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key !== "Escape") return;
+  const modal = document.getElementById("premiumModal");
+  if(modal?.classList.contains("show")) fecharPremiumModal();
+});
+
+// ===== DESTACAR (abre modal) =====
+function destacar(serverId, serverName){
+  abrirPremiumModal(serverId, serverName);
+}
+
+// ===== utils (escape mínimo p/ innerHTML + onclick) =====
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+function escapeAttr(s){
+  return String(s).replaceAll('"',"&quot;").replaceAll("'","&#39;");
+}
+
+function escapeJsStr(s){
+  return String(s)
+    .replaceAll("\\","\\\\")
+    .replaceAll("'","\\'")
+    .replaceAll("\n","\\n")
+    .replaceAll("\r","\\r");
 }
 
 // ===== INIT =====
@@ -253,7 +361,6 @@ async function destacar(serverId){
   const ok = await checkLogin();
   if(ok) loadServers();
 })();
-
 </script>
 
 </body>

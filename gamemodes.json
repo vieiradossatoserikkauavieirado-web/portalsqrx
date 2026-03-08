@@ -112,6 +112,14 @@
     "linkText": "Download",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": false
+  },
+  {
+    "title": "GM REDE PARADOX 2025",
+    "image": "https://i.imgur.com/mmATwPw.png",
+    "link": "https://dimagratis.online/redeparadox2025",
+    "linkText": "Download",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": false
   }
 
 

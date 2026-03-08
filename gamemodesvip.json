@@ -174,5 +174,14 @@
     "linkText": "Mediafire",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": true
+  },
+  {
+    "order": 18,
+    "title": "GM REDE PARADOX 2025",
+    "image": "https://i.imgur.com/mmATwPw.png",
+    "link": "https://www.mediafire.com/file/72kguor0p3cv8q6/[GM]+[PARADOX]+-+OFFICIAL.rar/file",
+    "linkText": "Mediafire",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
   }
 ]

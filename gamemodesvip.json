@@ -183,5 +183,14 @@
     "linkText": "Mediafire",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": true
+  },
+  {
+    "order": 19,
+    "title": "GM BRASIL PLAY CITY ✓",
+    "image": "https://i.imgur.com/SXQmIAi.png",
+    "link": "https://www.mediafire.com/file/3x51gxwkf3gbsob/projetc+bpc.rar/file",
+    "linkText": "Mediafire",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
   }
 ]

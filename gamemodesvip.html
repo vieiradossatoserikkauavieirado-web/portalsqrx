@@ -471,11 +471,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     `).join("");
   }
 
-  const res = await fetch(`/gamemodesvip.json?v=${Date.now()}`, { cache: "no-store" });
+  const res = await fetch(`/.netlify/functions/gamemodesvip?v=${Date.now()}`, {
+    credentials: "include",
+    cache: "no-store"
+  });
+
   if (!res.ok) {
     gmContainer.innerHTML = `
       <div style="padding:1rem;opacity:.9">
-        Não achei <b>gamemodesvip.json</b> (HTTP ${res.status}).
+        Erro ao carregar <b>gamemodes VIP</b> (HTTP ${res.status}).
       </div>`;
     return;
   }

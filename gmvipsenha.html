@@ -637,14 +637,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       .replaceAll("'","&#039;");
   }
 
-  const res = await fetch(`/senhasgm.json?v=${Date.now()}`, { cache: "no-store" });
+  const res = await fetch(`/.netlify/functions/senhasgm?v=${Date.now()}`, {
+  credentials: "include",
+  cache: "no-store"
+  });
+
   if (!res.ok) {
     pwContainer.innerHTML = `
       <div style="padding:1rem;opacity:.9">
-        Não achei <b>senhasgm.json</b> (HTTP ${res.status}).
+        Erro ao carregar <b>senhas GM VIP</b> (HTTP ${res.status}).
       </div>`;
     return;
-  }
+}
 
   const all = await res.json();
   render(all);

@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hosting SX - Hosting SAMP e MTA</title>
+  <meta
+    name="description"
+    content="Hosting SX - Hospedagem premium para servidores SAMP e MTA com ativação rápida, painel TCAdmin, MySQL e proteção Anti-DDoS."
+  />
+
+  <style>
+    :root {
+      --bg: #070707;
+      --bg-soft: #101010;
+      --card: rgba(255, 255, 255, 0.04);
+      --card-2: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f5f5f5;
+      --muted: #b8b8b8;
+      --red: #ff2b2b;
+      --red-2: #c90f0f;
+      --red-3: #ff5a5a;
+      --green: #21c16b;
+      --yellow: #ffcc33;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --max: 1200px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 43, 43, 0.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(255, 43, 43, 0.08), transparent 25%),
+        linear-gradient(180deg, #080808 0%, #050505 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      border: 0;
+      cursor: pointer;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: rgba(7, 7, 7, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 78px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 28px rgba(255, 43, 43, 0.35);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .brand span {
+      font-size: 1.05rem;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-pill {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+
+    .user-pill.show {
+      display: flex;
+    }
+
+    .user-pill img {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.08);
+    }
+
+    .user-pill div {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .user-pill strong {
+      font-size: 0.92rem;
+    }
+
+    .user-pill small {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      transition: 0.2s ease;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      box-shadow: 0 14px 34px rgba(255, 43, 43, 0.28);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 88px 0 52px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(255, 43, 43, 0.10);
+      border: 1px solid rgba(255, 43, 43, 0.18);
+      color: #ffd5d5;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      line-height: 0.98;
+      font-weight: 900;
+      letter-spacing: -1.6px;
+      max-width: 760px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, #fff, #ff7c7c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 650px;
+      font-size: 1.06rem;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .hero-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      color: #d0d0d0;
+      font-size: 0.95rem;
+    }
+
+    .hero-info span::before {
+      content: "•";
+      color: var(--red-3);
+      margin-right: 8px;
+    }
+
+    .hero-card {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -35% auto;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(255,43,43,0.28), transparent 70%);
+      pointer-events: none;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(33,193,107,0.12);
+      border: 1px solid rgba(33,193,107,0.22);
+      color: #9cf0c1;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .hero-card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 10px;
+    }
+
+    .hero-card p {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .feature-mini-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .feature-mini {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+    }
+
+    .feature-mini span:last-child {
+      color: #eaeaea;
+      font-weight: 700;
+    }
+
+    .section {
+      padding: 42px 0 28px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      letter-spacing: -0.8px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      max-width: 620px;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .plan {
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      transition: 0.25s ease;
+    }
+
+    .plan:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 90, 90, 0.28);
+    }
+
+    .plan.popular {
+      border-color: rgba(255, 43, 43, 0.28);
+      box-shadow: 0 20px 60px rgba(255, 43, 43, 0.12);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 7px 10px;
+      background: linear-gradient(135deg, var(--red), var(--red-2));
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .plan h3 {
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+    }
+
+    .plan .slots {
+      color: #ffb1b1;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .price strong {
+      font-size: 2.2rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .price span {
+      color: var(--muted);
+    }
+
+    .plan ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .plan li {
+      color: #e9e9e9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan li::before {
+      content: "✓";
+      color: var(--red-3);
+      font-weight: 900;
+    }
+
+    .plan .btn {
+      width: 100%;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .feature-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .feature-box strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .feature-box p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .cta-box {
+      margin-top: 36px;
+      background: linear-gradient(135deg, rgba(255, 43, 43, 0.13), rgba(255, 43, 43, 0.05));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 26px;
+      padding: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .cta-box p {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    footer {
+      padding: 36px 0 48px;
+      color: #9d9d9d;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 120;
+      display: grid;
+      gap: 10px;
+      width: min(380px, calc(100vw - 28px));
+    }
+
+    .toast {
+      background: rgba(15,15,15,0.94);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: white;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      animation: toastIn 0.22s ease;
+    }
+
+    .toast.success { border-color: rgba(33,193,107,0.28); }
+    .toast.error { border-color: rgba(255,43,43,0.28); }
+    .toast.warn { border-color: rgba(255,204,51,0.28); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(10px);
+      z-index: 110;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(100%, 640px);
+      background: linear-gradient(180deg, #101010, #0a0a0a);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 22px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .modal-head h3 {
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+    }
+
+    .modal-head p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .modal-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .modal-body {
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+    }
+
+    .summary strong {
+      font-size: 1.05rem;
+    }
+
+    .summary span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .summary-price {
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+
+    .pix-box {
+      display: none;
+      gap: 14px;
+    }
+
+    .pix-box.show {
+      display: grid;
+    }
+
+    .pix-qr {
+      display: grid;
+      place-items: center;
+      min-height: 230px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+    }
+
+    .pix-qr img {
+      max-width: 220px;
+      border-radius: 12px;
+      background: white;
+      padding: 8px;
+    }
+
+    .pix-code-wrap {
+      display: grid;
+      gap: 10px;
+    }
+
+    .pix-code-wrap label {
+      font-size: 0.92rem;
+      color: #e6e6e6;
+      font-weight: 700;
+    }
+
+    .pix-code {
+      width: 100%;
+      min-height: 116px;
+      resize: vertical;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      color: white;
+      padding: 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    .pix-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.20);
+      border-top-color: var(--red-3);
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status-note {
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #ececec;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .plans,
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-box,
+      .section-head {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        padding-top: 54px;
+      }
+
+      .topbar-inner {
+        min-height: 70px;
+      }
+
+      .nav {
+        gap: 8px;
+      }
+
+      .btn {
+        min-height: 45px;
+        padding: 0 15px;
+      }
+
+      .user-pill div {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#" class="brand">
+        <div class="brand-badge">SX</div>
+        <span>Hosting SX</span>
+      </a>
+
+      <div class="nav">
+        <div class="user-pill" id="userPill">
+          <img id="userAvatar" src="" alt="Avatar do usuário" />
+          <div>
+            <strong id="userName">Carregando...</strong>
+            <small>Conectado via Discord</small>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary hidden" id="dashboardBtn" type="button">
+          Minha Hosting
+        </button>
+
+        <button class="btn btn-primary" id="loginBtn" type="button">
+          Entrar com Discord
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Hosting premium para SAMP e MTA</div>
+
+          <h1>
+            Ative sua hosting com
+            <span class="highlight">Pix + entrega automática</span>
+          </h1>
+
+          <p>
+            Estrutura profissional, painel TCAdmin, banco MySQL, proteção Anti-DDoS
+            e ativação rápida para quem quer colocar o servidor online sem dor de cabeça.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#planos" class="btn btn-primary">Ver planos</a>
+            <button class="btn btn-ghost" id="heroLoginBtn" type="button">
+              Login Discord
+            </button>
+          </div>
+
+          <div class="hero-info">
+            <span>Ativação automatizada</span>
+            <span>Pix instantâneo</span>
+            <span>Painel premium</span>
+            <span>Suporte para SAMP / MTA</span>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="status-badge">● Entrega automática habilitada</div>
+          <h3>Fluxo rápido e profissional</h3>
+          <p>
+            Faça login com Discord, escolha o plano, pague via Pix e receba sua hosting assim que o pagamento for confirmado.
+          </p>
+
+          <div class="feature-mini-list">
+            <div class="feature-mini">
+              <span>Login</span>
+              <span>Discord OAuth</span>
+            </div>
+            <div class="feature-mini">
+              <span>Pagamento</span>
+              <span>Pix via Asaas</span>
+            </div>
+            <div class="feature-mini">
+              <span>Painel</span>
+              <span>TCAdmin + MySQL</span>
+            </div>
+            <div class="feature-mini">
+              <span>Proteção</span>
+              <span>Anti-DDoS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="planos">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Escolha seu plano</h2>
+            <p>
+              Planos preparados para diferentes tamanhos de servidor, com foco em desempenho,
+              estabilidade e entrega automatizada.
+            </p>
+          </div>
+        </div>
+
+        <div class="plans">
+          <article class="plan">
+            <h3>Plano Barato</h3>
+            <div class="slots">50 slots</div>
+            <div class="price">
+              <strong>R$ 8,59</strong>
+              <span>/mês</span>
+            </div>
+
+            <ul>
+              <li>50 slots</li>
+              <li>TCAdmin incluso</li>
+              <li>MySQL incluso</li>
+              <li>Armazenamento ilimitado</li>
+              <li>Proteção Anti-DDoS</li>
+            </ul>
+
+            <button
+              class="btn btn-primary buy-btn"
+              data-plan-id="plano_barato"
+              data-plan-name="Plano Barato"
+              data-plan-price="8.59"
+              data-plan-slots="50"
+              type="button"
+            >
+              Comprar agora
+            </button>
+          </article>
+
+          <article class="plan popular">
+            <div class="popular-badge">Mais vendido</div>
+            <h3>Plano Bom</h3>
+            <div class="slots">100 slots</div>
+            <div class="price">
+              <strong>R$ 16,00</strong>
+              <span>/mês</span>
+            </div>
+
+            <ul>
+              <li>100 slots</li>
+              <li>TCAdmin incluso</li>
+              <li>MySQL incluso</li>
+              <li>Armazenamento ilimitado</li>
+              <li>Proteção Anti-DDoS</li>
+            </ul>
+
+            <button
+              class="btn btn-primary buy-btn"
+              data-plan-id="plano_bom"
+              data-plan-name="Plano Bom"
+              data-plan-price="16.00"
+              data-plan-slots="100"
+              type="button"
+            >
+              Comprar agora
+            </button>
+          </article>
+
+          <article class="plan">
+            <h3>Plano Ótimo</h3>
+            <div class="slots">200 slots</div>
+            <div class="price">
+              <strong>R$ 33,00</strong>
+              <span>/mês</span>
+            </div>
+
+            <ul>
+              <li>200 slots</li>
+              <li>TCAdmin incluso</li>
+              <li>MySQL incluso</li>
+              <li>Armazenamento ilimitado</li>
+              <li>Proteção Anti-DDoS</li>
+            </ul>
+
+            <button
+              class="btn btn-primary buy-btn"
+              data-plan-id="plano_otimo"
+              data-plan-name="Plano Ótimo"
+              data-plan-price="33.00"
+              data-plan-slots="200"
+              type="button"
+            >
+              Comprar agora
+            </button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>O que sua hosting inclui</h2>
+            <p>
+              Infraestrutura pensada para venda profissional de hosting com boa percepção
+              visual e experiência sólida para o cliente final.
+            </p>
+          </div>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-box">
+            <strong>TCAdmin</strong>
+            <p>Painel para gerenciamento rápido e prático da sua hosting.</p>
+          </div>
+
+          <div class="feature-box">
+            <strong>Banco MySQL</strong>
+            <p>Compatível com recursos essenciais do seu servidor e scripts.</p>
+          </div>
+
+          <div class="feature-box">
+            <strong>Anti-DDoS</strong>
+            <p>Camada de proteção para manter sua operação mais estável.</p>
+          </div>
+
+          <div class="feature-box">
+            <strong>Entrega automática</strong>
+            <p>Pagamento confirmado, sistema pronto para liberar sua hosting.</p>
+          </div>
+        </div>
+
+        <div class="cta-box">
+          <div>
+            <h3>Pronto para ativar sua hosting?</h3>
+            <p>
+              Faça login com Discord, escolha um plano e gere seu Pix em poucos segundos.
+            </p>
+          </div>
+
+          <a href="#planos" class="btn btn-primary">Selecionar plano</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 Hosting SX. Todos os direitos reservados.
+  </footer>
+
+  <div class="modal" id="pixModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h3>Pagamento via Pix</h3>
+          <p>Finalize sua compra e aguarde a confirmação automática.</p>
+        </div>
+        <button class="modal-close" id="closeModalBtn" type="button" aria-label="Fechar modal">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="summary">
+          <div>
+            <strong id="summaryPlanName">Plano</strong>
+            <span id="summaryPlanMeta">0 slots</span>
+          </div>
+          <div class="summary-price" id="summaryPlanPrice">R$ 0,00</div>
+        </div>
+
+        <div class="loading" id="pixLoading">
+          <div class="spinner"></div>
+          <span>Gerando cobrança Pix...</span>
+        </div>
+
+        <div class="status-note hidden" id="pixStatusNote"></div>
+
+        <div class="pix-box" id="pixBox">
+          <div class="pix-qr" id="pixQrWrap">
+            <img id="pixQrImage" src="" alt="QR Code Pix" />
+          </div>
+
+          <div class="pix-code-wrap">
+            <label for="pixCode">Código Pix Copia e Cola</label>
+            <textarea id="pixCode" class="pix-code" readonly></textarea>
+          </div>
+
+          <div class="pix-actions">
+            <button class="btn btn-primary" id="copyPixBtn" type="button">Copiar código Pix</button>
+            <button class="btn btn-secondary" id="checkStatusBtn" type="button">Já paguei</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+    const API = {
+      login: "/.netlify/functions/discord-login-hosting",
+      me: "/.netlify/functions/me-hosting",
+      createOrder: "/.netlify/functions/criar-pedido-hosting",
+      // ajuste este link quando tiver uma página/painel final
+      dashboardUrl: "/painel-hosting.html"
+    };
+
+    const state = {
+      user: null,
+      selectedPlan: null,
+      currentOrder: null
+    };
+
+    const plans = {
+      plano_barato: {
+        id: "plano_barato",
+        nome: "Plano Barato",
+        valor: 8.59,
+        slots: 50
+      },
+      plano_bom: {
+        id: "plano_bom",
+        nome: "Plano Bom",
+        valor: 16.00,
+        slots: 100
+      },
+      plano_otimo: {
+        id: "plano_otimo",
+        nome: "Plano Ótimo",
+        valor: 33.00,
+        slots: 200
+      }
+    };
+
+    const els = {
+      loginBtn: document.getElementById("loginBtn"),
+      heroLoginBtn: document.getElementById("heroLoginBtn"),
+      dashboardBtn: document.getElementById("dashboardBtn"),
+      userPill: document.getElementById("userPill"),
+      userAvatar: document.getElementById("userAvatar"),
+      userName: document.getElementById("userName"),
+
+      buyButtons: document.querySelectorAll(".buy-btn"),
+
+      pixModal: document.getElementById("pixModal"),
+      closeModalBtn: document.getElementById("closeModalBtn"),
+
+      summaryPlanName: document.getElementById("summaryPlanName"),
+      summaryPlanMeta: document.getElementById("summaryPlanMeta"),
+      summaryPlanPrice: document.getElementById("summaryPlanPrice"),
+
+      pixLoading: document.getElementById("pixLoading"),
+      pixBox: document.getElementById("pixBox"),
+      pixQrImage: document.getElementById("pixQrImage"),
+      pixCode: document.getElementById("pixCode"),
+      copyPixBtn: document.getElementById("copyPixBtn"),
+      checkStatusBtn: document.getElementById("checkStatusBtn"),
+      pixStatusNote: document.getElementById("pixStatusNote"),
+
+      toastWrap: document.getElementById("toastWrap")
+    };
+
+    function currencyBRL(value) {
+      return Number(value).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      els.toastWrap.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(8px)";
+        toast.style.transition = "0.2s ease";
+      }, 3200);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+
+    function setLoggedUI(user) {
+      const avatar =
+        user?.avatar_url ||
+        user?.avatarUrl ||
+        user?.avatar ||
+        "https://cdn.discordapp.com/embed/avatars/0.png";
+
+      const name =
+        user?.global_name ||
+        user?.globalName ||
+        user?.username ||
+        "Usuário";
+
+      els.userAvatar.src = avatar;
+      els.userName.textContent = name;
+      els.userPill.classList.add("show");
+
+      els.loginBtn.textContent = "Conectado";
+      els.loginBtn.disabled = true;
+      els.heroLoginBtn.textContent = "Conta conectada";
+      els.heroLoginBtn.disabled = true;
+
+      els.dashboardBtn.classList.remove("hidden");
+    }
+
+    function setLoggedOutUI() {
+      els.userPill.classList.remove("show");
+
+      els.loginBtn.textContent = "Entrar com Discord";
+      els.loginBtn.disabled = false;
+      els.heroLoginBtn.textContent = "Login Discord";
+      els.heroLoginBtn.disabled = false;
+
+      els.dashboardBtn.classList.add("hidden");
+    }
+
+    async function fetchJSON(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        },
+        ...options
+      });
+
+      let data = null;
+
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (!response.ok) {
+        const errorMessage =
+          data?.error ||
+          data?.message ||
+          "Ocorreu um erro ao processar sua solicitação.";
+        throw new Error(errorMessage);
+      }
+
+      return data;
+    }
+
+    async function checkSession() {
+      try {
+        const data = await fetchJSON(API.me, { method: "GET" });
+
+        if (data?.logged || data?.authenticated || data?.user) {
+          state.user = data.user || data;
+          setLoggedUI(state.user);
+          return;
+        }
+
+        state.user = null;
+        setLoggedOutUI();
+      } catch {
+        state.user = null;
+        setLoggedOutUI();
+      }
+    }
+
+    function goLogin() {
+      window.location.href = API.login;
+    }
+
+    function openModal() {
+      els.pixModal.classList.add("show");
+      els.pixModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      els.pixModal.classList.remove("show");
+      els.pixModal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    function resetPixModal(plan) {
+      els.summaryPlanName.textContent = plan.nome;
+      els.summaryPlanMeta.textContent = `${plan.slots} slots`;
+      els.summaryPlanPrice.textContent = `${currencyBRL(plan.valor)}/mês`;
+
+      els.pixLoading.classList.remove("hidden");
+      els.pixBox.classList.remove("show");
+      els.pixStatusNote.classList.add("hidden");
+      els.pixStatusNote.textContent = "";
+      els.pixQrImage.src = "";
+      els.pixCode.value = "";
+    }
+
+    function fillPixData(orderData) {
+      const qrImage =
+        orderData?.pixQrCodeImage ||
+        orderData?.pixQrImage ||
+        orderData?.qrCodeImage ||
+        orderData?.encodedImage ||
+        "";
+
+      const pixCode =
+        orderData?.pixCopiaECola ||
+        orderData?.pixCode ||
+        orderData?.payload ||
+        orderData?.qrCode ||
+        "";
+
+      els.pixLoading.classList.add("hidden");
+      els.pixBox.classList.add("show");
+
+      if (qrImage) {
+        els.pixQrImage.src = qrImage;
+        els.pixQrImage.style.display = "block";
+      } else {
+        els.pixQrImage.style.display = "none";
+      }
+
+      els.pixCode.value = pixCode || "Código Pix não retornado pela API.";
+    }
+
+    function setModalStatus(message, type = "default") {
+      els.pixStatusNote.classList.remove("hidden");
+      els.pixStatusNote.textContent = message;
+
+      if (type === "success") {
+        els.pixStatusNote.style.borderColor = "rgba(33,193,107,0.28)";
+      } else if (type === "warn") {
+        els.pixStatusNote.style.borderColor = "rgba(255,204,51,0.28)";
+      } else if (type === "error") {
+        els.pixStatusNote.style.borderColor = "rgba(255,43,43,0.28)";
+      } else {
+        els.pixStatusNote.style.borderColor = "rgba(255,255,255,0.06)";
+      }
+    }
+
+    async function createOrder(plan) {
+      state.selectedPlan = plan;
+
+      resetPixModal(plan);
+      openModal();
+
+      try {
+        /**
+         * Ajuste os nomes enviados abaixo conforme sua function espera.
+         * Mantive um payload bem comum para facilitar compatibilidade.
+         */
+        const payload = {
+          plano: plan.id,
+          plano_id: plan.id,
+          plano_nome: plan.nome,
+          nome_plano: plan.nome,
+          valor: plan.valor,
+          preco: plan.valor,
+          slots: plan.slots
+        };
+
+        const data = await fetchJSON(API.createOrder, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        state.currentOrder = data;
+        fillPixData(data);
+
+        setModalStatus(
+          "Pix gerado com sucesso. Após o pagamento, a liberação será processada automaticamente.",
+          "success"
+        );
+      } catch (error) {
+        els.pixLoading.classList.add("hidden");
+        setModalStatus(error.message || "Não foi possível gerar o Pix.", "error");
+        showToast(error.message || "Erro ao gerar cobrança.", "error");
+      }
+    }
+
+    async function copyPixCode() {
+      const code = els.pixCode.value?.trim();
+
+      if (!code) {
+        showToast("Nenhum código Pix disponível para copiar.", "warn");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(code);
+        showToast("Código Pix copiado com sucesso.");
+      } catch {
+        els.pixCode.select();
+        document.execCommand("copy");
+        showToast("Código Pix copiado com sucesso.");
+      }
+    }
+
+    async function checkStatusAfterPayment() {
+      if (!state.currentOrder) {
+        showToast("Nenhum pedido carregado.", "warn");
+        return;
+      }
+
+      setModalStatus(
+        "Se o pagamento já foi concluído, a confirmação chegará pelo webhook em instantes. Atualize seu painel em alguns segundos.",
+        "warn"
+      );
+
+      showToast("Pagamento aguardando confirmação automática.", "warn");
+    }
+
+    function bindEvents() {
+      els.loginBtn.addEventListener("click", goLogin);
+      els.heroLoginBtn.addEventListener("click", goLogin);
+
+      els.dashboardBtn.addEventListener("click", () => {
+        window.location.href = API.dashboardUrl;
+      });
+
+      els.buyButtons.forEach((button) => {
+        button.addEventListener("click", async () => {
+          const planId = button.dataset.planId;
+          const plan = plans[planId];
+
+          if (!plan) {
+            showToast("Plano inválido.", "error");
+            return;
+          }
+
+          if (!state.user) {
+            showToast("Faça login com Discord antes de comprar.", "warn");
+            setTimeout(goLogin, 500);
+            return;
+          }
+
+          await createOrder(plan);
+        });
+      });
+
+      els.closeModalBtn.addEventListener("click", closeModal);
+
+      els.pixModal.addEventListener("click", (event) => {
+        if (event.target === els.pixModal) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && els.pixModal.classList.contains("show")) {
+          closeModal();
+        }
+      });
+
+      els.copyPixBtn.addEventListener("click", copyPixCode);
+      els.checkStatusBtn.addEventListener("click", checkStatusAfterPayment);
+    }
+
+    async function init() {
+      bindEvents();
+      await checkSession();
+    }
+
+    init();
+  </script>
+</body>
+</html>

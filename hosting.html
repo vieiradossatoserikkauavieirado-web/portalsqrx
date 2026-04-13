@@ -958,10 +958,15 @@
       loadingLogin: true,
       activePaymentId: null,
     };
+    const LINKS = {
+    barato: "https://checkout.infinitepay.io/siqueira-santos-12/xI8ZrO3sn",
+    bom: "https://checkout.infinitepay.io/siqueira-santos-12/1a1sxgskt",
+    otimo: "https://checkout.infinitepay.io/siqueira-santos-12/5vc5GGIJ9"
+  };
 
     const DISCORD_LOGIN_URL = "/.netlify/functions/discord-login-hosting";
     const ME_URL = "/.netlify/functions/me-hosting";
-    const CREATE_ORDER_URL = "/.netlify/functions/criar-pedido-hosting";
+    
 
     const ui = {
       navLoginBtn: document.getElementById("navLoginBtn"),
@@ -1091,85 +1096,30 @@
       }
     }
 
-    function openPixModal({ plano, valor, pixCode, pixQrBase64 }) {
-      ui.modalTitle.textContent = `Pagamento do ${plano}`;
-      ui.modalSubtitle.textContent = `Finalize o pagamento via Pix no valor de R$ ${Number(valor).toFixed(2).replace('.', ',')}.`;
-      ui.pixCode.value = pixCode || "";
-      ui.pixNote.textContent = "Depois do pagamento, sua entrega será processada automaticamente. Guarde este comprovante apenas se quiser conferência manual.";
-
-      if (pixQrBase64) {
-        ui.pixQrImage.src = `data:image/png;base64,${pixQrBase64}`;
-        ui.pixQrImage.classList.remove("hidden");
-      } else {
-        ui.pixQrImage.classList.add("hidden");
-        ui.pixQrImage.removeAttribute("src");
-      }
-
-      ui.pixModal.classList.add("show");
-      ui.pixModal.setAttribute("aria-hidden", "false");
-    }
-
-    function closePixModal() {
-      ui.pixModal.classList.remove("show");
-      ui.pixModal.setAttribute("aria-hidden", "true");
-    }
-
-    async function copyPixCode() {
-      const code = ui.pixCode.value.trim();
-      if (!code) return;
-
-      try {
-        await navigator.clipboard.writeText(code);
-        ui.pixNote.textContent = "Código Pix copiado com sucesso.";
-      } catch (error) {
-        console.error("Erro ao copiar Pix:", error);
-        ui.pixNote.textContent = "Não foi possível copiar automaticamente. Copie manualmente.";
-      }
-    }
-
-    async function createOrder(plano) {
-      const response = await fetch(CREATE_ORDER_URL, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ plano }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data.message || data.error || "Erro ao criar pedido");
-      }
-
-      return data;
-    }
+   
 
     async function handlePlanAction(plano) {
-      if (!state.loggedIn) {
-        window.location.href = DISCORD_LOGIN_URL;
-        return;
-      }
-
-      try {
-        setButtonsLoading("Gerando Pix...");
-        const data = await createOrder(plano);
-        state.activePaymentId = data.payment_id || null;
-
-        openPixModal({
-          plano: data.plano,
-          valor: data.valor,
-          pixCode: data.pix_code,
-          pixQrBase64: data.pix_qr_base64,
-        });
-      } catch (error) {
-        console.error(error);
-        alert(error.message || "Não foi possível criar o pagamento.");
-      } finally {
-        resetPlanButtons();
-      }
+    if (!state.loggedIn) {
+      window.location.href = DISCORD_LOGIN_URL;
+      return;
     }
+
+    if (!LINKS[plano]) {
+      alert("Plano inválido.");
+      return;
+    }
+
+    const discordId = state.user?.discord_id;
+    if (!discordId) {
+      alert("Não foi possível identificar sua conta do Discord.");
+      return;
+    }
+
+    setButtonsLoading("Redirecionando...");
+
+    const redirectUrl = LINKS[plano] + "?ref=" + encodeURIComponent(discordId);
+    window.location.href = redirectUrl;
+  }
 
     function handleQueryFeedback() {
       const params = new URLSearchParams(window.location.search);
@@ -1196,31 +1146,13 @@
         window.history.replaceState({}, document.title, cleanUrl);
       }
     }
-    const LINKS = {
-    barato: "https://checkout.infinitepay.io/siqueira-santos-12/xI8ZrO3sn",
-    bom: "https://checkout.infinitepay.io/siqueira-santos-12/1a1sxgskt",
-    otimo: "https://checkout.infinitepay.io/siqueira-santos-12/5vc5GGIJ9"
-  };
+  
 
-    ui.pixModal.addEventListener("click", (event) => {
-      if (event.target === ui.pixModal) {
-        closePixModal();
-      }
-    });
+  handleQueryFeedback();
+  setButtonsLoading("Carregando...");
+  loadSession().finally(() => resetPlanButtons());
 
-    window.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        closePixModal();
-      }
-    });
-
-    window.handlePlanAction = handlePlanAction;
-    window.closePixModal = closePixModal;
-    window.copyPixCode = copyPixCode;
-
-    handleQueryFeedback();
-    setButtonsLoading("Carregando...");
-    loadSession().finally(() => resetPlanButtons());
+      
   </script>
 </body>
 </html>

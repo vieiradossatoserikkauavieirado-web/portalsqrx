@@ -51,7 +51,7 @@ exports.handler = async (event) => {
     const required = [
       "DISCORD_CLIENT_ID",
       "DISCORD_CLIENT_SECRET",
-      "DISCORD_REDIRECT_URI",
+      "DISCORD_REDIRECT_URI_HOSTING",
       "SUPABASE_URL",
       "SUPABASE_SERVICE_ROLE_KEY",
     ];

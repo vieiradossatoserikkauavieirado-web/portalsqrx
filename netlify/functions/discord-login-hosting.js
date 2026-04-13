@@ -7,7 +7,7 @@ exports.handler = async () => {
   if (!clientId || !redirectUri) {
     return {
       statusCode: 500,
-      body: "missing_env: DISCORD_CLIENT_ID or DISCORD_REDIRECT_URI",
+      body: "missing_env: DISCORD_CLIENT_ID or DISCORD_REDIRECT_URI_HOSTING",
     };
   }
 

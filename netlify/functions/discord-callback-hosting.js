@@ -6,49 +6,64 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-function setCookie(token) {
-  return `sx_hosting_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=86400; Secure`;
+function buildCookie(token) {
+  return [
+    `sx_hosting_session=${token}`,
+    "HttpOnly",
+    "Path=/",
+    "SameSite=Lax",
+    "Max-Age=86400",
+    "Secure",
+  ].join("; ");
 }
 
 async function exchangeCodeForToken(code) {
+  const redirectUri = (process.env.DISCORD_REDIRECT_URI_HOSTING || "")
+    .trim()
+    .replace(/\/$/, "");
+
   const body = new URLSearchParams({
     client_id: process.env.DISCORD_CLIENT_ID,
     client_secret: process.env.DISCORD_CLIENT_SECRET,
     grant_type: "authorization_code",
     code,
-    redirect_uri: process.env.DISCORD_REDIRECT_URI_HOSTING,
+    redirect_uri: redirectUri,
   });
 
-  const r = await fetch("https://discord.com/api/oauth2/token", {
+  const response = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
     body,
   });
 
-  if (!r.ok) {
-    const text = await r.text();
-    throw new Error(`token_exchange_failed:${r.status}:${text}`);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`token_exchange_failed:${response.status}:${text}`);
   }
 
-  return r.json();
+  return response.json();
 }
 
 async function getDiscordUser(accessToken) {
-  const r = await fetch("https://discord.com/api/users/@me", {
-    headers: { Authorization: `Bearer ${accessToken}` },
+  const response = await fetch("https://discord.com/api/users/@me", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
   });
 
-  if (!r.ok) {
-    const text = await r.text();
-    throw new Error(`get_user_failed:${r.status}:${text}`);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`get_user_failed:${response.status}:${text}`);
   }
 
-  return r.json();
+  return response.json();
 }
 
 exports.handler = async (event) => {
   try {
-    const required = [
+    const requiredEnv = [
       "DISCORD_CLIENT_ID",
       "DISCORD_CLIENT_SECRET",
       "DISCORD_REDIRECT_URI_HOSTING",
@@ -56,23 +71,34 @@ exports.handler = async (event) => {
       "SUPABASE_SERVICE_ROLE_KEY",
     ];
 
-    for (const k of required) {
-      if (!process.env[k]) {
+    for (const key of requiredEnv) {
+      if (!process.env[key]) {
         return {
           statusCode: 302,
-          headers: { Location: "/hosting.html?err=loginfail" },
+          headers: {
+            Location: "/hosting.html?err=missingenv",
+            "Cache-Control": "no-store",
+          },
           body: "",
         };
       }
     }
 
-    const url = new URL(event.rawUrl);
-    const code = url.searchParams.get("code");
+    const rawUrl =
+      event.rawUrl ||
+      `https://${event.headers.host}${event.path}${event.rawQuery ? `?${event.rawQuery}` : ""}`;
 
-    if (!code) {
+    const url = new URL(rawUrl);
+    const code = url.searchParams.get("code");
+    const error = url.searchParams.get("error");
+
+    if (error || !code) {
       return {
         statusCode: 302,
-        headers: { Location: "/hosting.html?err=loginfail" },
+        headers: {
+          Location: "/hosting.html?err=loginfail",
+          "Cache-Control": "no-store",
+        },
         body: "",
       };
     }
@@ -80,21 +106,37 @@ exports.handler = async (event) => {
     const tokenData = await exchangeCodeForToken(code);
     const user = await getDiscordUser(tokenData.access_token);
 
-    const token = crypto.randomUUID();
+    if (!user?.id || !user?.username) {
+      return {
+        statusCode: 302,
+        headers: {
+          Location: "/hosting.html?err=invaliddiscorduser",
+          "Cache-Control": "no-store",
+        },
+        body: "",
+      };
+    }
 
-    const { error } = await supabase.from("sessoes_hosting").insert({
+    const token = crypto.randomUUID();
+    const expiraEm = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+    const { error: insertError } = await supabase.from("sessoes_hosting").insert({
       token,
       discord_id: user.id,
       username: user.username,
       avatar: user.avatar || null,
-      expira_em: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      expira_em: expiraEm,
     });
 
-    if (error) {
-      console.error(error);
+    if (insertError) {
+      console.error("supabase insert sessoes_hosting error:", insertError);
+
       return {
         statusCode: 302,
-        headers: { Location: "/hosting.html?err=loginfail" },
+        headers: {
+          Location: "/hosting.html?err=sessionfail",
+          "Cache-Control": "no-store",
+        },
         body: "",
       };
     }
@@ -102,16 +144,21 @@ exports.handler = async (event) => {
     return {
       statusCode: 302,
       headers: {
-        "Set-Cookie": setCookie(token),
+        "Set-Cookie": buildCookie(token),
         Location: "/hosting.html?login=ok",
+        "Cache-Control": "no-store",
       },
       body: "",
     };
   } catch (err) {
-    console.error(err);
+    console.error("discord-callback-hosting error:", err);
+
     return {
       statusCode: 302,
-      headers: { Location: "/hosting.html?err=loginfail" },
+      headers: {
+        Location: "/hosting.html?err=loginfail",
+        "Cache-Control": "no-store",
+      },
       body: "",
     };
   }

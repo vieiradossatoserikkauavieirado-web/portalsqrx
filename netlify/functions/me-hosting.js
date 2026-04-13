@@ -8,9 +8,14 @@ const supabase = createClient(
 function getCookie(name, headers) {
   const cookieHeader =
     headers?.cookie || headers?.Cookie || headers?.COOKIE || "";
+
   if (!cookieHeader) return null;
 
-  const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = cookieHeader.match(
+    new RegExp(`(?:^|;\\s*)${escapedName}=([^;]*)`)
+  );
+
   return match ? decodeURIComponent(match[1]) : null;
 }
 
@@ -22,10 +27,13 @@ exports.handler = async (event) => {
       return {
         statusCode: 401,
         headers: {
+          "Content-Type": "application/json; charset=utf-8",
           "Cache-Control": "no-store",
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ error: "no_session_cookie" }),
+        body: JSON.stringify({
+          ok: false,
+          error: "no_session_cookie",
+        }),
       };
     }
 
@@ -35,14 +43,33 @@ exports.handler = async (event) => {
       .eq("token", token)
       .maybeSingle();
 
-    if (error || !sess) {
+    if (error) {
+      console.error("supabase select sessoes_hosting error:", error);
+
+      return {
+        statusCode: 500,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Cache-Control": "no-store",
+        },
+        body: JSON.stringify({
+          ok: false,
+          error: "database_error",
+        }),
+      };
+    }
+
+    if (!sess) {
       return {
         statusCode: 401,
         headers: {
+          "Content-Type": "application/json; charset=utf-8",
           "Cache-Control": "no-store",
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ error: "invalid_session" }),
+        body: JSON.stringify({
+          ok: false,
+          error: "invalid_session",
+        }),
       };
     }
 
@@ -50,34 +77,42 @@ exports.handler = async (event) => {
       return {
         statusCode: 401,
         headers: {
+          "Content-Type": "application/json; charset=utf-8",
           "Cache-Control": "no-store",
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ error: "expired_session" }),
+        body: JSON.stringify({
+          ok: false,
+          error: "expired_session",
+        }),
       };
     }
 
     return {
       statusCode: 200,
       headers: {
+        "Content-Type": "application/json; charset=utf-8",
         "Cache-Control": "no-store",
-        "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        ok: true,
         discord_id: sess.discord_id,
         username: sess.username,
         avatar: sess.avatar,
       }),
     };
   } catch (err) {
-    console.error(err);
+    console.error("me-hosting error:", err);
+
     return {
       statusCode: 500,
       headers: {
+        "Content-Type": "application/json; charset=utf-8",
         "Cache-Control": "no-store",
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ error: "internal_error" }),
+      body: JSON.stringify({
+        ok: false,
+        error: "internal_error",
+      }),
     };
   }
 };

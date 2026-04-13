@@ -16,7 +16,7 @@ async function exchangeCodeForToken(code) {
     client_secret: process.env.DISCORD_CLIENT_SECRET,
     grant_type: "authorization_code",
     code,
-    redirect_uri: process.env.DISCORD_REDIRECT_URI,
+    redirect_uri: process.env.DISCORD_REDIRECT_URI_HOSTING,
   });
 
   const r = await fetch("https://discord.com/api/oauth2/token", {

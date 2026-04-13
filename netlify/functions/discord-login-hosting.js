@@ -1,6 +1,6 @@
 exports.handler = async () => {
   const clientId = (process.env.DISCORD_CLIENT_ID || "").trim();
-  const redirectUri = (process.env.DISCORD_REDIRECT_URI || "")
+  const redirectUri = (process.env.DISCORD_REDIRECT_URI_HOSTING || "")
     .trim()
     .replace(/\/$/, "");
 

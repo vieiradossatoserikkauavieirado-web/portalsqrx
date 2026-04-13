@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hosting SX | Pagamento</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b0b0d;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #ff394b;
+    }
+
+    p {
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    .status {
+      margin: 20px 0;
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 10px;
+      background: linear-gradient(135deg,#e11d2e,#ff394b);
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>Pagamento recebido</h1>
+  <p>Seu pedido foi enviado com sucesso.</p>
+
+  <div class="status" id="statusBox">
+    Verificando informações...
+  </div>
+
+  <p>
+    Após a confirmação do pagamento, sua hosting será entregue.
+  </p>
+
+  <a href="/hosting.html" class="btn">Voltar para o site</a>
+</div>
+
+<script>
+  function getParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+  }
+
+  const ref = getParam("ref");
+  const statusBox = document.getElementById("statusBox");
+
+  if (!ref) {
+    statusBox.innerHTML = "⚠️ Não foi possível identificar o cliente.";
+  } else {
+    statusBox.innerHTML = `
+      ✔️ Cliente identificado<br>
+      ID: <b>${ref}</b><br><br>
+      Aguarde enquanto verificamos seu pagamento.
+    `;
+  }
+</script>
+
+</body>
+</html>

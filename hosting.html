@@ -952,207 +952,233 @@
   </div>
 
   <script>
-    const state = {
-      loggedIn: false,
-      user: null,
-      loadingLogin: true,
-      activePaymentId: null,
-    };
-    const LINKS = {
-    barato: "https://checkout.infinitepay.io/siqueira-santos-12/xI8ZrO3sn",
-    bom: "https://checkout.infinitepay.io/siqueira-santos-12/1a1sxgskt",
-    otimo: "https://checkout.infinitepay.io/siqueira-santos-12/5vc5GGIJ9"
-  };
+/* hosting.html - script atualizado
+   Substitua o bloco <script> atual por este.
+*/
 
-    const DISCORD_LOGIN_URL = "/.netlify/functions/discord-login-hosting";
-    const ME_URL = "/.netlify/functions/me-hosting";
-    
+const state = {
+  loggedIn: false,
+  user: null,
+  loadingLogin: true,
+  activePaymentId: null,
+};
 
-    const ui = {
-      navLoginBtn: document.getElementById("navLoginBtn"),
-      heroMainBtn: document.getElementById("heroMainBtn"),
-      ctaBottomBtn: document.getElementById("ctaBottomBtn"),
-      loginStatusText: document.getElementById("loginStatusText"),
-      statusDot: document.getElementById("statusDot"),
-      userPill: document.getElementById("userPill"),
-      userAvatar: document.getElementById("userAvatar"),
-      userName: document.getElementById("userName"),
-      pixModal: document.getElementById("pixModal"),
-      pixQrImage: document.getElementById("pixQrImage"),
-      pixCode: document.getElementById("pixCode"),
-      pixNote: document.getElementById("pixNote"),
-      modalTitle: document.getElementById("modalTitle"),
-      modalSubtitle: document.getElementById("modalSubtitle"),
-    };
+const LINKS = {
+  barato: "https://checkout.infinitepay.io/siqueira-santos-12/xI8ZrO3sn",
+  bom: "https://checkout.infinitepay.io/siqueira-santos-12/1a1sxgskt",
+  otimo: "https://checkout.infinitepay.io/siqueira-santos-12/5vc5GGIJ9"
+};
 
-    const planButtons = Array.from(document.querySelectorAll(".plan-btn"));
+const DISCORD_LOGIN_URL = "/.netlify/functions/discord-login-hosting";
+const ME_URL = "/.netlify/functions/me-hosting";
 
-    function setLoggedOutUI() {
-      state.loggedIn = false;
-      state.user = null;
-      state.loadingLogin = false;
+const ui = {
+  navLoginBtn: document.getElementById("navLoginBtn"),
+  heroMainBtn: document.getElementById("heroMainBtn"),
+  ctaBottomBtn: document.getElementById("ctaBottomBtn"),
+  loginStatusText: document.getElementById("loginStatusText"),
+  statusDot: document.getElementById("statusDot"),
+  userPill: document.getElementById("userPill"),
+  userAvatar: document.getElementById("userAvatar"),
+  userName: document.getElementById("userName"),
+  pixModal: document.getElementById("pixModal"),
+  pixQrImage: document.getElementById("pixQrImage"),
+  pixCode: document.getElementById("pixCode"),
+  pixNote: document.getElementById("pixNote"),
+  modalTitle: document.getElementById("modalTitle"),
+  modalSubtitle: document.getElementById("modalSubtitle"),
+};
 
-      ui.navLoginBtn.textContent = "Entrar com Discord";
-      ui.navLoginBtn.href = DISCORD_LOGIN_URL;
+const planButtons = Array.from(document.querySelectorAll(".plan-btn"));
 
-      ui.heroMainBtn.textContent = "Entrar com Discord";
-      ui.heroMainBtn.href = DISCORD_LOGIN_URL;
+function setLoggedOutUI() {
+  state.loggedIn = false;
+  state.user = null;
+  state.loadingLogin = false;
 
-      ui.ctaBottomBtn.textContent = "Entrar com Discord";
-      ui.ctaBottomBtn.href = DISCORD_LOGIN_URL;
+  if (ui.navLoginBtn) { ui.navLoginBtn.textContent = "Entrar com Discord"; ui.navLoginBtn.href = DISCORD_LOGIN_URL; }
+  if (ui.heroMainBtn) { ui.heroMainBtn.textContent = "Entrar com Discord"; ui.heroMainBtn.href = DISCORD_LOGIN_URL; }
+  if (ui.ctaBottomBtn) { ui.ctaBottomBtn.textContent = "Entrar com Discord"; ui.ctaBottomBtn.href = DISCORD_LOGIN_URL; }
 
-      ui.loginStatusText.textContent = "Faça login com Discord para liberar a compra dos planos.";
-      ui.statusDot.classList.remove("online");
-      ui.userPill.classList.remove("show");
+  if (ui.loginStatusText) ui.loginStatusText.textContent = "Faça login com Discord para liberar a compra dos planos.";
+  if (ui.statusDot) ui.statusDot.classList.remove("online");
+  if (ui.userPill) ui.userPill.classList.remove("show");
 
-      planButtons.forEach((btn) => {
-        btn.disabled = false;
-        btn.textContent = "Entrar para comprar";
-      });
+  planButtons.forEach((btn) => {
+    btn.disabled = false;
+    btn.textContent = "Entrar para comprar";
+  });
+}
+
+function setLoggedInUI(user) {
+  state.loggedIn = true;
+  state.user = user;
+  state.loadingLogin = false;
+
+  if (ui.navLoginBtn) { ui.navLoginBtn.textContent = "Comprar plano"; ui.navLoginBtn.href = "#planos"; }
+  if (ui.heroMainBtn) { ui.heroMainBtn.textContent = "Ver planos"; ui.heroMainBtn.href = "#planos"; }
+  if (ui.ctaBottomBtn) { ui.ctaBottomBtn.textContent = "Escolher plano"; ui.ctaBottomBtn.href = "#planos"; }
+
+  if (ui.loginStatusText) ui.loginStatusText.textContent = `Logado como ${user.username}. Você já pode contratar qualquer plano.`;
+  if (ui.statusDot) ui.statusDot.classList.add("online");
+
+  if (ui.userName) ui.userName.textContent = user.username;
+  if (ui.userAvatar) {
+    ui.userAvatar.innerHTML = "";
+    if (user.avatar && user.discord_id) {
+      const img = document.createElement("img");
+      img.src = `https://cdn.discordapp.com/avatars/${user.discord_id}/${user.avatar}.png?size=64`;
+      img.alt = user.username;
+      img.style.width = "100%";
+      img.style.height = "100%";
+      img.style.objectFit = "cover";
+      ui.userAvatar.appendChild(img);
+    } else {
+      ui.userAvatar.textContent = (user.username || "SX").slice(0, 2).toUpperCase();
     }
-
-    function setLoggedInUI(user) {
-      state.loggedIn = true;
-      state.user = user;
-      state.loadingLogin = false;
-
-      ui.navLoginBtn.textContent = "Comprar plano";
-      ui.navLoginBtn.href = "#planos";
-
-      ui.heroMainBtn.textContent = "Ver planos";
-      ui.heroMainBtn.href = "#planos";
-
-      ui.ctaBottomBtn.textContent = "Escolher plano";
-      ui.ctaBottomBtn.href = "#planos";
-
-      ui.loginStatusText.textContent = `Logado como ${user.username}. Você já pode contratar qualquer plano.`;
-      ui.statusDot.classList.add("online");
-
-      ui.userName.textContent = user.username;
-      ui.userAvatar.innerHTML = "";
-
-      if (user.avatar && user.discord_id) {
-        const img = document.createElement("img");
-        img.src = `https://cdn.discordapp.com/avatars/${user.discord_id}/${user.avatar}.png?size=64`;
-        img.alt = user.username;
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        ui.userAvatar.appendChild(img);
-      } else {
-        ui.userAvatar.textContent = (user.username || "SX").slice(0, 2).toUpperCase();
-      }
-
-      ui.userPill.classList.add("show");
-
-      planButtons.forEach((btn) => {
-        btn.disabled = false;
-        btn.textContent = "Comprar agora";
-      });
-    }
-
-    function setButtonsLoading(label) {
-      planButtons.forEach((btn) => {
-        btn.disabled = true;
-        btn.textContent = label;
-      });
-    }
-
-    function resetPlanButtons() {
-      if (state.loggedIn) {
-        planButtons.forEach((btn) => {
-          btn.disabled = false;
-          btn.textContent = "Comprar agora";
-        });
-      } else {
-        planButtons.forEach((btn) => {
-          btn.disabled = false;
-          btn.textContent = "Entrar para comprar";
-        });
-      }
-    }
-
-    async function loadSession() {
-      try {
-        const response = await fetch(ME_URL, {
-          method: "GET",
-          credentials: "same-origin",
-          headers: {
-            "Cache-Control": "no-store",
-          },
-        });
-
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok || !data.ok) {
-          setLoggedOutUI();
-          return;
-        }
-
-        setLoggedInUI(data);
-      } catch (error) {
-        console.error("Erro ao carregar sessão:", error);
-        setLoggedOutUI();
-      }
-    }
-
-   
-
-    async function handlePlanAction(plano) {
-    if (!state.loggedIn) {
-      window.location.href = DISCORD_LOGIN_URL;
-      return;
-    }
-
-    if (!LINKS[plano]) {
-      alert("Plano inválido.");
-      return;
-    }
-
-    const discordId = state.user?.discord_id;
-    if (!discordId) {
-      alert("Não foi possível identificar sua conta do Discord.");
-      return;
-    }
-
-    setButtonsLoading("Redirecionando...");
-
-    const redirectUrl = LINKS[plano] + "?ref=" + encodeURIComponent(discordId);
-    window.location.href = redirectUrl;
   }
 
-    function handleQueryFeedback() {
-      const params = new URLSearchParams(window.location.search);
-      const login = params.get("login");
-      const err = params.get("err");
+  if (ui.userPill) ui.userPill.classList.add("show");
 
-      if (login === "ok") {
-        ui.loginStatusText.textContent = "Login realizado com sucesso. Verificando sua sessão...";
-      }
+  planButtons.forEach((btn) => {
+    btn.disabled = false;
+    btn.textContent = "Comprar agora";
+  });
+}
 
-      if (err) {
-        const messages = {
-          loginfail: "Não foi possível concluir o login com Discord.",
-          missingenv: "O login da hosting ainda não foi configurado corretamente no servidor.",
-          sessionfail: "O login foi concluído, mas não foi possível criar sua sessão.",
-          invaliddiscorduser: "O Discord retornou dados inválidos para esta conta.",
-        };
+function setButtonsLoading(label) {
+  planButtons.forEach((btn) => {
+    btn.disabled = true;
+    btn.textContent = label;
+  });
+}
 
-        alert(messages[err] || "Ocorreu um erro ao entrar com Discord.");
-      }
+function resetPlanButtons() {
+  if (state.loggedIn) {
+    planButtons.forEach((btn) => { btn.disabled = false; btn.textContent = "Comprar agora"; });
+  } else {
+    planButtons.forEach((btn) => { btn.disabled = false; btn.textContent = "Entrar para comprar"; });
+  }
+}
 
-      if (login || err) {
-        const cleanUrl = window.location.pathname + window.location.hash;
-        window.history.replaceState({}, document.title, cleanUrl);
-      }
+async function fetchMe() {
+  // fetch direto (usa credenciais do cookie) — retorna objeto do me-hosting
+  try {
+    const r = await fetch(ME_URL, { method: 'GET', credentials: 'same-origin', headers: { 'Cache-Control': 'no-store' }});
+    if (!r.ok) return null;
+    const j = await r.json().catch(()=>null);
+    return j && j.discord_id ? j : null;
+  } catch (e) {
+    console.error('fetchMe error', e);
+    return null;
+  }
+}
+
+async function loadSession() {
+  try {
+    const data = await fetchMe();
+    if (!data || !data.ok) {
+      setLoggedOutUI();
+      return;
     }
-  
+    setLoggedInUI(data);
+  } catch (error) {
+    console.error("Erro ao carregar sessão:", error);
+    setLoggedOutUI();
+  }
+}
 
-  handleQueryFeedback();
-  setButtonsLoading("Carregando...");
-  loadSession().finally(() => resetPlanButtons());
+/*
+ handlePlanAction: gera o link do checkout com ?ref=<discordId>&plan=<plano>
+ - Se state.user.discord_id presente usa ele
+ - Caso não, tenta buscar ME_URL na hora do clique (fallback)
+ - Se ainda não tiver id, redireciona para login
+*/
+async function handlePlanAction(plano) {
+  if (!LINKS[plano]) {
+    alert("Plano inválido.");
+    return;
+  }
 
-      
-  </script>
+  setButtonsLoading("Redirecionando...");
+
+  // 1) tentar usar sessão carregada
+  let discordId = state.user?.discord_id || null;
+
+  // 2) se não tiver (sessão não carregada ou expirou), buscar no momento
+  if (!discordId) {
+    const me = await fetchMe();
+    if (me && me.discord_id) {
+      // atualiza estado pra UX futura
+      setLoggedInUI(me);
+      discordId = me.discord_id;
+    }
+  }
+
+  // 3) se ainda não tem -> redirecionar para login
+  if (!discordId) {
+    alert("Você precisa estar logado com Discord para comprar. Faça login e tente novamente.");
+    setButtonsLoading("Redirecionar...");
+    // pequena pausa + redireciona
+    setTimeout(()=>{ window.location.href = DISCORD_LOGIN_URL; }, 300);
+    return;
+  }
+
+  // 4) construir redirect com plan e ref
+  const checkout = LINKS[plano];
+  // opcional: adicionar um checkout_ref se você quiser (ex: gerar id de pedido antes)
+  const redirectUrl = `${checkout}?ref=${encodeURIComponent(discordId)}&plan=${encodeURIComponent(plano)}`;
+  window.location.href = redirectUrl;
+}
+
+// Query feedback (mantive igual)
+function handleQueryFeedback() {
+  const params = new URLSearchParams(window.location.search);
+  const login = params.get("login");
+  const err = params.get("err");
+
+  if (login === "ok") {
+    if (ui.loginStatusText) ui.loginStatusText.textContent = "Login realizado com sucesso. Verificando sua sessão...";
+  }
+
+  if (err) {
+    const messages = {
+      loginfail: "Não foi possível concluir o login com Discord.",
+      missingenv: "O login da hosting ainda não foi configurado corretamente no servidor.",
+      sessionfail: "O login foi concluído, mas não foi possível criar sua sessão.",
+      invaliddiscorduser: "O Discord retornou dados inválidos para esta conta.",
+    };
+    alert(messages[err] || "Ocorreu um erro ao entrar com Discord.");
+  }
+
+  if (login || err) {
+    const cleanUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
+}
+
+// adiciona listeners aos botões de plano (botões devem ter data-plan="barato|bom|otimo")
+function attachPlanButtons() {
+  planButtons.forEach((btn) => {
+    // se o botão já tem onclick inline, preserva (mas preferimos dataset)
+    const ds = btn.dataset && btn.dataset.plan;
+    const plano = ds || btn.getAttribute('data-plan') || btn.getAttribute('data-plan-name') || btn.id || null;
+    if (!plano) return;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      handlePlanAction(plano).catch(err => {
+        console.error('handlePlanAction error', err);
+        resetPlanButtons();
+      });
+    });
+  });
+}
+
+// inicialização
+handleQueryFeedback();
+setButtonsLoading("Carregando...");
+attachPlanButtons();
+loadSession().finally(() => resetPlanButtons());
+</script>
 </body>
 </html>

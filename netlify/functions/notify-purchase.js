@@ -1,5 +1,4 @@
 // netlify/functions/notify-purchase.js
-const fetch = (...args) => import('node-fetch').then(({default: f}) => f(...args));
 const { createClient } = require('@supabase/supabase-js');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -44,6 +43,20 @@ exports.handler = async function(event) {
       // retornar 200 mas com mensagem de log (para não quebrar UX)
       return { statusCode: 200, body: JSON.stringify({ message: 'Pedido registrado localmente (warning).', error: error.message }) };
     }
+
+    // exemplo de envio via webhook (se quiser enviar do function)
+    // const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+    // if (DISCORD_WEBHOOK_URL) {
+    //   try {
+    //     await fetch(DISCORD_WEBHOOK_URL, {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify({ content: `Novo pedido: ${discord_id} - ${planoInfo.nome}` })
+    //     });
+    //   } catch (wErr) {
+    //     console.error('erro webhook:', wErr);
+    //   }
+    // }
 
     return { statusCode: 200, body: JSON.stringify({ message: 'Pedido registrado com sucesso.' }) };
   } catch (err) {

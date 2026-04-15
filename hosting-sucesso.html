@@ -24,51 +24,60 @@
   </div>
 
 <script>
-function getParam(name){
-  const u=new URL(window.location.href);
-  return u.searchParams.get(name);
+function getParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
 }
 
-const statusBox=document.getElementById('statusBox');
-const ref = getParam('ref'); // discord id passado via ?ref=
-const plan = getParam('plan') || getParam('plano') || 'desconhecido';
+const statusBox = document.getElementById("statusBox");
+const refRaw = getParam("ref");
+let plan = getParam("plan");
 
-if(!ref){
+// caso você tenha colocado ref como "ID|plan" em algum lugar (fallback)
+let discordId = null;
+if (refRaw) {
+  if (refRaw.includes('|')) {
+    const parts = refRaw.split('|');
+    discordId = decodeURIComponent(parts[0] || '').trim();
+    if (!plan) plan = decodeURIComponent(parts[1] || '').trim();
+  } else {
+    discordId = decodeURIComponent(refRaw).trim();
+  }
+}
+
+if (!discordId) {
   statusBox.innerHTML = "⚠️ Não foi possível identificar o cliente.";
 } else {
-  statusBox.innerHTML = `✔️ Cliente identificado<br>ID: <b>${ref}</b><br><br>Aguarde enquanto verificamos seu pagamento...`;
+  statusBox.innerHTML = `
+    ✔️ Cliente identificado<br>
+    ID: <b>${discordId}</b><br><br>
+    Aguarde enquanto verificamos seu pagamento.
+  `;
 
-  // chama sua função server-side que registra o pedido
+  // chama notify-purchase automaticamente (envia plan quando disponível)
   (async () => {
     try {
-      const resp = await fetch('/.netlify/functions/notify-purchase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          discord_id: ref,
-          plano: plan,
-          checkout_ref: getParam('checkout_ref') || null
-        })
+      // se plan ainda não veio, envia sem plan (será 'desconhecido') — idealmente sempre enviar plan
+      const payload = { discord_id: discordId };
+      if (plan) payload.plan = plan;
+
+      const resp = await fetch("/.netlify/functions/notify-purchase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       });
 
-      const json = await resp.json();
-      if(resp.ok){
-        statusBox.innerHTML = `
-          ✅ Cliente identificado<br>
-          ID: <b>${ref}</b><br><br>
-          ${json.message || 'Seu pedido foi registrado. Aguarde confirmação no Discord.'}
-        `;
+      const data = await resp.json().catch(()=>({}));
+      if (resp.ok) {
+        statusBox.innerHTML += `<br><br>✅ ${data.message || "Pedido registrado com sucesso."}`;
       } else {
-        statusBox.innerHTML = `
-          ⚠️ Problema ao notificar o servidor.<br>
-          Motivo: ${json.error || 'erro desconhecido'}<br>
-          Entre em contato no suporte se seu pagamento foi confirmado.
-        `;
-        console.error('notify-purchase error:', json);
+        // mostra erro legível
+        const msg = data?.message || data?.error || JSON.stringify(data);
+        statusBox.innerHTML += `<br><br>⚠️ Problema ao registrar pedido: ${msg}`;
       }
     } catch (err) {
-      console.error('fetch notify-purchase failed', err);
-      statusBox.innerHTML = '⚠️ Erro ao tentar notificar o servidor. Tente novamente mais tarde.';
+      console.error("notify-purchase fetch error:", err);
+      statusBox.innerHTML += `<br><br>⚠️ Erro ao notificar o servidor: ${err.message || err}`;
     }
   })();
 }

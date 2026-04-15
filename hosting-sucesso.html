@@ -23,64 +23,94 @@
     <a href="/hosting.html" class="btn">Voltar para o site</a>
   </div>
 
-<script>
+  <script>
 function getParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
 
 const statusBox = document.getElementById("statusBox");
-const refRaw = getParam("ref");
-let plan = getParam("plan");
 
-// caso você tenha colocado ref como "ID|plan" em algum lugar (fallback)
-let discordId = null;
-if (refRaw) {
-  if (refRaw.includes('|')) {
-    const parts = refRaw.split('|');
-    discordId = decodeURIComponent(parts[0] || '').trim();
-    if (!plan) plan = decodeURIComponent(parts[1] || '').trim();
-  } else {
-    discordId = decodeURIComponent(refRaw).trim();
+async function fetchMeHosting() {
+  try {
+    const r = await fetch("/.netlify/functions/me-hosting", { credentials: 'same-origin' });
+    if (!r.ok) return null;
+    const j = await r.json().catch(()=>null);
+    return j && j.discord_id ? j : null;
+  } catch (e) { return null; }
+}
+
+async function notifyPurchase(discordId, plan) {
+  try {
+    const payload = { discord_id: String(discordId) };
+    if (plan) payload.plan = plan;
+
+    const resp = await fetch("/.netlify/functions/notify-purchase", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await resp.json().catch(()=>({}));
+    return { ok: resp.ok, status: resp.status, body: data };
+  } catch (err) {
+    return { ok: false, error: String(err) };
   }
 }
 
-if (!discordId) {
-  statusBox.innerHTML = "⚠️ Não foi possível identificar o cliente.";
-} else {
+(async function main() {
+  statusBox.innerHTML = "Verificando informações...";
+
+  // 1) tenta localStorage (persistência antes do checkout)
+  let pending = null;
+  try {
+    const raw = localStorage.getItem('sx_pending_checkout');
+    if (raw) pending = JSON.parse(raw);
+  } catch(e) { /* ignore */ }
+
+  // 2) fallback: query params
+  let discordId = pending?.discord_id || getParam('ref') || null;
+  let plan = pending?.plan || getParam('plan') || null;
+
+  // 3) fallback final: chamar me-hosting (usa cookie de sessão)
+  if (!discordId) {
+    const me = await fetchMeHosting();
+    if (me && me.discord_id) {
+      discordId = me.discord_id;
+      // se me retornar plano (não usual), use
+    }
+  }
+
+  if (!discordId) {
+    statusBox.innerHTML = "⚠️ Não foi possível identificar o cliente.";
+    // limpa localStorage só por segurança
+    localStorage.removeItem('sx_pending_checkout');
+    return;
+  }
+
+  // mostra id na tela
   statusBox.innerHTML = `
     ✔️ Cliente identificado<br>
     ID: <b>${discordId}</b><br><br>
     Aguarde enquanto verificamos seu pagamento.
   `;
 
-  // chama notify-purchase automaticamente (envia plan quando disponível)
-  (async () => {
-    try {
-      // se plan ainda não veio, envia sem plan (será 'desconhecido') — idealmente sempre enviar plan
-      const payload = { discord_id: discordId };
-      if (plan) payload.plan = plan;
+  // tenta notificar o server (envia plan se existir)
+  const res = await notifyPurchase(discordId, plan);
 
-      const resp = await fetch("/.netlify/functions/notify-purchase", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await resp.json().catch(()=>({}));
-      if (resp.ok) {
-        statusBox.innerHTML += `<br><br>✅ ${data.message || "Pedido registrado com sucesso."}`;
-      } else {
-        // mostra erro legível
-        const msg = data?.message || data?.error || JSON.stringify(data);
-        statusBox.innerHTML += `<br><br>⚠️ Problema ao registrar pedido: ${msg}`;
-      }
-    } catch (err) {
-      console.error("notify-purchase fetch error:", err);
-      statusBox.innerHTML += `<br><br>⚠️ Erro ao notificar o servidor: ${err.message || err}`;
-    }
-  })();
-}
+  if (res.ok) {
+    // sucesso: mostra mensagem e limpa pending
+    statusBox.innerHTML += `<br><br>✅ ${res.body?.message || 'Pedido registrado com sucesso.'}`;
+    // opcional: mostrar pedido/retorno
+    // limpar localStorage
+    localStorage.removeItem('sx_pending_checkout');
+  } else {
+    // falha: exibe motivo legível
+    const msg = res.body?.message || res.body?.error || res.error || `HTTP ${res.status}`;
+    statusBox.innerHTML += `<br><br>⚠️ Problema ao registrar pedido: ${msg}`;
+    // manter localStorage por segurança (para tentar reprocessar manualmente)
+  }
+})();
 </script>
 </body>
 </html>

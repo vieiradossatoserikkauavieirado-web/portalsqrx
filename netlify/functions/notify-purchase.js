@@ -1,8 +1,25 @@
 // netlify/functions/notify-purchase.js
 const { createClient } = require('@supabase/supabase-js');
 
+// validação inicial de env vars (colocar no topo do handler)
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
+const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('[notify-purchase] ENV MISSING:', {
+    SUPABASE_URL: !!SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE: !! SUPABASE_SERVICE_ROLE_KEY
+  });
+  return {
+    statusCode: 500,
+    body: JSON.stringify({
+      error: 'ENV_MISSING',
+      message: 'SUPABASE_URL ou SUPABASE_SERVICE_ROLE não configurados no ambiente.'
+    })
+  };
+}
+
+// então crie o cliente com segurança:
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE);
 
 // opcional: PLANOS_JSON em env ({"barato":{"nome":"Barato","slots":50},...})

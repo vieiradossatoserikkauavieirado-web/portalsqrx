@@ -951,53 +951,71 @@
     </div>
   </div>
 
-  <script>
-  const LINKS = {
-    barato: "https://checkout.infinitepay.io/siqueira-santos-12/xI8ZrO3sn",
-    bom:    "https://checkout.infinitepay.io/siqueira-santos-12/1a1sxgskt",
-    otimo:  "https://checkout.infinitepay.io/siqueira-santos-12/5vc5GGIJ9"
-  };
+ <script>
+/* hosting.html - script simples e robusto para checkout */
+const LINKS = {
+  barato: "https://checkout.infinitepay.io/siqueira-santos-12/xI8ZrO3sn",
+  bom:    "https://checkout.infinitepay.io/siqueira-santos-12/1a1sxgskt",
+  otimo:  "https://checkout.infinitepay.io/siqueira-santos-12/5vc5GGIJ9"
+};
 
-  const DISCORD_LOGIN_URL = "/.netlify/functions/discord-login-hosting";
-  const ME_URL = "/.netlify/functions/me-hosting";
+const DISCORD_LOGIN_URL = "/.netlify/functions/discord-login-hosting";
+const ME_URL = "/.netlify/functions/me-hosting";
+const PENDING_KEY = "sx_pending_checkout";
 
-  // pega discord id da sessão (me-hosting)
-  async function getDiscordId() {
-    try {
-      const r = await fetch(ME_URL, { credentials: 'same-origin' });
-      if (!r.ok) return null;
-      const j = await r.json().catch(()=>null);
-      return j && j.discord_id ? j.discord_id : null;
-    } catch (e) { return null; }
+// Busca sessão no backend (cookie HttpOnly)
+async function fetchMe() {
+  try {
+    const r = await fetch(ME_URL, { credentials: 'same-origin', cache: 'no-store' });
+    if (!r.ok) return null;
+    const j = await r.json().catch(()=>null);
+    return j && j.ok ? j : null;
+  } catch (e) { return null; }
+}
+
+// Handler de clique nos botões de plano (botões devem ter class="plan-btn" data-plan="barato|bom|otimo")
+async function handlePlanAction(plano) {
+  if (!LINKS[plano]) return alert("Plano inválido.");
+  // 1) tenta pegar discord_id da sessão carregada
+  let discordId = null;
+  const me = await fetchMe();
+  if (me && me.discord_id) discordId = me.discord_id;
+
+  // 2) se não tiver, pede login
+  if (!discordId) {
+    alert("Você precisa entrar com o Discord para comprar.");
+    window.location.href = DISCORD_LOGIN_URL;
+    return;
   }
 
-  document.querySelectorAll('.plan-btn').forEach(btn=>{
-    btn.addEventListener('click', async (e)=>{
+  // 3) salva pending no localStorage (sobrevive ao redirect)
+  try {
+    localStorage.setItem(PENDING_KEY, JSON.stringify({ discord_id: discordId, plan: plano }));
+  } catch(e){ /* ignore storage errors */ }
+
+  // 4) redireciona para o checkout (query é redundante porque temos localStorage)
+  const checkout = LINKS[plano];
+  const url = `${checkout}?ref=${encodeURIComponent(discordId)}&plan=${encodeURIComponent(plano)}`;
+  window.location.href = url;
+}
+
+// Anexa listeners aos botões
+function attachPlanButtons() {
+  document.querySelectorAll('.plan-btn').forEach(btn => {
+    const plan = btn.dataset.plan;
+    if (!plan) return;
+    btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const plan = btn.dataset.plan;
-      const checkout = LINKS[plan];
-      if (!checkout) return alert('Plano inválido.');
-
-      // tenta pegar discord id via sessão (mais confiável que prompt)
-      const discordId = await getDiscordId();
-      if (!discordId) {
-        // se não estiver logado, envia para login
-        alert('Você precisa estar logado com Discord para comprar. Faça login e tente novamente.');
-        window.location.href = DISCORD_LOGIN_URL;
-        return;
-      }
-
-      // salva pré-pedido no localStorage (sobrevive ao redirect e ao checkout)
-      // chave: sx_pending_checkout  (guarde apenas id e plan, nada sensível)
-      const pending = { discord_id: discordId, plan };
-      localStorage.setItem('sx_pending_checkout', JSON.stringify(pending));
-
-      // redireciona para checkout. Mantemos query com ref+plan por compatibilidade,
-      // mas localStorage garante que teremos os dados no retorno.
-      const url = `${checkout}?ref=${encodeURIComponent(discordId)}&plan=${encodeURIComponent(plan)}`;
-      window.location.href = url;
+      handlePlanAction(plan).catch(err => {
+        console.error('handlePlanAction error', err);
+        alert('Erro ao iniciar compra. Tente novamente.');
+      });
     });
   });
-  </script>
+}
+
+// Inicializa (run)
+attachPlanButtons();
+</script>
 </body>
 </html>

@@ -24,16 +24,12 @@
   </div>
 
  <script>
-/* hosting-sucesso.html - notifica o servidor sobre a compra usando localStorage / query / me-hosting */
 const PENDING_KEY = "sx_pending_checkout";
 const ME_URL = "/.netlify/functions/me-hosting";
 const NOTIFY_URL = "/.netlify/functions/notify-purchase";
 
 function getParam(name) {
-  try {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name);
-  } catch { return null; }
+  try { return new URL(window.location.href).searchParams.get(name); } catch { return null; }
 }
 
 async function fetchMeHosting() {
@@ -65,11 +61,11 @@ async function notifyPurchase(discordId, plan) {
   const statusBox = document.getElementById("statusBox");
   if (statusBox) statusBox.innerHTML = "Verificando informações...";
 
-  // 1) tentar localStorage (mais confiável)
+  // 1) localStorage
   let pending = null;
   try { pending = JSON.parse(localStorage.getItem(PENDING_KEY) || "null"); } catch(e){ pending = null; }
 
-  // 2) query params fallback
+  // 2) query fallback
   let discordId = pending?.discord_id || getParam("ref") || null;
   let plan = pending?.plan || getParam("plan") || null;
 
@@ -81,23 +77,20 @@ async function notifyPurchase(discordId, plan) {
 
   if (!discordId) {
     if (statusBox) statusBox.innerHTML = "⚠️ Não foi possível identificar o cliente.";
-    // não limpamos o pending pra caso queira tentar manualmente depois
     return;
   }
 
   if (statusBox) statusBox.innerHTML = `✔️ Cliente identificado<br>ID: <b>${discordId}</b><br><br>Aguarde enquanto verificamos seu pagamento.`;
 
-  // 4) notifica o servidor (envia plan se disponível)
+  // 4) notify
   const res = await notifyPurchase(discordId, plan);
 
   if (res.ok) {
     if (statusBox) statusBox.innerHTML += `<br><br>✅ ${res.body?.message || "Pedido registrado com sucesso."}`;
-    // limpa pending
-    try { localStorage.removeItem(PENDING_KEY); } catch(e){ /* ignore */ }
+    try { localStorage.removeItem(PENDING_KEY); } catch(e){}
   } else {
     const msg = res.body?.message || res.body?.error || res.error || `HTTP ${res.status}`;
     if (statusBox) statusBox.innerHTML += `<br><br>⚠️ Problema ao registrar pedido: ${msg}`;
-    // mantém pending para re-tentativa manual se quiser
     console.error("notify-purchase fetch error:", res);
   }
 })();

@@ -951,8 +951,18 @@
     </div>
   </div>
 
- <script>
-/* hosting.html - script simples e robusto para checkout */
+<script>
+/*
+  hosting.html - script completo para login/UX e redirecionamento para checkout
+  - Usa /.netlify/functions/me-hosting para checar sessão (cookie HttpOnly)
+  - Salva pending no localStorage antes do checkout (sx_pending_checkout)
+  - Redireciona para InfinitePay com ?ref=<discordId>&plan=<plano> (query é redundante)
+  - Botões de compra: class="plan-btn" data-plan="barato|bom|otimo"
+  - IDs opcionais no HTML (se existirem) atualizados automaticamente:
+      #navLoginBtn, #heroMainBtn, #ctaBottomBtn, #loginStatusText, #statusDot,
+      #userPill, #userAvatar, #userName
+*/
+
 const LINKS = {
   barato: "https://checkout.infinitepay.io/siqueira-santos-12/xI8ZrO3sn",
   bom:    "https://checkout.infinitepay.io/siqueira-santos-12/1a1sxgskt",
@@ -963,43 +973,100 @@ const DISCORD_LOGIN_URL = "/.netlify/functions/discord-login-hosting";
 const ME_URL = "/.netlify/functions/me-hosting";
 const PENDING_KEY = "sx_pending_checkout";
 
-// Busca sessão no backend (cookie HttpOnly)
-async function fetchMe() {
-  try {
-    const r = await fetch(ME_URL, { credentials: 'same-origin', cache: 'no-store' });
-    if (!r.ok) return null;
-    const j = await r.json().catch(()=>null);
-    return j && j.ok ? j : null;
-  } catch (e) { return null; }
+// UI elements (optional - if exist on your page they'll be updated)
+const ui = {
+  navLoginBtn: document.getElementById("navLoginBtn"),
+  heroMainBtn: document.getElementById("heroMainBtn"),
+  ctaBottomBtn: document.getElementById("ctaBottomBtn"),
+  loginStatusText: document.getElementById("loginStatusText"),
+  statusDot: document.getElementById("statusDot"),
+  userPill: document.getElementById("userPill"),
+  userAvatar: document.getElementById("userAvatar"),
+  userName: document.getElementById("userName"),
+};
+
+// small helpers to update UI
+function setLoggedOutUI() {
+  if (ui.navLoginBtn) { ui.navLoginBtn.textContent = "Entrar com Discord"; ui.navLoginBtn.href = DISCORD_LOGIN_URL; }
+  if (ui.heroMainBtn) { ui.heroMainBtn.textContent = "Entrar com Discord"; ui.heroMainBtn.href = DISCORD_LOGIN_URL; }
+  if (ui.ctaBottomBtn) { ui.ctaBottomBtn.textContent = "Entrar com Discord"; ui.ctaBottomBtn.href = DISCORD_LOGIN_URL; }
+  if (ui.loginStatusText) ui.loginStatusText.textContent = "Faça login com Discord para liberar a compra dos planos.";
+  if (ui.statusDot) ui.statusDot.classList.remove("online");
+  if (ui.userPill) ui.userPill.classList.remove("show");
+  document.querySelectorAll(".plan-btn").forEach(btn => {
+    btn.disabled = false;
+    btn.textContent = "Entrar para comprar";
+  });
 }
 
-// Handler de clique nos botões de plano (botões devem ter class="plan-btn" data-plan="barato|bom|otimo")
+function setLoggedInUI(user) {
+  if (!user) return setLoggedOutUI();
+  if (ui.navLoginBtn) { ui.navLoginBtn.textContent = "Comprar plano"; ui.navLoginBtn.href = "#planos"; }
+  if (ui.heroMainBtn) { ui.heroMainBtn.textContent = "Ver planos"; ui.heroMainBtn.href = "#planos"; }
+  if (ui.ctaBottomBtn) { ui.ctaBottomBtn.textContent = "Escolher plano"; ui.ctaBottomBtn.href = "#planos"; }
+  if (ui.loginStatusText) ui.loginStatusText.textContent = `Logado como ${user.username || user.discord_id}.`;
+  if (ui.statusDot) ui.statusDot.classList.add("online");
+  if (ui.userName) ui.userName.textContent = user.username || user.discord_id;
+  if (ui.userAvatar && user.avatar && user.discord_id) {
+    ui.userAvatar.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${user.discord_id}/${user.avatar}.png?size=64" alt="${user.username}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else if (ui.userAvatar) {
+    ui.userAvatar.textContent = (user.username || "SX").slice(0,2).toUpperCase();
+  }
+  if (ui.userPill) ui.userPill.classList.add("show");
+
+  document.querySelectorAll(".plan-btn").forEach(btn => {
+    btn.disabled = false;
+    btn.textContent = "Comprar agora";
+  });
+}
+
+// fetch me-hosting (server function) - uses cookie (HttpOnly) so must send credentials
+async function fetchMe() {
+  try {
+    const r = await fetch(ME_URL, { method: "GET", credentials: "same-origin", cache: "no-store" });
+    if (!r.ok) return null;
+    const j = await r.json().catch(()=>null);
+    if (!j) return null;
+    return j.ok ? j : null;
+  } catch(err) {
+    console.error("fetchMe error", err);
+    return null;
+  }
+}
+
+// load session and update UI
+async function loadSessionAndUpdateUI() {
+  const me = await fetchMe();
+  if (me && me.discord_id) {
+    setLoggedInUI(me);
+    return me;
+  } else {
+    setLoggedOutUI();
+    return null;
+  }
+}
+
+// handle click on plan: ensure user logged, save pending and redirect to checkout
 async function handlePlanAction(plano) {
   if (!LINKS[plano]) return alert("Plano inválido.");
-  // 1) tenta pegar discord_id da sessão carregada
-  let discordId = null;
-  const me = await fetchMe();
-  if (me && me.discord_id) discordId = me.discord_id;
-
-  // 2) se não tiver, pede login
-  if (!discordId) {
+  // try session
+  let me = await fetchMe();
+  if (!me || !me.discord_id) {
+    // try reloading page with login query (or redirect to login)
     alert("Você precisa entrar com o Discord para comprar.");
     window.location.href = DISCORD_LOGIN_URL;
     return;
   }
-
-  // 3) salva pending no localStorage (sobrevive ao redirect)
-  try {
-    localStorage.setItem(PENDING_KEY, JSON.stringify({ discord_id: discordId, plan: plano }));
-  } catch(e){ /* ignore storage errors */ }
-
-  // 4) redireciona para o checkout (query é redundante porque temos localStorage)
+  const discordId = me.discord_id;
+  // persist pending data
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify({ discord_id: discordId, plan: plano })); } catch(e) {}
+  // redirect to checkout (we include ref+plan but localStorage is the reliable source on return)
   const checkout = LINKS[plano];
   const url = `${checkout}?ref=${encodeURIComponent(discordId)}&plan=${encodeURIComponent(plano)}`;
   window.location.href = url;
 }
 
-// Anexa listeners aos botões
+// attach listeners to .plan-btn buttons
 function attachPlanButtons() {
   document.querySelectorAll('.plan-btn').forEach(btn => {
     const plan = btn.dataset.plan;
@@ -1007,15 +1074,41 @@ function attachPlanButtons() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       handlePlanAction(plan).catch(err => {
-        console.error('handlePlanAction error', err);
-        alert('Erro ao iniciar compra. Tente novamente.');
+        console.error("handlePlanAction:", err);
+        alert("Erro ao iniciar compra. Tente novamente.");
       });
     });
   });
 }
 
-// Inicializa (run)
-attachPlanButtons();
+// handle login=ok query param (after callback) - reload session
+function handleQueryFeedback() {
+  const params = new URLSearchParams(window.location.search);
+  const login = params.get("login");
+  const err = params.get("err");
+  if (login === "ok") {
+    // small delay to allow cookie to be set by server response
+    setTimeout(()=>{ loadSessionAndUpdateUI(); }, 300);
+    // remove query from URL
+    const clean = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, clean);
+  }
+  if (err) {
+    console.warn("Login error:", err);
+    // you can show a user-friendly message if desired
+  }
+}
+
+// init
+(function initHostingScript() {
+  attachPlanButtons();
+  handleQueryFeedback();
+  // load session and set UI
+  loadSessionAndUpdateUI().catch(err => {
+    console.error("loadSession error", err);
+    setLoggedOutUI();
+  });
+})();
 </script>
 </body>
 </html>

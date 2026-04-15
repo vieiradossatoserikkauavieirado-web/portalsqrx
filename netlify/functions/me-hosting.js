@@ -1,118 +1,55 @@
+// netlify/functions/me-hosting.js
 const { createClient } = require("@supabase/supabase-js");
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE);
+const COOKIE_NAME = "sx_hosting_session";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-function getCookie(name, headers) {
-  const cookieHeader =
-    headers?.cookie || headers?.Cookie || headers?.COOKIE || "";
-
-  if (!cookieHeader) return null;
-
-  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const match = cookieHeader.match(
-    new RegExp(`(?:^|;\\s*)${escapedName}=([^;]*)`)
-  );
-
-  return match ? decodeURIComponent(match[1]) : null;
+function parseCookies(cookieHeader) {
+  if (!cookieHeader) return {};
+  return cookieHeader.split(";").map(c => c.split("=")).reduce((acc, [k, v]) => {
+    acc[k && k.trim()] = v && decodeURIComponent(v.trim());
+    return acc;
+  }, {});
 }
 
-exports.handler = async (event) => {
+exports.handler = async function (event) {
   try {
-    const token = getCookie("sx_hosting_session", event.headers);
+    const cookies = parseCookies(event.headers.cookie || event.headers.Cookie || "");
+    const token = cookies[COOKIE_NAME];
 
     if (!token) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-        },
-        body: JSON.stringify({
-          ok: false,
-          error: "no_session_cookie",
-        }),
-      };
+      return { statusCode: 200, body: JSON.stringify({ ok: false }) };
     }
 
-    const { data: sess, error } = await supabase
+    // procura sessao valida
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
       .from("sessoes_hosting")
-      .select("discord_id, username, avatar, expira_em")
-      .eq("token", token)
-      .maybeSingle();
+      .select("*")
+      .eq("session_token", token)
+      .gt("expires_at", now)
+      .limit(1)
+      .single();
 
-    if (error) {
-      console.error("supabase select sessoes_hosting error:", error);
-
-      return {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-        },
-        body: JSON.stringify({
-          ok: false,
-          error: "database_error",
-        }),
-      };
+    if (error || !data) {
+      // sessão inválida / expirada
+      return { statusCode: 200, body: JSON.stringify({ ok: false }) };
     }
 
-    if (!sess) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-        },
-        body: JSON.stringify({
-          ok: false,
-          error: "invalid_session",
-        }),
-      };
-    }
-
-    if (new Date(sess.expira_em).getTime() < Date.now()) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Cache-Control": "no-store",
-        },
-        body: JSON.stringify({
-          ok: false,
-          error: "expired_session",
-        }),
-      };
-    }
-
+    // retorna dados user para frontend
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "no-store",
-      },
       body: JSON.stringify({
         ok: true,
-        discord_id: sess.discord_id,
-        username: sess.username,
-        avatar: sess.avatar,
-      }),
+        discord_id: data.discord_id,
+        username: data.discord_username,
+        avatar: data.discord_avatar,
+        expires_at: data.expires_at
+      })
     };
   } catch (err) {
-    console.error("me-hosting error:", err);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "no-store",
-      },
-      body: JSON.stringify({
-        ok: false,
-        error: "internal_error",
-      }),
-    };
+    console.error("me-hosting error", err);
+    return { statusCode: 500, body: JSON.stringify({ ok: false, error: err.message }) };
   }
 };

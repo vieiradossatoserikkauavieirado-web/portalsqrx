@@ -25,6 +25,7 @@
 
  <script>
 const PENDING_KEY = "sx_pending_checkout";
+const LOCK_KEY = "sx_notify_sent";
 const ME_URL = "/.netlify/functions/me-hosting";
 const NOTIFY_URL = "/.netlify/functions/notify-purchase";
 
@@ -43,13 +44,18 @@ async function fetchMeHosting() {
 
 async function notifyPurchase(discordId, plan) {
   try {
-    const payload = { discord_id: String(discordId) };
-    if (plan) payload.plan = plan;
+    const payload = {
+      discord_id: String(discordId),
+      plan: plan || "barato"
+    };
+
     const resp = await fetch(NOTIFY_URL, {
       method: "POST",
+      credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+
     const body = await resp.json().catch(()=>({}));
     return { ok: resp.ok, status: resp.status, body };
   } catch (err) {
@@ -59,20 +65,41 @@ async function notifyPurchase(discordId, plan) {
 
 (async function main() {
   const statusBox = document.getElementById("statusBox");
+
+  if (sessionStorage.getItem(LOCK_KEY)) {
+    if (statusBox) statusBox.innerHTML = "✔️ Pedido já processado.";
+    return;
+  }
+
   if (statusBox) statusBox.innerHTML = "Verificando informações...";
 
   // 1) localStorage
   let pending = null;
-  try { pending = JSON.parse(localStorage.getItem(PENDING_KEY) || "null"); } catch(e){ pending = null; }
+  try {
+    pending = JSON.parse(localStorage.getItem(PENDING_KEY) || "null");
+  } catch(e) { pending = null; }
 
-  // 2) query fallback
-  let discordId = pending?.discord_id || getParam("ref") || null;
-  let plan = pending?.plan || getParam("plan") || null;
+  // 2) pegar dados (compatível com tudo)
+  let discordId =
+    pending?.discord_id ||
+    pending?.discordId ||
+    getParam("ref") ||
+    getParam("discord_id") ||
+    null;
 
-  // 3) me-hosting fallback
+  let plan =
+    pending?.plan ||
+    pending?.plano ||
+    getParam("plan") ||
+    getParam("plano") ||
+    "barato";
+
+  // 3) fallback me-hosting
   if (!discordId) {
     const me = await fetchMeHosting();
-    if (me && me.discord_id) discordId = me.discord_id;
+    if (me && me.discord_id) {
+      discordId = me.discord_id;
+    }
   }
 
   if (!discordId) {
@@ -80,18 +107,35 @@ async function notifyPurchase(discordId, plan) {
     return;
   }
 
-  if (statusBox) statusBox.innerHTML = `✔️ Cliente identificado<br>ID: <b>${discordId}</b><br><br>Aguarde enquanto verificamos seu pagamento.`;
+  if (statusBox) {
+    statusBox.innerHTML =
+      `✔️ Cliente identificado<br>ID: <b>${discordId}</b><br><br>Registrando pedido...`;
+  }
 
   // 4) notify
   const res = await notifyPurchase(discordId, plan);
 
   if (res.ok) {
-    if (statusBox) statusBox.innerHTML += `<br><br>✅ ${res.body?.message || "Pedido registrado com sucesso."}`;
+    sessionStorage.setItem(LOCK_KEY, "1");
     try { localStorage.removeItem(PENDING_KEY); } catch(e){}
+
+    if (statusBox) {
+      statusBox.innerHTML +=
+        `<br><br>✅ ${res.body?.message || "Pedido registrado com sucesso."}<br>` +
+        `Sua hosting será entregue automaticamente em instantes.`;
+    }
   } else {
-    const msg = res.body?.message || res.body?.error || res.error || `HTTP ${res.status}`;
-    if (statusBox) statusBox.innerHTML += `<br><br>⚠️ Problema ao registrar pedido: ${msg}`;
-    console.error("notify-purchase fetch error:", res);
+    const msg =
+      res.body?.message ||
+      res.body?.error ||
+      res.error ||
+      `HTTP ${res.status}`;
+
+    if (statusBox) {
+      statusBox.innerHTML += `<br><br>⚠️ Problema ao registrar pedido: ${msg}`;
+    }
+
+    console.error("notify-purchase error:", res);
   }
 })();
 </script>

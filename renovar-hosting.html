@@ -282,6 +282,7 @@
 <script>
 const ME_URL = "/.netlify/functions/me-hosting";
 const RENEW_INFO_URL = "/.netlify/functions/renew-info";
+const PENDING_RENEW_KEY = "sx_pending_renewal";
 
 const PLANOS_VALOR = {
   barato: "R$8,59",
@@ -346,6 +347,17 @@ function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
     `&tx=${encodeURIComponent(txRef)}` +
     `&state=${encodeURIComponent(state)}`;
 
+  const pending = {
+    host: hostLogin,
+    plan: planKey,
+    discord_id: discordId,
+    tx: txRef,
+    state,
+    amount
+  };
+
+  localStorage.setItem(PENDING_RENEW_KEY, JSON.stringify(pending));
+  sessionStorage.setItem(PENDING_RENEW_KEY, JSON.stringify(pending));
   sessionStorage.setItem(`renew_state_${txRef}`, state);
 
   const base = CHECKOUT_LINKS[planKey] || CHECKOUT_LINKS.barato;
@@ -369,7 +381,8 @@ function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
 
   if (!me || !me.ok) {
     authStatus.innerHTML = "Você precisa entrar com Discord para ver sua hospedagem.";
-    authButtons.style.display = "flex";
+    if (authButtons) authButtons.style.display = "flex";
+    if (loginBtn) loginBtn.style.display = "inline-flex";
     hostsBox.className = "empty";
     hostsBox.textContent = "Faça login para carregar suas hosts.";
     return;

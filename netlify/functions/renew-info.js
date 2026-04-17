@@ -4,14 +4,13 @@ const { createClient } = require("@supabase/supabase-js");
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_KEY;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
-  auth: { persistSession: false, autoRefreshToken: false }
-});
-
 function json(statusCode, body) {
   return {
     statusCode,
-    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store"
+    },
     body: JSON.stringify(body)
   };
 }
@@ -21,6 +20,18 @@ exports.handler = async (event) => {
     if (event.httpMethod !== "POST") {
       return json(405, { ok: false, error: "METHOD_NOT_ALLOWED" });
     }
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+      return json(500, {
+        ok: false,
+        error: "SUPABASE_ENV_MISSING",
+        message: "Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE (ou SUPABASE_KEY) no Netlify."
+      });
+    }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
 
     const body = JSON.parse(event.body || "{}");
     const discordId = body.discord_id || body.discordId || null;

@@ -4,39 +4,277 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Renovar hosting</title>
+  <title>Renovação de Hosting • Portal SiqueiraX</title>
   <style>
-    body{font-family:system-ui,Arial,sans-serif;max-width:820px;margin:24px auto;padding:0 16px;color:#111}
-    .card{border:1px solid #eee;border-radius:14px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.04)}
-    .muted{color:#666}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .btn{display:inline-block;border:0;border-radius:10px;padding:12px 16px;cursor:pointer;text-decoration:none;font-weight:700}
-    .btn-red{background:#b91c1c;color:#fff}
-    .btn-dark{background:#111;color:#fff}
-    .item{border:1px solid #eee;border-radius:12px;padding:14px;margin-top:12px}
-    .tag{display:inline-block;background:#fee2e2;color:#991b1b;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700}
-    .k{font-weight:700}
-    .sep{height:1px;background:#eee;margin:16px 0}
-    pre{white-space:pre-wrap;background:#fafafa;border:1px solid #eee;border-radius:10px;padding:12px;overflow:auto}
+    :root{
+      --bg:#0b0b10;
+      --card:#111118;
+      --card2:#15151d;
+      --line:rgba(255,255,255,.08);
+      --text:#f5f7fb;
+      --muted:#a6adbb;
+      --red:#b91c1c;
+      --red2:#ef4444;
+      --red3:#7f1d1d;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(185,28,28,.30), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(239,68,68,.16), transparent 32%),
+        linear-gradient(180deg,#09090d 0%, #0f0f15 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 42px;
+    }
+    .hero{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(185,28,28,.18), rgba(17,17,24,.92));
+      border-radius:26px;
+      padding:28px;
+      box-shadow:0 18px 40px rgba(0,0,0,.28);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:auto -120px -120px auto;
+      width:260px;height:260px;
+      background:radial-gradient(circle, rgba(239,68,68,.28), transparent 70%);
+      pointer-events:none;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(239,68,68,.12);
+      color:#fecaca;
+      border:1px solid rgba(239,68,68,.18);
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    h1{
+      margin:16px 0 10px;
+      font-size:clamp(30px, 4vw, 48px);
+      line-height:1.04;
+    }
+    .sub{
+      max-width:760px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.6;
+      margin:0;
+    }
+    .topbar{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      margin-top:18px;
+    }
+    .panel{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius:22px;
+      padding:18px;
+      backdrop-filter: blur(10px);
+    }
+    .panel h3{
+      margin:0 0 12px;
+      font-size:16px;
+    }
+    .meta{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .metaBox{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+    }
+    .metaBox .k{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+    .metaBox .v{font-size:15px;font-weight:700;word-break:break-word}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:12px 16px;
+      border-radius:14px;
+      text-decoration:none;
+      font-weight:800;
+      border:1px solid transparent;
+      transition:.18s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-red{background:linear-gradient(180deg, var(--red2), var(--red)); color:white; box-shadow:0 10px 22px rgba(185,28,28,.24)}
+    .btn-dark{background:#171723;color:var(--text);border-color:var(--line)}
+    .btn-ghost{background:transparent;color:var(--text);border-color:var(--line)}
+    .section{
+      margin-top:18px;
+      border:1px solid var(--line);
+      background:rgba(10,10,14,.72);
+      border-radius:24px;
+      padding:20px;
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
+    }
+    .sectionHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .sectionHead h2{margin:0;font-size:18px}
+    .sectionHead span{color:var(--muted);font-size:13px}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+    .hostCard{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius:20px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      min-height:240px;
+    }
+    .hostCard .tag{
+      display:inline-flex;
+      align-items:center;
+      align-self:flex-start;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(239,68,68,.12);
+      color:#fecaca;
+      border:1px solid rgba(239,68,68,.18);
+      font-size:12px;
+      font-weight:800;
+    }
+    .hostCard h3{
+      margin:12px 0 10px;
+      font-size:18px;
+    }
+    .infoList{
+      display:grid;
+      gap:8px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      margin-bottom:14px;
+    }
+    .infoList b{color:var(--text)}
+    .price{
+      margin-top:auto;
+      padding-top:10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-top:1px solid var(--line);
+    }
+    .price .value{
+      font-size:22px;
+      font-weight:900;
+      color:#fff;
+    }
+    .price .small{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .loading, .empty, .error{
+      border:1px dashed rgba(255,255,255,.14);
+      background:rgba(255,255,255,.025);
+      border-radius:18px;
+      padding:18px;
+      color:var(--muted);
+    }
+    .error{color:#fecaca;border-color:rgba(239,68,68,.24);background:rgba(239,68,68,.08)}
+    .divider{height:1px;background:var(--line);margin:14px 0}
+    @media (max-width: 960px){
+      .topbar{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .meta{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="tag">Renovação de hosting</div>
-    <h1>Renovar sua hospedagem</h1>
-    <p class="muted">Primeiro entramos com seu Discord. Depois mostramos sua host e o valor da renovação.</p>
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge">Renovação de hosting • Portal SiqueiraX</div>
+      <h1>Renovar sua hospedagem</h1>
+      <p class="sub">Entre com seu Discord para ver suas hosts vinculadas, conferir o vencimento e seguir com a renovação no valor correto.</p>
 
-    <div id="authBox">
-      <p id="authStatus" class="muted">Verificando login...</p>
-      <a id="loginBtn" class="btn btn-red" href="/discord-login-hosting" style="display:none;">Entrar com Discord</a>
+      <div class="topbar">
+        <div class="panel">
+          <h3>Identificação</h3>
+          <div id="authStatus" class="loading">Verificando login...</div>
+          <div class="btnRow" id="authButtons" style="display:none;">
+            <a id="loginBtn" class="btn btn-red" href="/discord-login-hosting">Entrar com Discord</a>
+          </div>
+          <div id="userInfo" style="display:none;">
+            <div class="meta">
+              <div class="metaBox">
+                <span class="k">Cliente</span>
+                <div class="v" id="clienteNome">-</div>
+              </div>
+              <div class="metaBox">
+                <span class="k">Discord ID</span>
+                <div class="v" id="clienteId">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Valores de renovação</h3>
+          <div class="meta">
+            <div class="metaBox">
+              <span class="k">Plano Barato</span>
+              <div class="v">R$8,59</div>
+            </div>
+            <div class="metaBox">
+              <span class="k">Plano Bom</span>
+              <div class="v">R$16,00</div>
+            </div>
+            <div class="metaBox">
+              <span class="k">Plano Ótimo</span>
+              <div class="v">R$33,00</div>
+            </div>
+            <div class="metaBox">
+              <span class="k">Suporte</span>
+              <div class="v">Ticket + alerta</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="contentBox" style="display:none;">
-      <div class="sep"></div>
-      <p><span class="k">Cliente:</span> <span id="clienteNome"></span></p>
-      <p><span class="k">Discord ID:</span> <span id="clienteId"></span></p>
+    <div class="section">
+      <div class="sectionHead">
+        <h2>Suas hosts</h2>
+        <span id="hostCount">0 hosts</span>
+      </div>
 
-      <div id="hostsBox"></div>
+      <div id="hostsBox" class="loading">Carregando suas hospedagens...</div>
       <div id="debug" style="margin-top:14px;"></div>
     </div>
   </div>
@@ -51,7 +289,7 @@ const PLANOS_VALOR = {
   otimo: "R$33,00"
 };
 
- const CHECKOUT_LINKS = {
+const CHECKOUT_LINKS = {
     barato: "https://checkout.infinitepay.io/siqueira-santos-12/7fsMNuC0wd",
     bom:    "https://checkout.infinitepay.io/siqueira-santos-12/1HJOfTzEtl",
     otimo:  "https://checkout.infinitepay.io/siqueira-santos-12/2Car3sqxT"
@@ -66,7 +304,7 @@ function fmtDate(d) {
 }
 
 function getPlanKey(host) {
-  return (host?.plano || host?.plano_key || "barato").toLowerCase();
+  return String(host?.plano || host?.plano_key || "barato").toLowerCase();
 }
 
 async function fetchMeHosting() {
@@ -116,59 +354,81 @@ function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
 
 (async function main() {
   const authStatus = document.getElementById("authStatus");
+  const authButtons = document.getElementById("authButtons");
   const loginBtn = document.getElementById("loginBtn");
-  const contentBox = document.getElementById("contentBox");
+  const userInfo = document.getElementById("userInfo");
   const clienteNome = document.getElementById("clienteNome");
   const clienteId = document.getElementById("clienteId");
   const hostsBox = document.getElementById("hostsBox");
   const debug = document.getElementById("debug");
+  const hostCount = document.getElementById("hostCount");
 
   authStatus.textContent = "Verificando login...";
 
   const me = await fetchMeHosting();
 
   if (!me || !me.ok) {
-    authStatus.textContent = "Você precisa entrar com Discord para ver sua host.";
-    loginBtn.style.display = "inline-block";
+    authStatus.innerHTML = "Você precisa entrar com Discord para ver sua hospedagem.";
+    authButtons.style.display = "flex";
+    hostsBox.className = "empty";
+    hostsBox.textContent = "Faça login para carregar suas hosts.";
     return;
   }
 
   const discordId = me.discord_id;
   clienteNome.textContent = me.username || "n/d";
   clienteId.textContent = discordId;
-  contentBox.style.display = "block";
+  userInfo.style.display = "block";
   authStatus.textContent = "";
 
   const info = await fetchRenewInfoByDiscord(discordId);
 
   if (!info.ok || !info.body || !info.body.ok) {
-    hostsBox.innerHTML = `<p class="muted">Não foi possível carregar suas hosts.</p>`;
+    hostsBox.className = "error";
+    hostsBox.innerHTML = "Não foi possível carregar suas hosts.";
     debug.innerText = JSON.stringify(info, null, 2);
     return;
   }
 
   const hosts = info.body.hosts || (info.body.host ? [info.body.host] : []);
+  hostCount.textContent = `${hosts.length} host${hosts.length === 1 ? "" : "s"}`;
 
   if (!hosts.length) {
-    hostsBox.innerHTML = `<p class="muted">Nenhuma host encontrada para sua conta.</p>`;
+    hostsBox.className = "empty";
+    hostsBox.innerHTML = "Nenhuma host encontrada para sua conta.";
     return;
   }
 
+  hostsBox.className = "";
   hostsBox.innerHTML = "";
+
   hosts.forEach((host) => {
     const planKey = getPlanKey(host);
     const valor = PLANOS_VALOR[planKey] || "R$0,00";
     const hostLogin = host.login_host || host.login || "n/d";
     const venc = host.data_vencimento || null;
 
-    const box = document.createElement("div");
-    box.className = "item";
-    box.innerHTML = `
-      <p><span class="k">Host:</span> ${hostLogin}</p>
-      <p><span class="k">Plano:</span> ${planKey}</p>
-      <p><span class="k">Vencimento:</span> ${venc ? fmtDate(venc) : "n/d"}</p>
-      <p><span class="k">Valor da renovação:</span> ${valor}</p>
+    const card = document.createElement("div");
+    card.className = "hostCard";
+
+    card.innerHTML = `
+      <span class="tag">Host ativa</span>
+      <h3>${hostLogin}</h3>
+      <div class="infoList">
+        <div><b>Plano:</b> ${planKey}</div>
+        <div><b>Vencimento:</b> ${venc ? fmtDate(venc) : "n/d"}</div>
+        <div><b>Cliente:</b> ${me.username || "n/d"}</div>
+      </div>
+      <div class="price">
+        <div>
+          <div class="small">Renovação</div>
+          <div class="value">${valor}</div>
+        </div>
+      </div>
     `;
+
+    const btnRow = document.createElement("div");
+    btnRow.className = "btnRow";
 
     const btn = document.createElement("a");
     btn.className = "btn btn-red";
@@ -179,8 +439,16 @@ function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
       planKey
     });
 
-    box.appendChild(btn);
-    hostsBox.appendChild(box);
+    const btn2 = document.createElement("a");
+    btn2.className = "btn btn-ghost";
+    btn2.textContent = "Abrir ticket";
+    btn2.href = `/support?topic=renew&host=${encodeURIComponent(hostLogin)}`;
+
+    btnRow.appendChild(btn);
+    btnRow.appendChild(btn2);
+    card.appendChild(btnRow);
+
+    hostsBox.appendChild(card);
   });
 })();
 </script>

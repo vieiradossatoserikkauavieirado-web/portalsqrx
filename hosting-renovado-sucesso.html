@@ -1,41 +1,266 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8"/>
-  <title>Renovação concluída — Portal SiqueiraX</title>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style> body{font-family:Inter,system-ui,Arial;padding:20px;max-width:800px;margin:auto;} pre{white-space:pre-wrap;background:#fafafa;padding:12px;border-radius:8px;border:1px solid #eee;} </style>
+  <title>Renovação concluída • Portal SiqueiraX</title>
+  <style>
+    :root{
+      --bg:#0b0b10;
+      --card:#111118;
+      --line:rgba(255,255,255,.08);
+      --text:#f5f7fb;
+      --muted:#a6adbb;
+      --red:#b91c1c;
+      --red2:#ef4444;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(185,28,28,.30), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(239,68,68,.16), transparent 32%),
+        linear-gradient(180deg,#09090d 0%, #0f0f15 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:920px;
+      margin:0 auto;
+      padding:28px 18px 42px;
+    }
+    .hero{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(185,28,28,.18), rgba(17,17,24,.92));
+      border-radius:26px;
+      padding:28px;
+      box-shadow:0 18px 40px rgba(0,0,0,.28);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:auto -120px -120px auto;
+      width:260px;height:260px;
+      background:radial-gradient(circle, rgba(239,68,68,.28), transparent 70%);
+      pointer-events:none;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(239,68,68,.12);
+      color:#fecaca;
+      border:1px solid rgba(239,68,68,.18);
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    h1{
+      margin:16px 0 10px;
+      font-size:clamp(30px, 4vw, 48px);
+      line-height:1.04;
+    }
+    .sub{
+      max-width:760px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.6;
+      margin:0;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      margin-top:18px;
+    }
+    .panel{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius:22px;
+      padding:18px;
+      backdrop-filter: blur(10px);
+    }
+    .panel h3{
+      margin:0 0 12px;
+      font-size:16px;
+    }
+    .info{
+      display:grid;
+      gap:10px;
+    }
+    .metaBox{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+    }
+    .metaBox .k{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+    .metaBox .v{font-size:15px;font-weight:700;word-break:break-word}
+    .status{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:rgba(34,197,94,.08);
+      color:#bbf7d0;
+      border:1px solid rgba(34,197,94,.14);
+      font-weight:700;
+    }
+    .status.warn{
+      background:rgba(245,158,11,.08);
+      color:#fde68a;
+      border-color:rgba(245,158,11,.14);
+    }
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:12px 16px;
+      border-radius:14px;
+      text-decoration:none;
+      font-weight:800;
+      border:1px solid transparent;
+      transition:.18s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-red{
+      background:linear-gradient(180deg, var(--red2), var(--red));
+      color:white;
+      box-shadow:0 10px 22px rgba(185,28,28,.24);
+    }
+    .btn-dark{
+      background:#171723;
+      color:var(--text);
+      border-color:var(--line);
+    }
+    .divider{
+      height:1px;
+      background:var(--line);
+      margin:14px 0;
+    }
+    pre{
+      white-space:pre-wrap;
+      background:#0c0c12;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      color:#d9dee8;
+      overflow:auto;
+      margin:0;
+      min-height:120px;
+    }
+    .small{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-  <h1>Pagamento recebido</h1>
-  <div id="status">Registrando renovação...</div>
-  <pre id="debug"></pre>
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge">Renovação de hosting • Portal SiqueiraX</div>
+      <h1>Pagamento recebido</h1>
+      <p class="sub">Sua renovação foi processada. Abaixo está o resumo da host e a confirmação da equipe.</p>
+
+      <div class="grid">
+        <div class="panel">
+          <h3>Resumo da renovação</h3>
+          <div id="status" class="status">Registrando renovação...</div>
+
+          <div class="divider"></div>
+
+          <div class="info">
+            <div class="metaBox">
+              <span class="k">Host</span>
+              <div class="v" id="hostName">-</div>
+            </div>
+            <div class="metaBox">
+              <span class="k">Plano</span>
+              <div class="v" id="planName">-</div>
+            </div>
+            <div class="metaBox">
+              <span class="k">Discord ID</span>
+              <div class="v" id="discordId">-</div>
+            </div>
+            <div class="metaBox">
+              <span class="k">Novo vencimento</span>
+              <div class="v" id="newDue">-</div>
+            </div>
+          </div>
+
+          <div class="btnRow">
+            <a class="btn btn-red" href="/renovar-hosting.html">Voltar para renovação</a>
+            <a class="btn btn-dark" href="/">Ir para o site</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Detalhes técnicos</h3>
+          <p class="small">
+            Esta página confirma a renovação e chama a função do servidor para atualizar o vencimento da host.
+            Se houver divergência de dados, a equipe será notificada no canal de alerta.
+          </p>
+          <pre id="debug">Aguardando resposta...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
 (async function(){
-  function getParam(n){ try{ return new URL(location.href).searchParams.get(n); }catch{ return null; } }
-  const discordId = getParam('discord_id') || getParam('ref') || null;
-  const host = getParam('host') || null;
-  const plan = getParam('plan') || null;
-  const tx = getParam('tx') || null;
-  const state = getParam('state') || null;
+  function getParam(n){
+    try { return new URL(location.href).searchParams.get(n); }
+    catch { return null; }
+  }
 
   const statusEl = document.getElementById('status');
   const debugEl = document.getElementById('debug');
+  const hostEl = document.getElementById('hostName');
+  const planEl = document.getElementById('planName');
+  const discordEl = document.getElementById('discordId');
+  const dueEl = document.getElementById('newDue');
 
-  if (!host) { statusEl.textContent = "Parâmetros incompletos (host)."; return; }
+  const host = getParam('host') || '';
+  const plan = getParam('plan') || 'barato';
+  const discordId = getParam('discord_id') || getParam('ref') || '';
+  const tx = getParam('tx') || '';
+  const state = getParam('state') || '';
 
-  // valida state salvo em sessionStorage (opcional)
-  if (tx && state) {
-    const saved = sessionStorage.getItem(`renew_state_${tx}`);
-    if (!saved || saved !== state) {
-      console.warn('state mismatch or not present for tx', tx);
-      // permitir continuar (webhook pode confirmar), mas avisar ao usuário
-      statusEl.textContent = "Registrando renovação... (aguardando confirmação segura)";
-    } else {
-      // ok, remover a chave
-      try { sessionStorage.removeItem(`renew_state_${tx}`); } catch(e){}
-    }
+  hostEl.textContent = host || '-';
+  planEl.textContent = plan || '-';
+  discordEl.textContent = discordId || '-';
+
+  if (!host) {
+    statusEl.className = 'status warn';
+    statusEl.textContent = 'Parâmetros incompletos. Não foi possível registrar a renovação.';
+    debugEl.textContent = JSON.stringify({ error: 'HOST_REQUIRED', host, plan, discordId, tx, state }, null, 2);
+    return;
+  }
+
+  const savedState = tx ? sessionStorage.getItem(`renew_state_${tx}`) : null;
+  if (tx && state && savedState && savedState !== state) {
+    console.warn('state mismatch', { tx, state, savedState });
   }
 
   async function callNotify(payload){
@@ -43,28 +268,39 @@
       const res = await fetch('/.netlify/functions/notify-renewal', {
         method: 'POST',
         credentials: 'same-origin',
-        headers: {'Content-Type':'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const j = await res.json().catch(()=>({}));
-      return { ok: res.ok, status: res.status, body: j };
+      const body = await res.json().catch(() => ({}));
+      return { ok: res.ok, status: res.status, body };
     } catch (err) {
-      return { ok:false, error: String(err) };
+      return { ok: false, error: String(err) };
     }
   }
-
-  statusEl.textContent = "Registrando renovação...";
 
   const payload = { host, plan, discord_id: discordId, tx };
 
   const res = await callNotify(payload);
 
   if (res.ok && res.body && res.body.ok) {
-    statusEl.textContent = "✅ Renovação registrada com sucesso. Sua hospedagem foi renovada e nossa equipe foi notificada.";
-    debugEl.innerText = JSON.stringify(res.body, null, 2);
+    statusEl.className = 'status';
+    statusEl.textContent = '✅ Renovação registrada com sucesso. Sua hospedagem foi renovada e a equipe foi notificada.';
+
+    if (res.body.novo_vencimento) {
+      dueEl.textContent = new Date(res.body.novo_vencimento).toLocaleString('pt-BR');
+    } else if (res.body.host && res.body.host.data_vencimento) {
+      dueEl.textContent = new Date(res.body.host.data_vencimento).toLocaleString('pt-BR');
+    }
+
+    debugEl.textContent = JSON.stringify(res.body, null, 2);
+
+    if (tx) {
+      try { sessionStorage.removeItem(`renew_state_${tx}`); } catch(e){}
+    }
   } else {
-    statusEl.textContent = "⚠️ Houve um problema ao registrar a renovação. Aguardando confirmação via webhook.";
-    debugEl.innerText = JSON.stringify(res, null, 2);
+    statusEl.className = 'status warn';
+    statusEl.textContent = '⚠️ Houve um problema ao registrar a renovação. Nossa equipe foi avisada.';
+    debugEl.textContent = JSON.stringify(res, null, 2);
   }
 })();
 </script>

@@ -50,25 +50,33 @@ exports.handler = async (event) => {
         .limit(1)
         .maybeSingle();
 
-      if (error) return json(500, { ok: false, error: error.message });
+      if (error) {
+        return json(500, { ok: false, error: error.message });
+      }
+
       host = data || null;
     }
 
     if (!host && discordId) {
-      const query = supabase
+      const { data, error } = await supabase
         .from("hostings_estoque")
         .select("*")
         .eq("cliente_discord_id", String(discordId))
-        .order("id", { ascending: false })
-        .limit(1);
+        .order("id", { ascending: false });
 
-      const { data, error } = await query.maybeSingle();
-      if (error) return json(500, { ok: false, error: error.message });
-      host = data || null;
+      if (error) {
+        return json(500, { ok: false, error: error.message });
+      }
+
+      host = Array.isArray(data) && data.length ? data[0] : null;
     }
 
     if (!host) {
-      return json(404, { ok: false, error: "HOST_NOT_FOUND" });
+      return json(404, {
+        ok: false,
+        error: "HOST_NOT_FOUND",
+        message: "Não foi possível localizar a host do cliente."
+      });
     }
 
     const agora = new Date();
@@ -84,6 +92,7 @@ exports.handler = async (event) => {
       login_host: host.login_host || host.login,
       plano: plan || host.plano,
       valor: amount || null,
+      tx_ref: tx || null,
       status: "concluida",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -109,7 +118,9 @@ exports.handler = async (event) => {
       .select()
       .single();
 
-    if (updateErr) return json(500, { ok: false, error: updateErr.message });
+    if (updateErr) {
+      return json(500, { ok: false, error: updateErr.message });
+    }
 
     return json(200, {
       ok: true,

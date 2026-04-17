@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Renovar hosting — Portal SiqueiraX</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 20px; max-width: 820px; margin: auto; color:#111; }
+    .card { border: 1px solid #eee; padding: 18px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.04); background:#fff; }
+    h1 { margin-top: 0; font-size: 1.4rem; }
+    .row { margin: 10px 0; }
+    .muted { color:#666; font-size:0.95rem; }
+    .btn { background:#2563eb;color:white;padding:10px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:600; }
+    pre { background:#fafafa;padding:10px;border-radius:6px;overflow:auto;border:1px solid #f0f0f0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Renovar sua hospedagem</h1>
+    <div id="status" class="muted">Carregando...</div>
+
+    <div id="info" style="display:none;">
+      <div class="row"><strong>Host:</strong> <span id="hostLogin"></span></div>
+      <div class="row"><strong>Plano:</strong> <span id="hostPlano"></span></div>
+      <div class="row"><strong>Vencimento:</strong> <span id="hostVenc"></span></div>
+      <div class="row"><strong>Valor:</strong> <span id="hostValor"></span></div>
+
+      <div class="row">
+        <button id="btnCheckout" class="btn">Ir para o pagamento</button>
+      </div>
+
+      <div class="row muted" id="note">
+        Ao finalizar o pagamento, você será redirecionado para a página de confirmação.
+      </div>
+    </div>
+
+    <div id="debug" style="margin-top:12px; white-space:pre-wrap;"></div>
+  </div>
+
+<script>
+/* renovar-hosting.html — usa /renew-info para buscar host(s) do usuário */
+(async function(){
+  const STATUS = document.getElementById('status');
+  const INFO = document.getElementById('info');
+  const DEBUG = document.getElementById('debug');
+  const hostLoginEl = document.getElementById('hostLogin');
+  const hostPlanoEl = document.getElementById('hostPlano');
+  const hostVencEl = document.getElementById('hostVenc');
+  const hostValorEl = document.getElementById('hostValor');
+  const btnCheckout = document.getElementById('btnCheckout');
+
+  function getParam(name){ try { return new URL(location.href).searchParams.get(name); } catch { return null; } }
+
+  const PLANOS_VALOR = {
+    barato: "R$8,59",
+    bom: "R$16,00",
+    otimo: "R$33,00"
+  };
+
+  // Ajuste seus links de checkout reais aqui (gateway). Ex.: InfinitePay / PagSeguro / MercadoPago etc.
+  const CHECKOUT_LINKS = {
+    barato: "https://checkout.infinitepay.io/siqueira-santos-12/7fsMNuC0wd",
+    bom:    "https://checkout.infinitepay.io/siqueira-santos-12/1HJOfTzEtl",
+    otimo:  "https://checkout.infinitepay.io/siqueira-santos-12/2Car3sqxT"
+  };
+
+  const SUCCESS_PAGE = "https://portalsiqueirax.com.br/hosting-renovado-sucesso.html";
+
+  const qHost = getParam('host'); // opcional
+  let discordId = getParam('discord_id') || getParam('ref') || null;
+  let planParam = getParam('plan') || null;
+
+  async function fetchRenewInfo({ discordId, host }) {
+    try {
+      const payload = {};
+      if (discordId) payload.discord_id = discordId;
+      if (host) payload.host = host;
+      const res = await fetch('/.netlify/functions/renew-info', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) return { ok:false, status: res.status };
+      const j = await res.json().catch(()=>null);
+      return j;
+    } catch (err) {
+      return { ok:false, error: String(err) };
+    }
+  }
+
+  STATUS.textContent = "Identificando cliente e host...";
+
+  const info = await fetchRenewInfo({ discordId, host: qHost });
+
+  if (!info || !info.ok) {
+    STATUS.textContent = "Não foi possível localizar sua hospedagem. Verifique se está logado ou informe o login da host na query string (?host=host1).";
+    DEBUG.innerText = info ? JSON.stringify(info, null, 2) : "Sem resposta do servidor";
+    return;
+  }
+
+  const hostData = info.host || (Array.isArray(info.hosts) && info.hosts.length ? info.hosts[0] : null);
+  if (!hostData) {
+    STATUS.textContent = "Nenhuma host encontrada para esse usuário.";
+    DEBUG.innerText = JSON.stringify(info, null, 2);
+    return;
+  }
+
+  INFO.style.display = 'block';
+  STATUS.style.display = 'none';
+
+  hostLoginEl.textContent = hostData.login_host || hostData.login || '';
+  hostPlanoEl.textContent = hostData.plano || hostData.plano_key || planParam || 'barato';
+  hostVencEl.textContent = hostData.data_vencimento ? new Date(hostData.data_vencimento).toLocaleString() : 'não cadastrado';
+  const planoKey = hostData.plano || hostData.plano_key || planParam || 'barato';
+  hostValorEl.textContent = PLANOS_VALOR[planoKey] || 'R$0,00';
+
+  btnCheckout.addEventListener('click', () => {
+    // nonce state + txRef
+    const state = Math.random().toString(36).slice(2,12);
+    const txRef = `renew-${Date.now()}`;
+
+    const hostLogin = hostData.login_host || hostData.login || '';
+    const discord = hostData.cliente_discord_id || discordId || '';
+
+    // construir return_url completo com parâmetros
+    const returnUrl = `${SUCCESS_PAGE}` +
+      `?host=${encodeURIComponent(hostLogin)}` +
+      `&plan=${encodeURIComponent(planoKey)}` +
+      `&discord_id=${encodeURIComponent(discord)}` +
+      `&tx=${encodeURIComponent(txRef)}` +
+      `&state=${encodeURIComponent(state)}`;
+
+    const redirectParam = encodeURIComponent(returnUrl);
+
+    // montando URL do gateway (ajuste parametros conforme gateway real)
+    const amount = (PLANOS_VALOR[planoKey] || 'R$0,00').replace('R$','').replace(',','.');
+    const checkoutBase = CHECKOUT_LINKS[planoKey] || CHECKOUT_LINKS['barato'];
+    const finalUrl = `${checkoutBase}?return_url=${redirectParam}&tx_ref=${encodeURIComponent(txRef)}&amount=${encodeURIComponent(amount)}`;
+
+    // salva state temporário para validação do return (sessionStorage)
+    try { sessionStorage.setItem(`renew_state_${txRef}`, state); } catch(e){}
+
+    // redireciona para o gateway
+    window.location.href = finalUrl;
+  });
+
+})();
+</script>
+</body>
+</html>

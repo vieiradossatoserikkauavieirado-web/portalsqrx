@@ -1,8 +1,4 @@
-// netlify/functions/renew-info.js
 const { createClient } = require("@supabase/supabase-js");
-
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_KEY;
 
 function json(statusCode, body) {
   return {
@@ -21,7 +17,11 @@ exports.handler = async (event) => {
       return json(405, { ok: false, error: "METHOD_NOT_ALLOWED" });
     }
 
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+    const SUPABASE_URL = process.env.SUPABASE_URL;
+    const SUPABASE_KEY =
+      process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_KEY;
+
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
       return json(500, {
         ok: false,
         error: "SUPABASE_ENV_MISSING",
@@ -29,7 +29,7 @@ exports.handler = async (event) => {
       });
     }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false }
     });
 

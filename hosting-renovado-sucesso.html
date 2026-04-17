@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <title>Renovação concluída — Portal SiqueiraX</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style> body{font-family:Inter,system-ui,Arial;padding:20px;max-width:800px;margin:auto;} pre{white-space:pre-wrap;background:#fafafa;padding:12px;border-radius:8px;border:1px solid #eee;} </style>
+</head>
+<body>
+  <h1>Pagamento recebido</h1>
+  <div id="status">Registrando renovação...</div>
+  <pre id="debug"></pre>
+
+<script>
+(async function(){
+  function getParam(n){ try{ return new URL(location.href).searchParams.get(n); }catch{ return null; } }
+  const discordId = getParam('discord_id') || getParam('ref') || null;
+  const host = getParam('host') || null;
+  const plan = getParam('plan') || null;
+  const tx = getParam('tx') || null;
+  const state = getParam('state') || null;
+
+  const statusEl = document.getElementById('status');
+  const debugEl = document.getElementById('debug');
+
+  if (!host) { statusEl.textContent = "Parâmetros incompletos (host)."; return; }
+
+  // valida state salvo em sessionStorage (opcional)
+  if (tx && state) {
+    const saved = sessionStorage.getItem(`renew_state_${tx}`);
+    if (!saved || saved !== state) {
+      console.warn('state mismatch or not present for tx', tx);
+      // permitir continuar (webhook pode confirmar), mas avisar ao usuário
+      statusEl.textContent = "Registrando renovação... (aguardando confirmação segura)";
+    } else {
+      // ok, remover a chave
+      try { sessionStorage.removeItem(`renew_state_${tx}`); } catch(e){}
+    }
+  }
+
+  async function callNotify(payload){
+    try {
+      const res = await fetch('/.netlify/functions/notify-renewal', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const j = await res.json().catch(()=>({}));
+      return { ok: res.ok, status: res.status, body: j };
+    } catch (err) {
+      return { ok:false, error: String(err) };
+    }
+  }
+
+  statusEl.textContent = "Registrando renovação...";
+
+  const payload = { host, plan, discord_id: discordId, tx };
+
+  const res = await callNotify(payload);
+
+  if (res.ok && res.body && res.body.ok) {
+    statusEl.textContent = "✅ Renovação registrada com sucesso. Sua hospedagem foi renovada e nossa equipe foi notificada.";
+    debugEl.innerText = JSON.stringify(res.body, null, 2);
+  } else {
+    statusEl.textContent = "⚠️ Houve um problema ao registrar a renovação. Aguardando confirmação via webhook.";
+    debugEl.innerText = JSON.stringify(res, null, 2);
+  }
+})();
+</script>
+</body>
+</html>

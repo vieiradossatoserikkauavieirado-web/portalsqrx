@@ -24,8 +24,7 @@ exports.handler = async (event) => {
     if (!SUPABASE_URL || !SUPABASE_KEY) {
       return json(500, {
         ok: false,
-        error: "SUPABASE_ENV_MISSING",
-        message: "Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no Netlify."
+        error: "SUPABASE_ENV_MISSING"
       });
     }
 
@@ -34,39 +33,33 @@ exports.handler = async (event) => {
     });
 
     const body = JSON.parse(event.body || "{}");
-    const hostLogin = body.host || body.login_host || null;
-    const discordId = body.discord_id || body.discordId || null;
-    const plan = body.plan || body.plano || null;
+
+    const hostLogin = body.host || null;
+    const discordId = body.discord_id || null;
+    const plan = body.plan || null;
     const tx = body.tx || null;
     const amount = body.amount || null;
 
-    let host = null;
+    // =============================
+    // Buscar host
+    // =============================
 
-    if (hostLogin) {
-      const { data, error } = await supabase
-        .from("hostings_estoque")
-        .select("*")
-        .eq("login_host", hostLogin)
-        .limit(1)
-        .maybeSingle();
+    let { data: host, error: hostErr } = await supabase
+      .from("hostings_estoque")
+      .select("*")
+      .eq("login_host", hostLogin)
+      .maybeSingle();
 
-      if (error) {
-        return json(500, { ok: false, error: error.message });
-      }
-
-      host = data || null;
+    if (hostErr) {
+      return json(500, { ok: false, error: hostErr.message });
     }
 
     if (!host && discordId) {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("hostings_estoque")
         .select("*")
         .eq("cliente_discord_id", String(discordId))
-        .order("id", { ascending: false });
-
-      if (error) {
-        return json(500, { ok: false, error: error.message });
-      }
+        .limit(1);
 
       host = Array.isArray(data) && data.length ? data[0] : null;
     }
@@ -74,10 +67,13 @@ exports.handler = async (event) => {
     if (!host) {
       return json(404, {
         ok: false,
-        error: "HOST_NOT_FOUND",
-        message: "Não foi possível localizar a host do cliente."
+        error: "HOST_NOT_FOUND"
       });
     }
+
+    // =============================
+    // Calcular novo vencimento
+    // =============================
 
     const agora = new Date();
     let base = host.data_vencimento ? new Date(host.data_vencimento) : agora;
@@ -86,33 +82,30 @@ exports.handler = async (event) => {
     const novoVenc = new Date(base);
     novoVenc.setDate(novoVenc.getDate() + 30);
 
-    const renovPayload = {
+    // =============================
+    // Registrar renovação (sem updated_at)
+    // =============================
+
+    await supabase.from("renovacoes").insert({
       discord_id: String(host.cliente_discord_id || discordId || ""),
       host_id: host.id,
-      login_host: host.login_host || host.login,
+      login_host: host.login_host,
       plano: plan || host.plano,
       valor: amount || null,
       tx_ref: tx || null,
       status: "concluida",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
+      created_at: new Date().toISOString()
+    });
 
-    const { data: renovacao, error: renovErr } = await supabase
-      .from("renovacoes")
-      .insert(renovPayload)
-      .select()
-      .single();
-
-    if (renovErr) {
-      console.warn("renovacoes insert falhou:", renovErr.message);
-    }
+    // =============================
+    // Atualizar host (SEM updated_at)
+    // =============================
 
     const { data: updatedHost, error: updateErr } = await supabase
       .from("hostings_estoque")
       .update({
         data_vencimento: novoVenc.toISOString(),
-        updated_at: new Date().toISOString()
+        status: "em_uso"
       })
       .eq("id", host.id)
       .select()
@@ -126,9 +119,9 @@ exports.handler = async (event) => {
       ok: true,
       message: "Renovação registrada com sucesso",
       host: updatedHost,
-      renovacao: renovacao || null,
       novo_vencimento: novoVenc.toISOString()
     });
+
   } catch (err) {
     return json(500, { ok: false, error: err.message });
   }

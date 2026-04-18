@@ -291,10 +291,10 @@ const PLANOS_VALOR = {
 };
 
 const CHECKOUT_LINKS = {
-    barato: "https://checkout.infinitepay.io/siqueira-santos-12/7fsMNuC0wd",
-    bom:    "https://checkout.infinitepay.io/siqueira-santos-12/1HJOfTzEtl",
-    otimo:  "https://checkout.infinitepay.io/siqueira-santos-12/2Car3sqxT"
-  };
+  barato: "https://checkout.infinitepay.io/siqueira-santos-12/7fsMNuC0wd",
+  bom:    "https://checkout.infinitepay.io/siqueira-santos-12/1HJOfTzEtl",
+  otimo:  "https://checkout.infinitepay.io/siqueira-santos-12/2Car3sqxT"
+};
 
 function fmtDate(d) {
   try {
@@ -374,6 +374,10 @@ function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
   const hostsBox = document.getElementById("hostsBox");
   const debug = document.getElementById("debug");
   const hostCount = document.getElementById("hostCount");
+
+  if (loginBtn) {
+    loginBtn.href = `/discord-login-hosting?next=${encodeURIComponent("/renovar-hosting.html")}`;
+  }
 
   authStatus.textContent = "Verificando login...";
 

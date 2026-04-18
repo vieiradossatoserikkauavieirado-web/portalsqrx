@@ -464,11 +464,13 @@ hosts.forEach((host) => {
   const valor = PLANOS_VALOR[planKey] || "R$0,00";
   const hostLogin = host.login_host || host.login || "n/d";
   const venc = host.data_vencimento ? new Date(host.data_vencimento) : null;
-  const statusInfo = getHostStatusInfo(host.status);
 
   const agora = new Date();
-  let podeRenovar = false;
   let diasRestantes = null;
+  let podeRenovar = false;
+  let tagLabel = "Host ativa";
+  let tagClass = "tag-ok";
+  let destaque = false;
 
   if (venc) {
     const diffMs = venc - agora;
@@ -476,23 +478,53 @@ hosts.forEach((host) => {
 
     if (diasRestantes <= 1) {
       podeRenovar = true;
+      tagLabel = diasRestantes < 0 ? "Host vencida" : "Vence hoje";
+      tagClass = "tag-warn";
+    }
+
+    if (diasRestantes <= 3 && diasRestantes > 1) {
+      tagLabel = `Vence em ${diasRestantes} dias`;
+      tagClass = "tag-warn";
+      destaque = true;
+    }
+
+    if (diasRestantes < 0) {
+      tagLabel = "Host vencida";
+      tagClass = "tag-warn";
+      destaque = true;
+      podeRenovar = true;
     }
   }
 
   if (host.status === "suspensa") {
     podeRenovar = true;
+    tagLabel = "Host suspensa";
+    tagClass = "tag-warn";
+    destaque = true;
   }
 
   const card = document.createElement("div");
   card.className = "hostCard";
 
+  if (destaque) {
+    card.style.border = "1px solid rgba(239,68,68,.35)";
+    card.style.boxShadow = "0 0 20px rgba(239,68,68,.15)";
+  }
+
   card.innerHTML = `
-    <span class="${statusInfo.className}">${statusInfo.label}</span>
+    <span class="${tagClass}">${tagLabel}</span>
     <h3>${hostLogin}</h3>
     <div class="infoList">
       <div><b>Plano:</b> ${planKey}</div>
       <div><b>Status:</b> ${host.status || "n/d"}</div>
       <div><b>Vencimento:</b> ${venc ? fmtDate(venc) : "n/d"}</div>
+      <div><b>Dias restantes:</b> ${
+        diasRestantes !== null
+          ? diasRestantes < 0
+            ? "Vencida"
+            : diasRestantes
+          : "n/d"
+      }</div>
       <div><b>Cliente:</b> ${me.username || "n/d"}</div>
     </div>
     <div class="price">

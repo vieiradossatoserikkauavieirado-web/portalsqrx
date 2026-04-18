@@ -232,6 +232,25 @@
     font-size:12px;
     font-weight:800;
   }
+
+  /* ======== ALERTA CRÍTICO ======== */
+
+  .pulse {
+    animation: pulseGlow 1.5s infinite;
+  }
+
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 rgba(239,68,68,0); }
+    50% { box-shadow: 0 0 25px rgba(239,68,68,.35); }
+    100% { box-shadow: 0 0 0 rgba(239,68,68,0); }
+  }
+
+  .countdown {
+    font-size:13px;
+    font-weight:700;
+    margin-top:6px;
+    color:#fca5a5;
+  }
     .error{color:#fecaca;border-color:rgba(239,68,68,.24);background:rgba(239,68,68,.08)}
     .divider{height:1px;background:var(--line);margin:14px 0}
     @media (max-width: 960px){
@@ -466,41 +485,47 @@ hosts.forEach((host) => {
   const venc = host.data_vencimento ? new Date(host.data_vencimento) : null;
 
   const agora = new Date();
-  let diasRestantes = null;
   let podeRenovar = false;
   let tagLabel = "Host ativa";
   let tagClass = "tag-ok";
   let destaque = false;
+  let critico = false;
+
+  let diasRestantes = null;
 
   if (venc) {
     const diffMs = venc - agora;
-    diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    diasRestantes = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (diasRestantes <= 1) {
       podeRenovar = true;
+      destaque = true;
+      critico = true;
       tagLabel = diasRestantes < 0 ? "Host vencida" : "Vence hoje";
       tagClass = "tag-warn";
     }
 
     if (diasRestantes <= 3 && diasRestantes > 1) {
+      destaque = true;
       tagLabel = `Vence em ${diasRestantes} dias`;
       tagClass = "tag-warn";
-      destaque = true;
     }
 
     if (diasRestantes < 0) {
+      podeRenovar = true;
+      destaque = true;
+      critico = true;
       tagLabel = "Host vencida";
       tagClass = "tag-warn";
-      destaque = true;
-      podeRenovar = true;
     }
   }
 
   if (host.status === "suspensa") {
     podeRenovar = true;
+    destaque = true;
+    critico = true;
     tagLabel = "Host suspensa";
     tagClass = "tag-warn";
-    destaque = true;
   }
 
   const card = document.createElement("div");
@@ -508,7 +533,10 @@ hosts.forEach((host) => {
 
   if (destaque) {
     card.style.border = "1px solid rgba(239,68,68,.35)";
-    card.style.boxShadow = "0 0 20px rgba(239,68,68,.15)";
+  }
+
+  if (critico) {
+    card.classList.add("pulse");
   }
 
   card.innerHTML = `
@@ -518,14 +546,12 @@ hosts.forEach((host) => {
       <div><b>Plano:</b> ${planKey}</div>
       <div><b>Status:</b> ${host.status || "n/d"}</div>
       <div><b>Vencimento:</b> ${venc ? fmtDate(venc) : "n/d"}</div>
-      <div><b>Dias restantes:</b> ${
-        diasRestantes !== null
-          ? diasRestantes < 0
-            ? "Vencida"
-            : diasRestantes
-          : "n/d"
-      }</div>
       <div><b>Cliente:</b> ${me.username || "n/d"}</div>
+      ${
+        venc
+          ? `<div class="countdown" id="countdown-${host.id}"></div>`
+          : ""
+      }
     </div>
     <div class="price">
       <div>
@@ -557,7 +583,6 @@ hosts.forEach((host) => {
     const aviso = document.createElement("div");
     aviso.style.fontSize = "13px";
     aviso.style.color = "#a6adbb";
-    aviso.style.marginTop = "8px";
     aviso.textContent =
       "A renovação é liberada 1 dia antes do vencimento.";
 
@@ -570,9 +595,32 @@ hosts.forEach((host) => {
   btn2.href = `/support?topic=renew&host=${encodeURIComponent(hostLogin)}`;
 
   btnRow.appendChild(btn2);
-
   card.appendChild(btnRow);
   hostsBox.appendChild(card);
+
+  // ===== CONTADOR EM TEMPO REAL =====
+  if (venc) {
+    const el = document.getElementById(`countdown-${host.id}`);
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = venc - now;
+
+      if (diff <= 0) {
+        el.textContent = "⛔ Hosting vencida";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+      el.textContent = `⏳ Expira em ${days}d ${hours}h ${minutes}m`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+  }
 });
 })();
 </script>

@@ -207,6 +207,31 @@
       padding:18px;
       color:var(--muted);
     }
+    .tag-ok{
+    display:inline-flex;
+    align-items:center;
+    align-self:flex-start;
+    padding:6px 10px;
+    border-radius:999px;
+    background:rgba(34,197,94,.12);
+    color:#bbf7d0;
+    border:1px solid rgba(34,197,94,.18);
+    font-size:12px;
+    font-weight:800;
+  }
+
+  .tag-warn{
+    display:inline-flex;
+    align-items:center;
+    align-self:flex-start;
+    padding:6px 10px;
+    border-radius:999px;
+    background:rgba(245,158,11,.12);
+    color:#fde68a;
+    border:1px solid rgba(245,158,11,.18);
+    font-size:12px;
+    font-weight:800;
+  }
     .error{color:#fecaca;border-color:rgba(239,68,68,.24);background:rgba(239,68,68,.08)}
     .divider{height:1px;background:var(--line);margin:14px 0}
     @media (max-width: 960px){
@@ -334,6 +359,21 @@ async function fetchRenewInfoByDiscord(discordId) {
   }
 }
 
+function getHostStatusInfo(status) {
+  const s = String(status || "").toLowerCase();
+
+  if (s === "suspensa") {
+    return { label: "Host suspensa", className: "tag-warn" };
+  }
+
+  if (s === "em_uso") {
+    return { label: "Host ativa", className: "tag-ok" };
+  }
+
+  return { label: "Host disponível", className: "tag-ok" };
+}
+
+
 function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
   const state = Math.random().toString(36).slice(2, 12);
   const txRef = `renew-${Date.now()}`;
@@ -419,54 +459,56 @@ function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
   hostsBox.className = "";
   hostsBox.innerHTML = "";
 
-  hosts.forEach((host) => {
-    const planKey = getPlanKey(host);
-    const valor = PLANOS_VALOR[planKey] || "R$0,00";
-    const hostLogin = host.login_host || host.login || "n/d";
-    const venc = host.data_vencimento || null;
+hosts.forEach((host) => {
+  const planKey = getPlanKey(host);
+  const valor = PLANOS_VALOR[planKey] || "R$0,00";
+  const hostLogin = host.login_host || host.login || "n/d";
+  const venc = host.data_vencimento || null;
+  const statusInfo = getHostStatusInfo(host.status);
 
-    const card = document.createElement("div");
-    card.className = "hostCard";
+  const card = document.createElement("div");
+  card.className = "hostCard";
 
-    card.innerHTML = `
-      <span class="tag">Host ativa</span>
-      <h3>${hostLogin}</h3>
-      <div class="infoList">
-        <div><b>Plano:</b> ${planKey}</div>
-        <div><b>Vencimento:</b> ${venc ? fmtDate(venc) : "n/d"}</div>
-        <div><b>Cliente:</b> ${me.username || "n/d"}</div>
+  card.innerHTML = `
+    <span class="${statusInfo.className}">${statusInfo.label}</span>
+    <h3>${hostLogin}</h3>
+    <div class="infoList">
+      <div><b>Plano:</b> ${planKey}</div>
+      <div><b>Status:</b> ${host.status || "n/d"}</div>
+      <div><b>Vencimento:</b> ${venc ? fmtDate(venc) : "n/d"}</div>
+      <div><b>Cliente:</b> ${me.username || "n/d"}</div>
+    </div>
+    <div class="price">
+      <div>
+        <div class="small">Renovação</div>
+        <div class="value">${valor}</div>
       </div>
-      <div class="price">
-        <div>
-          <div class="small">Renovação</div>
-          <div class="value">${valor}</div>
-        </div>
-      </div>
-    `;
+    </div>
+  `;
 
-    const btnRow = document.createElement("div");
-    btnRow.className = "btnRow";
+  const btnRow = document.createElement("div");
+  btnRow.className = "btnRow";
 
-    const btn = document.createElement("a");
-    btn.className = "btn btn-red";
-    btn.textContent = "Renovar agora";
-    btn.href = makeCheckoutUrl({
-      hostLogin,
-      discordId,
-      planKey
-    });
-
-    const btn2 = document.createElement("a");
-    btn2.className = "btn btn-ghost";
-    btn2.textContent = "Abrir ticket";
-    btn2.href = `/support?topic=renew&host=${encodeURIComponent(hostLogin)}`;
-
-    btnRow.appendChild(btn);
-    btnRow.appendChild(btn2);
-    card.appendChild(btnRow);
-
-    hostsBox.appendChild(card);
+  const btn = document.createElement("a");
+  btn.className = "btn btn-red";
+  btn.textContent = host.status === "suspensa" ? "Regularizar agora" : "Renovar agora";
+  btn.href = makeCheckoutUrl({
+    hostLogin,
+    discordId,
+    planKey
   });
+
+  const btn2 = document.createElement("a");
+  btn2.className = "btn btn-ghost";
+  btn2.textContent = "Abrir ticket";
+  btn2.href = `/support?topic=renew&host=${encodeURIComponent(hostLogin)}`;
+
+  btnRow.appendChild(btn);
+  btnRow.appendChild(btn2);
+  card.appendChild(btnRow);
+
+  hostsBox.appendChild(card);
+});
 })();
 </script>
 </body>

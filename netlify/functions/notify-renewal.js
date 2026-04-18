@@ -82,6 +82,8 @@ exports.handler = async (event) => {
     const novoVenc = new Date(base);
     novoVenc.setDate(novoVenc.getDate() + 30);
 
+    
+
     // =============================
     // Registrar renovação (sem updated_at)
     // =============================
@@ -114,6 +116,40 @@ exports.handler = async (event) => {
     if (updateErr) {
       return json(500, { ok: false, error: updateErr.message });
     }
+
+  // =============================
+  // Enviar notificação Discord
+  // =============================
+
+  const webhookUrl = process.env.DISCORD_RENEW_WEBHOOK_URL;
+
+  if (webhookUrl) {
+    try {
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "Portal SiqueiraX",
+          embeds: [
+            {
+              title: "🔄 Hosting Renovada",
+              color: 0x22c55e,
+              fields: [
+                { name: "Host", value: host.login_host, inline: true },
+                { name: "Plano", value: plan || host.plano || "N/D", inline: true },
+                { name: "Cliente", value: `<@${discordId}>`, inline: false },
+                { name: "Novo vencimento", value: novoVenc.toLocaleString("pt-BR"), inline: false }
+              ],
+              footer: { text: "Renovação automática via site" },
+              timestamp: new Date().toISOString()
+            }
+          ]
+        })
+      });
+    } catch (err) {
+      console.warn("Falha ao enviar webhook Discord:", err.message);
+    }
+  }
 
     return json(200, {
       ok: true,

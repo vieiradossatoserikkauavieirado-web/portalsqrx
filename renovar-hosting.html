@@ -463,8 +463,25 @@ hosts.forEach((host) => {
   const planKey = getPlanKey(host);
   const valor = PLANOS_VALOR[planKey] || "R$0,00";
   const hostLogin = host.login_host || host.login || "n/d";
-  const venc = host.data_vencimento || null;
+  const venc = host.data_vencimento ? new Date(host.data_vencimento) : null;
   const statusInfo = getHostStatusInfo(host.status);
+
+  const agora = new Date();
+  let podeRenovar = false;
+  let diasRestantes = null;
+
+  if (venc) {
+    const diffMs = venc - agora;
+    diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diasRestantes <= 1) {
+      podeRenovar = true;
+    }
+  }
+
+  if (host.status === "suspensa") {
+    podeRenovar = true;
+  }
 
   const card = document.createElement("div");
   card.className = "hostCard";
@@ -489,24 +506,40 @@ hosts.forEach((host) => {
   const btnRow = document.createElement("div");
   btnRow.className = "btnRow";
 
-  const btn = document.createElement("a");
-  btn.className = "btn btn-red";
-  btn.textContent = host.status === "suspensa" ? "Regularizar agora" : "Renovar agora";
-  btn.href = makeCheckoutUrl({
-    hostLogin,
-    discordId,
-    planKey
-  });
+  if (podeRenovar) {
+    const btn = document.createElement("a");
+    btn.className = "btn btn-red";
+    btn.textContent =
+      host.status === "suspensa"
+        ? "Regularizar agora"
+        : "Renovar agora";
+
+    btn.href = makeCheckoutUrl({
+      hostLogin,
+      discordId,
+      planKey
+    });
+
+    btnRow.appendChild(btn);
+  } else {
+    const aviso = document.createElement("div");
+    aviso.style.fontSize = "13px";
+    aviso.style.color = "#a6adbb";
+    aviso.style.marginTop = "8px";
+    aviso.textContent =
+      "A renovação é liberada 1 dia antes do vencimento.";
+
+    btnRow.appendChild(aviso);
+  }
 
   const btn2 = document.createElement("a");
   btn2.className = "btn btn-ghost";
   btn2.textContent = "Abrir ticket";
   btn2.href = `/support?topic=renew&host=${encodeURIComponent(hostLogin)}`;
 
-  btnRow.appendChild(btn);
   btnRow.appendChild(btn2);
-  card.appendChild(btnRow);
 
+  card.appendChild(btnRow);
   hostsBox.appendChild(card);
 });
 })();

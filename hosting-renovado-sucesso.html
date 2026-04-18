@@ -229,9 +229,23 @@
 
 <script>
 (async function(){
-  function getParam(n){
-    try { return new URL(location.href).searchParams.get(n); }
-    catch { return null; }
+
+  const PENDING_KEY = "sx_pending_renewal";
+
+  function getParam(name){
+    try {
+      return new URL(window.location.href).searchParams.get(name);
+    } catch {
+      return null;
+    }
+  }
+
+  function readPending(){
+    try {
+      return JSON.parse(localStorage.getItem(PENDING_KEY) || "null");
+    } catch {
+      return null;
+    }
   }
 
   const statusEl = document.getElementById('status');
@@ -241,27 +255,55 @@
   const discordEl = document.getElementById('discordId');
   const dueEl = document.getElementById('newDue');
 
-  const host = getParam('host') || '';
-  const plan = getParam('plan') || 'barato';
-  const discordId = getParam('discord_id') || getParam('ref') || '';
-  const tx = getParam('tx') || '';
-  const state = getParam('state') || '';
+  // =============================
+  // 1️⃣ tenta pegar da URL
+  // =============================
 
+  let host = getParam('host');
+  let plan = getParam('plan');
+  let discordId = getParam('discord_id') || getParam('ref');
+  let tx = getParam('tx');
+  let state = getParam('state');
+
+  // =============================
+  // 2️⃣ fallback localStorage
+  // =============================
+
+  if (!host || !discordId) {
+    const pending = readPending();
+    if (pending) {
+      host = host || pending.host;
+      plan = plan || pending.plan;
+      discordId = discordId || pending.discord_id;
+      tx = tx || pending.tx;
+      state = state || pending.state;
+    }
+  }
+
+  host = host || '';
+  plan = plan || 'barato';
+  discordId = discordId || '';
+  tx = tx || '';
+  state = state || '';
+
+  // preenche tela
   hostEl.textContent = host || '-';
   planEl.textContent = plan || '-';
   discordEl.textContent = discordId || '-';
 
-  if (!host) {
+  if (!host || !discordId) {
     statusEl.className = 'status warn';
     statusEl.textContent = 'Parâmetros incompletos. Não foi possível registrar a renovação.';
-    debugEl.textContent = JSON.stringify({ error: 'HOST_REQUIRED', host, plan, discordId, tx, state }, null, 2);
+    debugEl.textContent = JSON.stringify({
+      error: 'HOST_REQUIRED',
+      host, plan, discordId, tx, state
+    }, null, 2);
     return;
   }
 
-  const savedState = tx ? sessionStorage.getItem(`renew_state_${tx}`) : null;
-  if (tx && state && savedState && savedState !== state) {
-    console.warn('state mismatch', { tx, state, savedState });
-  }
+  // =============================
+  // 3️⃣ chama servidor
+  // =============================
 
   async function callNotify(payload){
     try {
@@ -271,6 +313,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+
       const body = await res.json().catch(() => ({}));
       return { ok: res.ok, status: res.status, body };
     } catch (err) {
@@ -278,30 +321,48 @@
     }
   }
 
-  const payload = { host, plan, discord_id: discordId, tx };
+  const payload = {
+    host,
+    plan,
+    discord_id: discordId,
+    tx
+  };
+
+  statusEl.textContent = 'Registrando renovação...';
 
   const res = await callNotify(payload);
 
   if (res.ok && res.body && res.body.ok) {
+
     statusEl.className = 'status';
-    statusEl.textContent = '✅ Renovação registrada com sucesso. Sua hospedagem foi renovada e a equipe foi notificada.';
+    statusEl.textContent =
+      '✅ Renovação registrada com sucesso. Sua hospedagem foi renovada e a equipe foi notificada.';
 
     if (res.body.novo_vencimento) {
-      dueEl.textContent = new Date(res.body.novo_vencimento).toLocaleString('pt-BR');
+      dueEl.textContent =
+        new Date(res.body.novo_vencimento).toLocaleString('pt-BR');
     } else if (res.body.host && res.body.host.data_vencimento) {
-      dueEl.textContent = new Date(res.body.host.data_vencimento).toLocaleString('pt-BR');
+      dueEl.textContent =
+        new Date(res.body.host.data_vencimento).toLocaleString('pt-BR');
     }
 
     debugEl.textContent = JSON.stringify(res.body, null, 2);
 
-    if (tx) {
-      try { sessionStorage.removeItem(`renew_state_${tx}`); } catch(e){}
-    }
+    // limpa dados pendentes
+    try {
+      localStorage.removeItem(PENDING_KEY);
+      if (tx) sessionStorage.removeItem(`renew_state_${tx}`);
+    } catch(e){}
+
   } else {
+
     statusEl.className = 'status warn';
-    statusEl.textContent = '⚠️ Houve um problema ao registrar a renovação. Nossa equipe foi avisada.';
+    statusEl.textContent =
+      '⚠️ Houve um problema ao registrar a renovação. Nossa equipe foi avisada.';
+
     debugEl.textContent = JSON.stringify(res, null, 2);
   }
+
 })();
 </script>
 </body>

@@ -1001,17 +1001,32 @@ function setLoggedOutUI() {
 
 function setLoggedInUI(user) {
   if (!user) return setLoggedOutUI();
-  if (ui.navLoginBtn) { ui.navLoginBtn.textContent = "Comprar plano"; ui.navLoginBtn.href = "#planos"; }
-  if (ui.heroMainBtn) { ui.heroMainBtn.textContent = "Ver planos"; ui.heroMainBtn.href = "#planos"; }
-  if (ui.ctaBottomBtn) { ui.ctaBottomBtn.textContent = "Escolher plano"; ui.ctaBottomBtn.href = "#planos"; }
+
+  if (ui.navLoginBtn) {
+    ui.navLoginBtn.textContent = "Menu Cliente";
+    ui.navLoginBtn.href = "/renovar-hosting.html";
+  }
+
+  if (ui.heroMainBtn) {
+    ui.heroMainBtn.textContent = "Ver planos";
+    ui.heroMainBtn.href = "#planos";
+  }
+
+  if (ui.ctaBottomBtn) {
+    ui.ctaBottomBtn.textContent = "Escolher plano";
+    ui.ctaBottomBtn.href = "#planos";
+  }
+
   if (ui.loginStatusText) ui.loginStatusText.textContent = `Logado como ${user.username || user.discord_id}.`;
   if (ui.statusDot) ui.statusDot.classList.add("online");
   if (ui.userName) ui.userName.textContent = user.username || user.discord_id;
+
   if (ui.userAvatar && user.avatar && user.discord_id) {
     ui.userAvatar.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${user.discord_id}/${user.avatar}.png?size=64" alt="${user.username}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
   } else if (ui.userAvatar) {
-    ui.userAvatar.textContent = (user.username || "SX").slice(0,2).toUpperCase();
+    ui.userAvatar.textContent = (user.username || "SX").slice(0, 2).toUpperCase();
   }
+
   if (ui.userPill) ui.userPill.classList.add("show");
 
   document.querySelectorAll(".plan-btn").forEach(btn => {

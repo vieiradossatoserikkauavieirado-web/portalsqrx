@@ -215,14 +215,7 @@
           </div>
         </div>
 
-        <div class="panel">
-          <h3>Detalhes técnicos</h3>
-          <p class="small">
-            Esta página confirma a renovação e chama a função do servidor para atualizar o vencimento da host.
-            Se houver divergência de dados, a equipe será notificada no canal de alerta.
-          </p>
-          <pre id="debug">Aguardando resposta...</pre>
-        </div>
+    
       </div>
     </div>
   </div>
@@ -249,7 +242,6 @@
   }
 
   const statusEl = document.getElementById('status');
-  const debugEl = document.getElementById('debug');
   const hostEl = document.getElementById('hostName');
   const planEl = document.getElementById('planName');
   const discordEl = document.getElementById('discordId');
@@ -346,7 +338,7 @@
         new Date(res.body.host.data_vencimento).toLocaleString('pt-BR');
     }
 
-    debugEl.textContent = JSON.stringify(res.body, null, 2);
+    //debugEl.textContent = JSON.stringify(res.body, null, 2);
 
     // limpa dados pendentes
     try {
@@ -360,7 +352,7 @@
     statusEl.textContent =
       '⚠️ Houve um problema ao registrar a renovação. Nossa equipe foi avisada.';
 
-    debugEl.textContent = JSON.stringify(res, null, 2);
+    //debugEl.textContent = JSON.stringify(res, null, 2);
   }
 
 })();

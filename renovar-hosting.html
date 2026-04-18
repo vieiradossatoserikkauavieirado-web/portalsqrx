@@ -376,7 +376,7 @@ function makeCheckoutUrl({ hostLogin, discordId, planKey }) {
   const hostCount = document.getElementById("hostCount");
 
   if (loginBtn) {
-    loginBtn.href = `/discord-login-hosting?next=${encodeURIComponent("/renovar-hosting.html")}`;
+    loginBtn.href = `https://portalsiqueirax.com.br/.netlify/functions/discord-login-hosting?next=%2Frenovar-hosting.html`;
   }
 
   authStatus.textContent = "Verificando login...";

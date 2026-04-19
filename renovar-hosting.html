@@ -483,15 +483,27 @@ hosts.forEach((host, index) => {
   const valor = PLANOS_VALOR[planKey] || "R$0,00";
   const hostLogin = host.login_host || host.login || "n/d";
 
-  const rawVenc =
-    host.data_vencimento ||
-    host.vencimento ||
-    host.data_expiracao ||
-    host.expire_at ||
-    host.expires_at ||
-    null;
+  // ===== DATA BASE =====
+  const rawEntrega = host.entregue_em || null;
 
-  const venc = rawVenc ? new Date(rawVenc) : null;
+  function parseDateBRLike(dateStr) {
+    if (!dateStr) return null;
+
+    // Converte "2026-04-18 10:17:07.663+00" para formato ISO compatível
+    const isoLike = String(dateStr).replace(" ", "T");
+    const d = new Date(isoLike);
+
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  const entrega = parseDateBRLike(rawEntrega);
+
+  // ===== CALCULA VENCIMENTO = ENTREGA + 30 DIAS =====
+  let venc = null;
+  if (entrega) {
+    venc = new Date(entrega.getTime() + 30 * 24 * 60 * 60 * 1000);
+  }
+
   const vencValido = venc && !isNaN(venc.getTime());
 
   const agora = new Date();
@@ -555,6 +567,7 @@ hosts.forEach((host, index) => {
     <div class="infoList">
       <div><b>Plano:</b> ${planKey}</div>
       <div><b>Status:</b> ${host.status || "n/d"}</div>
+      <div><b>Entregue em:</b> ${entrega ? fmtDate(entrega) : "n/d"}</div>
       <div><b>Vencimento:</b> ${vencValido ? fmtDate(venc) : "n/d"}</div>
       <div><b>Cliente:</b> ${me.username || "n/d"}</div>
       ${
@@ -608,6 +621,7 @@ hosts.forEach((host, index) => {
   card.appendChild(btnRow);
   hostsBox.appendChild(card);
 
+  // ===== CONTADOR EM TEMPO REAL =====
   if (vencValido) {
     const el = document.getElementById(`countdown-${index}`);
     if (!el) return;

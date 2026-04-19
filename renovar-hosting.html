@@ -482,7 +482,17 @@ hosts.forEach((host, index) => {
   const planKey = getPlanKey(host);
   const valor = PLANOS_VALOR[planKey] || "R$0,00";
   const hostLogin = host.login_host || host.login || "n/d";
-  const venc = host.data_vencimento ? new Date(host.data_vencimento) : null;
+
+  const rawVenc =
+    host.data_vencimento ||
+    host.vencimento ||
+    host.data_expiracao ||
+    host.expire_at ||
+    host.expires_at ||
+    null;
+
+  const venc = rawVenc ? new Date(rawVenc) : null;
+  const vencValido = venc && !isNaN(venc.getTime());
 
   const agora = new Date();
   let podeRenovar = false;
@@ -493,7 +503,7 @@ hosts.forEach((host, index) => {
 
   let diasRestantes = null;
 
-  if (venc) {
+  if (vencValido) {
     const diffMs = venc - agora;
     diasRestantes = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
@@ -545,12 +555,12 @@ hosts.forEach((host, index) => {
     <div class="infoList">
       <div><b>Plano:</b> ${planKey}</div>
       <div><b>Status:</b> ${host.status || "n/d"}</div>
-      <div><b>Vencimento:</b> ${venc ? fmtDate(venc) : "n/d"}</div>
+      <div><b>Vencimento:</b> ${vencValido ? fmtDate(venc) : "n/d"}</div>
       <div><b>Cliente:</b> ${me.username || "n/d"}</div>
       ${
-        venc
+        vencValido
           ? `<div class="countdown" id="countdown-${index}"></div>`
-          : ""
+          : `<div class="countdown">⛔ Data de vencimento não informada</div>`
       }
     </div>
     <div class="price">
@@ -598,10 +608,8 @@ hosts.forEach((host, index) => {
   card.appendChild(btnRow);
   hostsBox.appendChild(card);
 
-  // ===== CONTADOR EM TEMPO REAL =====
-  if (venc && !isNaN(venc.getTime())) {
+  if (vencValido) {
     const el = document.getElementById(`countdown-${index}`);
-
     if (!el) return;
 
     function updateCountdown() {
@@ -622,6 +630,7 @@ hosts.forEach((host, index) => {
     }
 
     updateCountdown();
+
     const intervalId = setInterval(() => {
       const now = new Date();
       const diff = venc - now;

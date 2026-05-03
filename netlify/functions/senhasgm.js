@@ -47,6 +47,12 @@ exports.handler = async (event) => {
         "password": "bpcddjhjdakjdg665###*",
         "note": "/siqueirax",
         "tag": "VIP"
+      },
+      {
+        "name": "Os Guri RPG",
+        "password": "osguri2k26#$%sxoffice",
+        "note": "/siqueirax",
+        "tag": "VIP"
       }
     ];
 

@@ -218,7 +218,16 @@ exports.handler = async (event) => {
         "linkText": "Mediafire",
         "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
         "vip": true
-      }
+      },
+      {
+        "order": 1,
+        "title": "OS GURI RPG ✓",
+        "image": "https://i.imgur.com/Icw5JdX.png",
+        "link": "https://www.mediafire.com/file/hnotqge14p9twe8/Os+Guri+RPG.rar/file",
+        "linkText": "Mediafire",
+        "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+        "vip": true
+      },
     ];
 
     return {

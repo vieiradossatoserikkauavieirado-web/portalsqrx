@@ -868,37 +868,73 @@ async function loadDiscord() {
    TEMPO ONLINE
 ========================= */
 
-function diffMonthsDays(fromDate, toDate){
-  const start = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-  const end = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
-  if (end < start) return { months: 0, days: 0 };
+function diffYearsMonthsDays(fromDate, toDate = new Date()) {
+  const start = new Date(
+    fromDate.getFullYear(),
+    fromDate.getMonth(),
+    fromDate.getDate()
+  );
 
-  let months =
-    (end.getFullYear() - start.getFullYear()) * 12 +
-    (end.getMonth() - start.getMonth());
+  const end = new Date(
+    toDate.getFullYear(),
+    toDate.getMonth(),
+    toDate.getDate()
+  );
 
-  let anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
-
-  if (anchor > end){
-    months--;
-    anchor = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
+  if (end < start) {
+    return { years: 0, months: 0, days: 0 };
   }
 
-  const msDay = 24 * 60 * 60 * 1000;
-  const days = Math.max(0, Math.round((end - anchor) / msDay));
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
 
-  return { months, days };
+  if (days < 0) {
+    months--;
+
+    const lastMonth = new Date(
+      end.getFullYear(),
+      end.getMonth(),
+      0
+    );
+
+    days += lastMonth.getDate();
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  return { years, months, days };
+}
+
+function formatTempo(fromDate, toDate = new Date()) {
+  const { years, months, days } = diffYearsMonthsDays(fromDate, toDate);
+
+  const partes = [];
+
+  if (years > 0) {
+    partes.push(`${years} ${years === 1 ? "ano" : "anos"}`);
+  }
+
+  if (months > 0) {
+    partes.push(`${months} ${months === 1 ? "mês" : "meses"}`);
+  }
+
+  if (days > 0 || partes.length === 0) {
+    partes.push(`${days} ${days === 1 ? "dia" : "dias"}`);
+  }
+
+  return partes.join(" e ");
 }
 
 function tempoOnline() {
   const el = document.querySelector("#tempo-online strong");
-  if(!el) return;
+  if (!el) return;
 
-  const createdAt = new Date(2025, 4, 11);
-  const now = new Date();
-  const { months, days } = diffMonthsDays(createdAt, now);
-
-  el.textContent = `${months} ${months === 1 ? "mês" : "meses"} ${days} ${days === 1 ? "dia" : "dias"}`;
+  const createdAt = new Date(2025, 4, 11); // 11/05/2025
+  el.textContent = formatTempo(createdAt);
 }
 
 /* =========================

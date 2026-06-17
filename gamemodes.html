@@ -317,41 +317,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     `).join("");
   }
 
-let all = [];
-
-try {
-  const res = await fetch(`gamemodes.json?v=${Date.now()}`, {
-    cache: "no-store"
-  });
-
-  if (!res.ok) throw new Error("Erro ao carregar gamemodes.json");
-
-  all = await res.json();
+  const res = await fetch("gamemodes.json", { cache: "no-store" });
+  const all = await res.json();
   render(all);
-} catch (err) {
-  console.error(err);
 
-  if (gmContainer) {
-    gmContainer.innerHTML = `
-      <div style="color:#fff;text-align:center;padding:20px;">
-        Erro ao carregar gamemodes.json
-      </div>
-    `;
+  if (search) {
+    search.addEventListener("input", () => {
+      const v = (search.value || "").toLowerCase();
+      render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)));
+    });
   }
-}
-render(all);
-
- if (search) {
-  search.addEventListener("input", () => {
-    const v = (search.value || "").toLowerCase();
-
-    render(
-      all.filter(gm =>
-        (gm.title || "").toLowerCase().includes(v)
-      )
-    );
-  });
-}
 });
 </script>
 

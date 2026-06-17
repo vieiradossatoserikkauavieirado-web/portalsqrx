@@ -448,6 +448,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* ===============================
      2) RENDER GAMEMODES VIP
      =============================== */
+  /* ===============================
+    2) RENDER GAMEMODES VIP
+    =============================== */
   function statusSpan(ok) {
     return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`;
   }
@@ -457,6 +460,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="gm-card vip">
         <img src="${gm.image}" alt="${gm.title}" />
         <h3>${gm.title}</h3>
+
         <div class="gm-info">
           <div>Gamemode funciona:</div>
           <div><strong>optlink:</strong> ${statusSpan(!!gm.works?.optlink)}</div>
@@ -464,6 +468,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div><strong>TCADMIN:</strong> ${statusSpan(!!gm.works?.tcadmin)}</div>
           <div><strong>VPS:</strong> ${statusSpan(!!gm.works?.vps)}</div>
         </div>
+
         <a href="${gm.link}" target="_blank" rel="noopener noreferrer">
           ${gm.linkText || "Download"}
         </a>
@@ -480,17 +485,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     gmContainer.innerHTML = `
       <div style="padding:1rem;opacity:.9">
         Erro ao carregar <b>gamemodes VIP</b> (HTTP ${res.status}).
-      </div>`;
+      </div>
+    `;
     return;
   }
 
   const all = await res.json();
+
+  all.sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+
   render(all);
 
   if (search) {
     search.addEventListener("input", () => {
       const v = (search.value || "").toLowerCase();
-      render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)));
+
+      render(
+        all
+          .filter(gm =>
+            (gm.title || "").toLowerCase().includes(v)
+          )
+          .sort((a, b) => Number(a.order || 0) - Number(b.order || 0))
+      );
     });
   }
 });

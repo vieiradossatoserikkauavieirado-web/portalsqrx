@@ -95,5 +95,15 @@
     "linkText": "Mediafire",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": true
+  },
+
+  {
+    "order": 10,
+    "title": "BRASIL PLAY SLAYER 2V2 2026",
+    "image": "https://i.imgur.com/EKyQbLl.png",
+    "link": "https://www.mediafire.com/file/acyxzhkadgqffpb/samp-textdraw-editor-main.rar/file",
+    "linkText": "Mediafire",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
   }
 ]

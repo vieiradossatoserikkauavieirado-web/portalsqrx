@@ -1,5 +1,13 @@
 [
 
+  {
+    "title": "BRASIL PLAY SLAYER V2 2026",
+    "image": "https://i.imgur.com/EKyQbLl.png",
+    "link": "planos.html",
+    "linkText": "Disponível na página VIP!",
+    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+    "vip": true
+  },
    {
     "title": "WONDER RPG ® OFICIAL",
     "image": "https://i.imgur.com/VEZmOgO.png",
@@ -8,15 +16,6 @@
     "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
     "vip": true
   },
-  {
-    "title": "BRASIL PLAY SLAYER V2 2026",
-    "image": "https://i.imgur.com/EKyQbLl.png",
-    "link": "planos.html",
-    "linkText": "Disponível na página VIP!",
-    "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
-    "vip": true
-  },
-
   {
     "title": "GM BRASIL PLAY FLOW COM VOIP!",
     "image": "https://i.imgur.com/hjcUVHF.png",

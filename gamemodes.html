@@ -317,8 +317,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     `).join("");
   }
 
-  const res = await fetch("gamemodes.json", { cache: "no-store" });
-  const all = await res.json();
+    const res = await fetch(`/.netlify/functions/gamemodes?v=${Date.now()}`, {
+    credentials: "include",
+    cache: "no-store"
+  });
   render(all);
 
   if (search) {

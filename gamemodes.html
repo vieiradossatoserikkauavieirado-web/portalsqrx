@@ -320,32 +320,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 let all = [];
 
 try {
-  const res = await fetch(`/.netlify/functions/gamemodes?v=${Date.now()}`, {
-    credentials: "include",
+  const res = await fetch(`gamemodes.json?v=${Date.now()}`, {
     cache: "no-store"
   });
 
-  if (!res.ok) throw new Error("Erro ao carregar gamemodes");
+  if (!res.ok) throw new Error("Erro ao carregar gamemodes.json");
 
   all = await res.json();
-
-  if (!Array.isArray(all)) {
-    throw new Error("Resposta inválida da função gamemodes");
-  }
-
   render(all);
-} catch (e) {
-  console.error(e);
+} catch (err) {
+  console.error(err);
 
   if (gmContainer) {
     gmContainer.innerHTML = `
       <div style="color:#fff;text-align:center;padding:20px;">
-        Erro ao carregar os gamemodes.
+        Erro ao carregar gamemodes.json
       </div>
     `;
   }
-
-  return;
 }
 render(all);
 

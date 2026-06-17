@@ -1,18 +1,16 @@
 [
 
-
-  {
-    "title": "BRASIL PLAY SLAYER V2 2026",
-    "image": "https://i.imgur.com/EKyQbLl.png",
+   {
+    "title": "WONDER RPG ® OFICIAL",
+    "image": "https://i.imgur.com/VEZmOgO.png",
     "link": "planos.html",
     "linkText": "Disponível na página VIP!",
     "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
     "vip": true
   },
-
-   {
-    "title": "WONDER RPG ® OFICIAL",
-    "image": "https://i.imgur.com/VEZmOgO.png",
+  {
+    "title": "BRASIL PLAY SLAYER V2 2026",
+    "image": "https://i.imgur.com/EKyQbLl.png",
     "link": "planos.html",
     "linkText": "Disponível na página VIP!",
     "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },

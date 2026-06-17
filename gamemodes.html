@@ -317,18 +317,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     `).join("");
   }
 
-    const res = await fetch(`/.netlify/functions/gamemodes?v=${Date.now()}`, {
+let all = [];
+
+try {
+  const res = await fetch(`/.netlify/functions/gamemodes?v=${Date.now()}`, {
     credentials: "include",
     cache: "no-store"
   });
-  render(all);
 
-  if (search) {
-    search.addEventListener("input", () => {
-      const v = (search.value || "").toLowerCase();
-      render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)));
-    });
+  if (!res.ok) throw new Error("Erro ao carregar gamemodes");
+
+  all = await res.json();
+
+  if (!Array.isArray(all)) {
+    throw new Error("Resposta inválida da função gamemodes");
   }
+
+  render(all);
+} catch (e) {
+  console.error(e);
+
+  if (gmContainer) {
+    gmContainer.innerHTML = `
+      <div style="color:#fff;text-align:center;padding:20px;">
+        Erro ao carregar os gamemodes.
+      </div>
+    `;
+  }
+
+  return;
+}
+render(all);
+
+ if (search) {
+  search.addEventListener("input", () => {
+    const v = (search.value || "").toLowerCase();
+
+    render(
+      all.filter(gm =>
+        (gm.title || "").toLowerCase().includes(v)
+      )
+    );
+  });
+}
 });
 </script>
 

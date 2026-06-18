@@ -220,10 +220,19 @@ exports.handler = async (event) => {
         "vip": true
       },
       {
-        "order": 1,
+        "order": 20,
         "title": "OS GURI RPG ✓",
         "image": "https://i.imgur.com/Icw5JdX.png",
         "link": "https://www.mediafire.com/file/hnotqge14p9twe8/Os+Guri+RPG.rar/file",
+        "linkText": "Mediafire",
+        "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+        "vip": true
+      },
+      {
+        "order": 21,
+        "title": "BRASIL PLAY SLAYER V2 2026",
+        "image": "https://i.imgur.com/EKyQbLl.png",
+        "link": "https://www.mediafire.com/file/peop05rrtqxqosc/project+slayer.rar/file",
         "linkText": "Mediafire",
         "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
         "vip": true

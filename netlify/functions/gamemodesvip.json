@@ -8,7 +8,7 @@
     "linkText": "Mediafire",
     "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
     "vip": true
-  }
+  },
 
   {
     "order": 2,

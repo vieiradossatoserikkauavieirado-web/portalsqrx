@@ -3,794 +3,378 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090a0d" />
+  <meta name="description" content="Portal SiqueiraX — servidores, gamemodes e serviços para GTA SA:MP." />
   <title>Portal SiqueiraX</title>
 
   <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --red-main:#ff002b;
-      --red-dark:#b0001c;
-      --glass:rgba(15,15,15,.74);
-      --glass-2:rgba(18,18,18,.58);
-      --border:rgba(255,255,255,.10);
+      --bg:#08090c;
+      --surface:#111319;
+      --surface-2:#171a22;
+      --surface-3:#20242e;
+      --red-main:#ff234f;
+      --red-dark:#b9002d;
+      --red-soft:rgba(255,35,79,.14);
+      --discord:#5865f2;
+      --green:#45d483;
+      --text:#f5f7fb;
+      --text-dim:#9ca3b2;
+      --border:rgba(255,255,255,.09);
+      --border-strong:rgba(255,255,255,.15);
       --radius:14px;
-      --radius-lg:18px;
-      --transition:.28s ease;
-      --shadow:0 18px 45px rgba(0,0,0,.45);
-      --shadow-soft:0 10px 26px rgba(0,0,0,.32);
-      --text-dim:rgba(255,255,255,.78);
-      --max:1040px;
+      --radius-lg:22px;
+      --transition:.24s ease;
+      --shadow:0 24px 70px rgba(0,0,0,.42);
+      --shadow-soft:0 14px 40px rgba(0,0,0,.28);
+      --max:1180px;
     }
 
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth}
-
     body{
-      font-family:'Inter',sans-serif;
-      background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
-      color:#fff;
       min-height:100vh;
-      display:flex;
-      flex-direction:column;
+      font-family:'Inter',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,35,79,.16), transparent 28%),
+        radial-gradient(circle at 88% 18%, rgba(88,101,242,.12), transparent 24%),
+        linear-gradient(180deg,#090a0e 0%,#08090c 48%,#0c0e13 100%);
+      overflow-x:hidden;
     }
-
     body::before{
       content:"";
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.64);
+      pointer-events:none;
+      z-index:-1;
+      opacity:.24;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:42px 42px;
+      mask-image:linear-gradient(to bottom,black,transparent 75%);
+    }
+
+    a,button{font:inherit}
+    button{border:0}
+    img{max-width:100%}
+    .wrap{width:min(var(--max),calc(100% - 2rem));margin-inline:auto}
+
+    /* NAVBAR */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:100;
+      border-bottom:1px solid var(--border);
+      background:rgba(8,9,12,.82);
       backdrop-filter:blur(18px);
       -webkit-backdrop-filter:blur(18px);
-      z-index:-1;
     }
-
-    /* ===== LAYOUT BASE ===== */
-    .wrap{
-      width:min(var(--max), 100%);
-      margin:0 auto;
-      padding:0 1rem;
-    }
-
-    /* ===== TOPO ===== */
-    header{
-      text-align:center;
-      padding:3.2rem 1rem 1.6rem;
-    }
-
-    /* Logo arredondado (ícone do site) */
-    .site-logo{
-      width:64px;
-      height:64px;
-      border-radius:16px; /* "meio arredondado" */
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:0 14px 34px rgba(0,0,0,.38);
-      display:block;
-      margin:0 auto .9rem;
-      object-fit:cover;
-      background:rgba(0,0,0,.25);
-    }
-
-    header h1{
-      font-family:'Orbitron',sans-serif;
-      font-size:clamp(2.6rem, 5.2vw, 4.7rem);
-      letter-spacing:3px;
-      background:linear-gradient(90deg,#ff002b,#ff4d4d);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      text-shadow:0 12px 40px rgba(255,0,43,.14);
-    }
-
-    header p{
-      margin-top:.55rem;
-      color:var(--text-dim);
-      font-weight:500;
-      font-size:clamp(.95rem, 1.1vw, 1.05rem);
-    }
-
-    /* ===== STATS ===== */
-    .stats{
-      margin:1.4rem auto 1.8rem;
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
-      gap:1rem;
-    }
-
-    .stat{
-      background:linear-gradient(180deg,var(--glass),var(--glass-2));
-      border:1px solid var(--border);
-      border-radius:var(--radius-lg);
-      padding:1rem 1.1rem;
-      display:flex;
-      align-items:center;
-      gap:.75rem;
-      box-shadow:var(--shadow-soft);
-      min-height:64px;
-    }
-
-    .stat i{
-      color:var(--red-main);
-      font-size:1.1rem;
-      width:28px;
-      display:grid;
-      place-items:center;
-      opacity:.95;
-    }
-
-    .stat span{
-      color:var(--text-dim);
-      font-weight:600;
-      font-size:.98rem;
-      line-height:1.2;
-    }
-
-    .stat strong{
-      color:#ff6b6b;
-      font-weight:800;
-    }
-
-    /* ===== MENUS ===== */
-    .side-menu{
-      position:fixed;
-      top:50%;
-      transform:translateY(-50%);
-      display:flex;
-      flex-direction:column;
-      gap:.85rem;
-      z-index:10;
-    }
-
-    .side-left{left:1rem}
-    .side-right{right:1rem}
+    .nav-shell{min-height:72px;display:flex;align-items:center;gap:1rem}
+    .brand{display:flex;align-items:center;gap:.8rem;color:#fff;text-decoration:none;flex:0 0 auto}
+    .site-logo{width:42px;height:42px;border-radius:13px;object-fit:cover;border:1px solid var(--border-strong);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+    .brand-copy{display:flex;flex-direction:column;line-height:1.05}
+    .brand-copy strong{font-family:'Orbitron',sans-serif;font-size:.98rem;letter-spacing:.6px}
+    .brand-copy small{color:var(--text-dim);font-size:.7rem;margin-top:.24rem}
+    .nav-links{display:flex;align-items:center;justify-content:center;gap:.25rem;flex:1}
+    .nav-links a{color:#c8cdd7;text-decoration:none;font-size:.9rem;font-weight:700;padding:.72rem .8rem;border-radius:11px;transition:background var(--transition),color var(--transition)}
+    .nav-links a:hover{background:rgba(255,255,255,.06);color:#fff}
+    .nav-actions{display:flex;align-items:center;gap:.65rem}
 
     .menu-btn{
-      background:linear-gradient(135deg,var(--red-main),var(--red-dark));
-      color:#fff;
-      padding:.95rem 1.15rem;
-      border-radius:var(--radius);
-      font-weight:700;
-      text-decoration:none;
-      display:flex;
-      align-items:center;
-      gap:.65rem;
-      transition:transform var(--transition), filter var(--transition), box-shadow var(--transition);
-      box-shadow:0 10px 24px rgba(0,0,0,.28);
-      border:1px solid rgba(255,255,255,.10);
-      white-space:nowrap;
-      user-select:none;
-    }
-
-    .menu-btn i{opacity:.95}
-
-    .menu-btn:hover{
-      transform:translateY(-2px) scale(1.03);
-      filter:saturate(1.05);
-      box-shadow:0 14px 34px rgba(0,0,0,.38);
-    }
-
-    .menu-btn:active{transform:translateY(0) scale(.99)}
-
-    .menu-btn:focus-visible{
-      outline:3px solid rgba(255,0,43,.35);
-      outline-offset:3px;
-    }
-
-    /* ===== BOTÃO PRINCIPAL ===== */
-    .menu-btn.primary{
-      padding:1.05rem 1.25rem;
-      position:relative;
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow:
-        0 16px 38px rgba(0,0,0,.48),
-        0 0 0 1px rgba(255,0,43,.18) inset;
-      transform-origin:center;
-    }
-
-    .menu-btn.primary::before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      border-radius:calc(var(--radius) + 2px);
-      background:linear-gradient(120deg, rgba(255,0,43,.45), rgba(255,255,255,.06), rgba(176,0,28,.35));
-      filter:blur(10px);
-      opacity:.7;
-      z-index:-1;
-      transition:opacity var(--transition);
-    }
-
-    .menu-btn.primary:hover::before{opacity:1}
-
-    .menu-btn.primary .tag{
-      margin-left:auto;
-      font-size:.72rem;
-      font-weight:800;
-      padding:.2rem .5rem;
-      border-radius:999px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.14);
-      color:#fff;
-    }
-    /* ===== RANKING HOME ===== */
-  .ranking{
-    margin: .6rem auto 2.2rem;
-    background: linear-gradient(180deg,var(--glass),var(--glass-2));
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    box-shadow: var(--shadow-soft);
-    padding: 1.2rem 1.1rem 1.05rem;
-  }
-
-  .ranking-head{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:1rem;
-    flex-wrap:wrap;
-    margin-bottom:1rem;
-  }
-
-  .ranking h2{
-    font-family:'Orbitron',sans-serif;
-    letter-spacing:1px;
-    font-size:1.15rem;
-    color:#ff4d4d;
-  }
-
-  .ranking p{
-    margin-top:.35rem;
-    color: var(--text-dim);
-    font-weight:600;
-    font-size:.95rem;
-  }
-
-  .ranking-actions{
-    display:flex;
-    gap:.65rem;
-    flex-wrap:wrap;
-    align-items:center;
-    justify-content:flex-end;
-  }
-
-  .menu-btn.mini{
-    padding:.75rem .95rem;
-    border-radius: 14px;
-    font-weight:800;
-  }
-
-  .menu-btn.primary.mini{
-    padding:.78rem 1.05rem;
-  }
-
-  .ranking-grid{
-    display:grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: .85rem;
-  }
-
-  @media(max-width: 900px){
-    .ranking-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-
-  @media(max-width: 520px){
-    .ranking-grid{ grid-template-columns: 1fr; }
-    .ranking-actions{ width:100%; justify-content:stretch; }
-    .ranking-actions .menu-btn{ flex:1 1 auto; justify-content:center; }
-  }
-
-  .rank-card{
-    position:relative;
-    border: 1px solid rgba(255,255,255,.10);
-    border-radius: 18px;
-    padding: .95rem .95rem .85rem;
-    background: rgba(0,0,0,.22);
-    box-shadow: 0 10px 26px rgba(0,0,0,.28);
-    overflow:hidden;
-    min-height: 120px;
-  }
-
-  .rank-card:hover{
-    transform: translateY(-1px);
-    transition: transform var(--transition);
-  }
-
-  .rank-top{
-    display:flex;
-    align-items:center;
-    gap:.75rem;
-    margin-bottom:.55rem;
-  }
-
-  .rank-logo{
-    width:44px;
-    height:44px;
-    border-radius:14px;
-    object-fit:cover;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.25);
-    flex:0 0 auto;
-  }
-
-  .rank-title{
-    display:flex;
-    flex-direction:column;
-    gap:.15rem;
-    min-width:0;
-  }
-
-  .rank-title strong{
-    font-weight:900;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
-  .rank-title small{
-    color: var(--text-dim);
-    font-weight:700;
-  }
-
-  .badge{
-    display:inline-flex;
-    align-items:center;
-    gap:.35rem;
-    font-size:.72rem;
-    font-weight:900;
-    padding:.18rem .55rem;
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.28);
-  }
-
-  .badge.premium{
-    background: rgba(255,0,43,.16);
-    border-color: rgba(255,0,43,.25);
-    color:#fff;
-  }
-
-  .badge.pos{
-    margin-left:auto;
-    color:#fff;
-    opacity:.92;
-  }
-
-  .rank-meta{
-    display:flex;
-    flex-direction:column;
-    gap:.35rem;
-    color: var(--text-dim);
-    font-weight:700;
-    font-size:.92rem;
-  }
-
-  .rank-meta .row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:.6rem;
-  }
-
-  .rank-actions{
-    margin-top:.65rem;
-    display:flex;
-    gap:.55rem;
-  }
-
-  .rank-actions a{
-    flex:1 1 auto;
-    text-decoration:none;
-    text-align:center;
-    padding:.6rem .7rem;
-    border-radius:14px;
-    font-weight:900;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.26);
-    color:#fff;
-  }
-
-  .rank-actions a:hover{
-    filter:saturate(1.05);
-  }
-
-  .rank-actions a.primary{
-    background: linear-gradient(135deg,var(--red-main),var(--red-dark));
-  }
-
-  .rank-card.cta{
-    border-color: rgba(255,0,43,.22);
-    background: radial-gradient(120% 120% at 0% 0%, rgba(255,0,43,.14), rgba(0,0,0,.24));
-  }
-
-  .cta-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:.75rem;
-    margin-bottom:.55rem;
-  }
-
-  .cta p{
-    color: var(--text-dim);
-    font-weight:700;
-    margin:.2rem 0 .8rem;
-  }
-
-  .cta-btn{
-    width:100%;
-    padding:.7rem .8rem;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.12);
-    background: linear-gradient(135deg,var(--red-main),var(--red-dark));
-    color:#fff;
-    font-weight:900;
-    cursor:pointer;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:.55rem;
-  }
-
-  .cta-note{
-    display:block;
-    margin-top:.55rem;
-    color: rgba(255,255,255,.70);
-    font-weight:700;
-    font-size:.82rem;
-  }
-
-  /* Skeleton */
-  .rank-card.skeleton{
-    background: rgba(255,255,255,.06);
-    border-color: rgba(255,255,255,.08);
-    min-height: 120px;
-    position:relative;
-  }
-  .rank-card.skeleton::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.10), rgba(255,255,255,.03));
-    transform: translateX(-100%);
-    animation: shimmer 1.2s infinite;
-  }
-  @keyframes shimmer{
-    100%{ transform: translateX(100%); }
-  }
-
-    /* ===== MOBILE: menus viram grid bonito ===== */
-    @media(max-width:768px){
-      header{padding:2.4rem 1rem 1rem}
-
-      .side-menu{
-        position:static;
-        transform:none;
-        flex-direction:row;
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:.75rem;
-        padding:1.1rem 1rem 0;
-      }
-
-      .menu-btn{
-        flex:1 1 calc(50% - .75rem);
-        justify-content:center;
-        text-align:center;
-      }
-
-      .menu-btn.primary{
-        flex:1 1 100%;
-        order:-1; /* coloca ele em primeiro no mobile */
-      }
-    }
-
-    /* ===== MODAIS ===== */
-    .modal{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.75);
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:200;
-      padding:1rem;
-    }
-
-    .modal-content{
-      width:min(560px, 100%);
-      background:linear-gradient(180deg,var(--glass),var(--glass-2));
-      border:1px solid rgba(255,255,255,.12);
-      padding:1.55rem 1.4rem 1.2rem;
-      border-radius:22px;
-      box-shadow:var(--shadow);
-    }
-
-    .modal-content h2{
-      text-align:center;
-      color:#ff4d4d;
-      margin-bottom:.75rem;
-      font-family:'Orbitron',sans-serif;
-      letter-spacing:1px;
-      font-size:1.2rem;
-    }
-
-    .modal-content ul{
-      list-style:none;
-      line-height:1.8;
-      font-size:.95rem;
-      color:var(--text-dim);
-      padding:.4rem .1rem 0;
-    }
-
-    .modal-content li{
-      padding:.25rem 0;
-      display:flex;
-      gap:.55rem;
-      align-items:flex-start;
-    }
-
-    .modal-content .btn-row{
-      display:flex;
-      gap:.75rem;
-      margin-top:1.1rem;
-      flex-wrap:wrap;
-    }
-
-    .modal-content button,
-    .modal-content a.action{
-      width:100%;
-      padding:.8rem;
-      border:none;
-      border-radius:14px;
-      background:linear-gradient(135deg,var(--red-main),var(--red-dark));
-      color:#fff;
-      cursor:pointer;
-      font-weight:800;
-      transition:transform var(--transition), filter var(--transition);
-      border:1px solid rgba(255,255,255,.12);
-      text-decoration:none;
-      text-align:center;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:.6rem;
+      gap:.55rem;
+      min-height:44px;
+      padding:.72rem 1rem;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.055);
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform var(--transition),background var(--transition),border-color var(--transition),box-shadow var(--transition);
     }
+    .menu-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09);border-color:var(--border-strong)}
+    .menu-btn.primary{background:linear-gradient(135deg,var(--red-main),var(--red-dark));border-color:rgba(255,255,255,.16);box-shadow:0 12px 30px rgba(255,35,79,.2)}
+    .menu-btn.primary:hover{box-shadow:0 16px 34px rgba(255,35,79,.28)}
+    .menu-btn.discord-btn{background:rgba(88,101,242,.15);border-color:rgba(88,101,242,.32)}
+    .menu-btn.mini{min-height:40px;padding:.65rem .85rem;font-size:.87rem}
+    .tag{font-size:.62rem;padding:.2rem .42rem;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);font-weight:900;letter-spacing:.4px}
 
-    .modal-content button:hover,
-    .modal-content a.action:hover{transform:translateY(-1px); filter:saturate(1.05)}
-    .modal-content button:active,
-    .modal-content a.action:active{transform:translateY(0)}
+    .mobile-toggle{display:none;width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--border);cursor:pointer}
+    #mobileNavToggle{display:none}
 
-    /* ===== FOOTER ===== */
-    footer{
-      margin-top:auto;
-      text-align:center;
-      padding:1.2rem 1rem 1.35rem;
-      opacity:.65;
-      font-size:.9rem;
-      color:var(--text-dim);
+    /* HERO */
+    .hero{padding:5.2rem 0 2.1rem}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:2rem;align-items:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:.5rem;color:#ffd1da;background:var(--red-soft);border:1px solid rgba(255,35,79,.24);border-radius:999px;padding:.45rem .7rem;font-size:.76rem;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+    .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red-main);box-shadow:0 0 14px var(--red-main)}
+    .hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(2.7rem,6.1vw,5.4rem);line-height:.98;letter-spacing:-1.5px;margin:1.15rem 0 1rem;max-width:760px}
+    .hero h1 span{background:linear-gradient(90deg,#fff 0%,#ff889f 55%,#ff234f 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero-lead{color:#b3bac7;font-size:clamp(1rem,1.7vw,1.18rem);line-height:1.7;max-width:650px}
+    .hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.65rem}
+    .hero-note{display:flex;align-items:center;gap:.5rem;color:var(--text-dim);font-size:.82rem;margin-top:1rem}
+    .hero-note i{color:var(--green)}
+
+    .discord-panel{position:relative;overflow:hidden;border:1px solid rgba(88,101,242,.27);border-radius:26px;background:linear-gradient(145deg,rgba(88,101,242,.17),rgba(17,19,25,.94) 48%,rgba(255,35,79,.08));box-shadow:var(--shadow);padding:1.3rem}
+    .discord-panel::before{content:"";position:absolute;right:-70px;top:-90px;width:220px;height:220px;border-radius:50%;background:rgba(88,101,242,.24);filter:blur(25px)}
+    .discord-head{position:relative;display:flex;align-items:center;gap:.9rem;padding:.25rem}
+    .discord-logo{width:58px;height:58px;border-radius:17px;object-fit:cover;border:1px solid var(--border-strong);box-shadow:0 12px 26px rgba(0,0,0,.3)}
+    .discord-title{min-width:0}
+    .discord-title small{display:flex;align-items:center;gap:.35rem;color:#aeb5c3;font-size:.76rem;font-weight:700}
+    .online-dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 10px rgba(69,212,131,.85)}
+    .discord-title h2{font-size:1.15rem;margin-top:.28rem}
+    .discord-card-stats{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1.25rem 0}
+    .discord-stat{background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:16px;padding:.9rem}
+    .discord-stat span{color:var(--text-dim);font-size:.75rem;font-weight:700;display:block;margin-bottom:.35rem}
+    .discord-stat strong{font-size:1.05rem}
+    .discord-panel .discord-join{position:relative;width:100%;background:linear-gradient(135deg,#6672f5,#4a56dd);box-shadow:0 14px 30px rgba(88,101,242,.25)}
+
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:1.6rem auto 2.2rem}
+    .stat{min-height:92px;display:flex;align-items:center;gap:.9rem;padding:1rem 1.1rem;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.028));border:1px solid var(--border);box-shadow:var(--shadow-soft)}
+    .stat-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:var(--red-soft);color:var(--red-main);font-size:1.1rem;flex:0 0 auto}
+    .stat span{color:var(--text-dim);font-size:.88rem;font-weight:700;line-height:1.45}
+    .stat strong{color:#fff;font-size:1rem;font-weight:900}
+    .stat.discord .stat-icon{background:rgba(88,101,242,.15);color:#7d87ff}
+    .stat.community .stat-icon{background:rgba(69,212,131,.12);color:var(--green)}
+
+    /* SECTION / RANKING */
+    .section{padding:1.2rem 0 4rem}
+    .ranking{border:1px solid var(--border);border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));box-shadow:var(--shadow-soft);padding:1.25rem}
+    .ranking-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;padding:.25rem}
+    .section-kicker{display:block;color:var(--red-main);font-size:.72rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:.45rem}
+    .ranking h2{font-family:'Orbitron',sans-serif;font-size:clamp(1.2rem,2vw,1.55rem)}
+    .ranking p{color:var(--text-dim);font-size:.9rem;font-weight:600;margin-top:.45rem}
+    .ranking-actions{display:flex;gap:.65rem;flex-wrap:wrap}
+    .ranking-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+
+    .rank-card{position:relative;overflow:hidden;min-height:168px;padding:1rem;border-radius:19px;background:linear-gradient(180deg,rgba(20,23,30,.96),rgba(13,15,20,.96));border:1px solid var(--border);box-shadow:0 12px 34px rgba(0,0,0,.25);transition:transform var(--transition),border-color var(--transition),box-shadow var(--transition)}
+    .rank-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16);box-shadow:0 18px 42px rgba(0,0,0,.34)}
+    .premium-card{border-color:rgba(255,35,79,.27);box-shadow:0 18px 42px rgba(255,35,79,.08),0 12px 30px rgba(0,0,0,.26)}
+    .premium-banner{height:82px;border-radius:14px;margin-bottom:.8rem;background-size:cover;background-position:center;border:1px solid var(--border);position:relative;overflow:hidden}
+    .premium-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.58))}
+    .rank-top{display:flex;align-items:center;gap:.75rem;margin-bottom:.7rem}
+    .rank-logo{width:46px;height:46px;border-radius:14px;object-fit:cover;border:1px solid var(--border-strong);background:#0d0f14;flex:0 0 auto}
+    .rank-title{display:flex;flex-direction:column;gap:.18rem;min-width:0}
+    .rank-title strong{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rank-title small{color:var(--text-dim);font-size:.76rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .badge{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;font-size:.65rem;font-weight:900;padding:.25rem .5rem;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05)}
+    .badge.premium{background:var(--red-soft);border-color:rgba(255,35,79,.25);color:#ffdce4}
+    .badge.pos{margin-left:auto;min-width:30px;color:#fff;background:rgba(255,255,255,.07)}
+    .rank-meta{display:flex;flex-direction:column;gap:.4rem;color:var(--text-dim);font-size:.83rem;font-weight:700}
+    .rank-meta .row{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+    .rank-actions{display:flex;gap:.5rem;margin-top:.85rem}
+    .rank-actions a,.copy-ip{flex:1 1 auto;min-height:39px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;border:1px solid var(--border);background:rgba(255,255,255,.055);color:#fff;text-decoration:none;font-size:.78rem;font-weight:900;cursor:pointer;transition:background var(--transition),transform var(--transition)}
+    .rank-actions a:hover,.copy-ip:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+    .rank-actions a.primary{background:linear-gradient(135deg,var(--red-main),var(--red-dark));border-color:rgba(255,255,255,.13)}
+    .rank-card.cta{display:flex;flex-direction:column;justify-content:center;background:radial-gradient(circle at top left,rgba(255,35,79,.19),transparent 55%),linear-gradient(180deg,#171921,#0f1117);border-color:rgba(255,35,79,.25)}
+    .cta-top{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.55rem}
+    .cta p{color:var(--text-dim);line-height:1.55;margin:.25rem 0 .85rem}
+    .cta-btn{width:100%;min-height:42px;border-radius:12px;background:linear-gradient(135deg,var(--red-main),var(--red-dark));color:#fff;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+    .cta-note{display:block;color:#8f96a4;font-size:.73rem;font-weight:700;margin-top:.6rem;text-align:center}
+    .rank-card.skeleton{min-height:168px;background:rgba(255,255,255,.04);border-color:var(--border);position:relative}
+    .rank-card.skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);transform:translateX(-100%);animation:shimmer 1.25s infinite}
+    @keyframes shimmer{100%{transform:translateX(100%)}}
+
+    /* SERVICES */
+    .services{padding:0 0 4.5rem}
+    .services-head{text-align:center;margin-bottom:1.4rem}
+    .services-head h2{font-family:'Orbitron',sans-serif;font-size:clamp(1.3rem,2.4vw,1.9rem)}
+    .services-head p{color:var(--text-dim);margin-top:.55rem}
+    .service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .service-card{display:flex;flex-direction:column;gap:.8rem;padding:1.15rem;border:1px solid var(--border);border-radius:20px;background:rgba(255,255,255,.035);text-decoration:none;color:#fff;transition:transform var(--transition),border-color var(--transition),background var(--transition)}
+    .service-card:hover{transform:translateY(-3px);border-color:rgba(255,35,79,.24);background:rgba(255,255,255,.055)}
+    .service-card i{width:44px;height:44px;display:grid;place-items:center;border-radius:13px;background:var(--red-soft);color:var(--red-main)}
+    .service-card h3{font-size:1rem}
+    .service-card p{color:var(--text-dim);font-size:.84rem;line-height:1.55}
+
+    /* MODAIS */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:300}
+    .modal-content{width:min(530px,100%);border-radius:22px;border:1px solid var(--border-strong);background:linear-gradient(180deg,#191c24,#101218);padding:1.35rem;box-shadow:var(--shadow)}
+    .modal-content h2{font-family:'Orbitron',sans-serif;text-align:center;color:#fff;font-size:1.16rem;margin:.2rem 0 .9rem}
+    .modal-content ul{list-style:none;display:flex;flex-direction:column;gap:.55rem;color:#c0c6d1;font-size:.9rem;line-height:1.55}
+    .modal-content li{display:flex;align-items:flex-start;gap:.55rem;padding:.62rem .7rem;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055)}
+    .btn-row{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:1rem}
+    .modal-content button,.modal-content a.action{flex:1 1 180px;min-height:44px;padding:.7rem 1rem;border-radius:12px;background:linear-gradient(135deg,var(--red-main),var(--red-dark));border:1px solid rgba(255,255,255,.12);color:#fff;font-weight:900;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;cursor:pointer}
+    .modal-content button:last-child{background:rgba(255,255,255,.07)}
+
+    footer{border-top:1px solid var(--border);padding:1.6rem 1rem;text-align:center;color:#777f8d;font-size:.82rem}
+
+    @media(max-width:980px){
+      .nav-links{display:none}
+      .mobile-toggle{display:grid;place-items:center}
+      .nav-actions .discord-btn{display:none}
+      .mobile-nav{display:none;padding:0 0 1rem;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+      #mobileNavToggle:checked ~ .mobile-nav{display:grid}
+      .mobile-nav a{color:#d2d6de;text-decoration:none;font-weight:800;font-size:.86rem;padding:.8rem;border-radius:11px;background:rgba(255,255,255,.045);border:1px solid var(--border)}
+      .hero{padding-top:3.7rem}
+      .hero-grid{grid-template-columns:1fr}
+      .discord-panel{max-width:680px}
+      .ranking-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
-    .premium-card{
-  border-color: rgba(255,0,43,.35);
-  box-shadow: 0 16px 44px rgba(255,0,43,.10), 0 10px 26px rgba(0,0,0,.30);
-}
-
-.premium-banner{
-  height: 64px;
-  border-radius: 14px;
-  margin-bottom: .7rem;
-  background-size: cover;
-  background-position: center;
-  border: 1px solid rgba(255,255,255,.10);
-  position: relative;
-  overflow: hidden;
-}
-
-.premium-banner::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 100%);
-}
-
-.copy-ip{
-  flex:1 1 auto;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.26);
-  color:#fff;
-  font-weight:900;
-  padding:.6rem .7rem;
-  cursor:pointer;
-}
-.copy-ip:hover{ filter:saturate(1.05); }
-    /* Acessibilidade: reduzir animações */
-    @media (prefers-reduced-motion: reduce){
-      *{transition:none !important; scroll-behavior:auto}
+    @media(max-width:680px){
+      .wrap{width:min(var(--max),calc(100% - 1.2rem))}
+      .brand-copy small{display:none}
+      .nav-actions .primary .tag{display:none}
+      .nav-actions .primary{padding:.65rem .8rem;font-size:.82rem}
+      .hero{padding:3rem 0 1.4rem}
+      .hero h1{font-size:clamp(2.3rem,13vw,3.65rem)}
+      .hero-actions .menu-btn{flex:1 1 100%}
+      .stats{grid-template-columns:1fr}
+      .ranking{padding:.85rem;border-radius:20px}
+      .ranking-head{align-items:flex-start}
+      .ranking-actions{width:100%}
+      .ranking-actions .menu-btn{flex:1 1 100%}
+      .ranking-grid{grid-template-columns:1fr}
+      .service-grid{grid-template-columns:1fr}
+      .discord-card-stats{grid-template-columns:1fr}
     }
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
   </style>
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="nav-shell">
+        <a class="brand" href="index.html" aria-label="Portal SiqueiraX - início">
+          <img class="site-logo" src="https://i.imgur.com/eKjFtd1.png" alt="Logo SiqueiraX">
+          <span class="brand-copy"><strong>SiqueiraX</strong><small>Portal SA:MP</small></span>
+        </a>
 
-  <header class="wrap">
-    
-    <h1>Portal SiqueiraX</h1>
-    <p>Maior central de gamemodes do GTA SA:MP</p>
+        <nav class="nav-links" aria-label="Navegação principal">
+          <a href="#inicio">Início</a>
+          <a href="#ranking-servidores">Servidores</a>
+          <a href="registro.html">Registro</a>
+          <a href="hosting.html">Hosting</a>
+          <a href="menuvip.html" id="vipBtn">VIP</a>
+          <a href="#" id="gmBtn">Comprar GM</a>
+          <a href="desban.html" id="desbanBtn">Desban</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a class="menu-btn discord-btn" href="https://discord.gg/HSd3YcWryb" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Discord</a>
+          <a class="menu-btn primary" href="loginpainel.html"><i class="fas fa-gamepad"></i> Painel <span class="tag">PRINCIPAL</span></a>
+          <label class="mobile-toggle" for="mobileNavToggle" aria-label="Abrir menu"><i class="fas fa-bars"></i></label>
+        </div>
+      </div>
+      <input type="checkbox" id="mobileNavToggle" aria-hidden="true">
+      <nav class="mobile-nav" aria-label="Menu mobile">
+        <a href="#ranking-servidores">Servidores</a><a href="registro.html">Registro</a>
+        <a href="hosting.html">Hosting SX</a><a href="menuvip.html">Benefícios VIP</a>
+        <a href="desban.html">Desban</a><a href="https://discord.gg/HSd3YcWryb" target="_blank" rel="noopener noreferrer">Discord</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="wrap" aria-label="Conteúdo principal">
-    <section class="stats" aria-label="Estatísticas">
-
-      <div class="ranking-foot" id="rankingFoot" hidden>
-        <span class="foot-muted">Atualiza automaticamente.</span>
-      </div>
-    </section>
-      <div class="stat" id="discordStats" role="status" aria-live="polite">
-        <i class="fab fa-discord"></i>
-        <span>Carregando Discord...</span>
-      </div>
-
-      <div class="stat" id="tempo-online" role="status" aria-live="polite">
-        <i class="fas fa-clock"></i>
-        <span>Online há <strong>...</strong></span>
-      </div>
-    </section>
-
-        <!-- ===== RANKING (HOME) ===== -->
-    <section class="ranking" id="ranking-servidores" aria-label="Ranking de servidores">
-      <div class="ranking-head">
+  <main id="inicio">
+    <section class="hero">
+      <div class="wrap hero-grid">
         <div>
-          <h2>🏆 Ranking de Servidores</h2>
-          <p>Top servidores em destaque + ranking da semana.</p>
-        </div>
-
-        <div class="ranking-actions">
-          <a class="menu-btn primary mini" id="btnCadastrarServidor" href="#">
-            <i class="fas fa-plus"></i> Cadastrar Servidor
-            <span class="tag">NOVO</span>
-          </a>
-
-          <a class="menu-btn mini" id="btnVerRanking" href="servidores.html">
-            <i class="fas fa-list"></i> Ver lista completa
-          </a>
-        </div>
-      </div>
-
-      <div class="ranking-grid" id="rankingGrid" aria-live="polite">
-        <!-- Skeleton / placeholder -->
-        <div class="rank-card skeleton"></div>
-        <div class="rank-card skeleton"></div>
-        <div class="rank-card skeleton"></div>
-        <div class="rank-card skeleton"></div>
-        <div class="rank-card skeleton"></div>
-
-        <!-- CTA card -->
-        <div class="rank-card cta" id="ctaDestaque">
-          <div class="cta-top">
-            <span class="badge premium">PREMIUM</span>
-            <strong>Destaque seu servidor</strong>
+          <span class="eyebrow">Central da comunidade SA:MP</span>
+          <h1>Seu portal para o universo <span>SiqueiraX</span></h1>
+          <p class="hero-lead">Encontre servidores, gamemodes, serviços e novidades da comunidade em uma experiência mais rápida, organizada e moderna.</p>
+          <div class="hero-actions">
+            <a class="menu-btn primary" href="#ranking-servidores"><i class="fas fa-server"></i> Explorar servidores</a>
+            <a class="menu-btn" href="loginpainel.html"><i class="fas fa-gauge-high"></i> Acessar painel</a>
           </div>
-          <p>Fique no topo e apareça na página inicial.</p>
-          <button class="cta-btn" type="button" id="btnDestaqueAgora">
-            <i class="fas fa-bolt"></i> Quero destaque
-          </button>
-          <small class="cta-note">Planos semanais e mensais acessíveis.</small>
+          <div class="hero-note"><i class="fas fa-circle-check"></i> Sistemas, contas e integrações atuais preservados.</div>
+        </div>
+
+        <aside class="discord-panel" aria-label="Comunidade no Discord">
+          <div class="discord-head">
+            <img class="discord-logo" src="https://i.imgur.com/eKjFtd1.png" alt="SiqueiraX Community">
+            <div class="discord-title"><small><span class="online-dot"></span> Comunidade ativa</small><h2>SiqueiraX Community</h2></div>
+          </div>
+          <div class="discord-card-stats">
+            <div class="discord-stat"><span>Status do Discord</span><strong>Online agora</strong></div>
+            <div class="discord-stat"><span>Acesso</span><strong>Convite aberto</strong></div>
+          </div>
+          <a class="menu-btn discord-join" href="https://discord.gg/HSd3YcWryb" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Entrar no Discord</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wrap stats" aria-label="Estatísticas">
+      <div class="stat discord" id="discordStats" role="status" aria-live="polite"><div class="stat-icon"><i class="fab fa-discord"></i></div><span>Carregando Discord...</span></div>
+      <div class="stat" id="tempo-online" role="status" aria-live="polite"><div class="stat-icon"><i class="fas fa-clock"></i></div><span>Online há <strong>...</strong></span></div>
+      <div class="stat community"><div class="stat-icon"><i class="fas fa-shield-halved"></i></div><span>Portal oficial<br><strong>SiqueiraX Community</strong></span></div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <section class="ranking" id="ranking-servidores" aria-label="Ranking de servidores">
+          <div class="ranking-head">
+            <div><span class="section-kicker">Destaques da comunidade</span><h2>Ranking de Servidores</h2><p>Servidores premium em destaque e acesso rápido às principais comunidades.</p></div>
+            <div class="ranking-actions">
+              <a class="menu-btn primary mini" id="btnCadastrarServidor" href="#"><i class="fas fa-plus"></i> Cadastrar servidor <span class="tag">NOVO</span></a>
+              <a class="menu-btn mini" id="btnVerRanking" href="servidores.html"><i class="fas fa-list"></i> Lista completa</a>
+            </div>
+          </div>
+
+          <div class="ranking-grid" id="rankingGrid" aria-live="polite">
+            <div class="rank-card skeleton"></div><div class="rank-card skeleton"></div><div class="rank-card skeleton"></div><div class="rank-card skeleton"></div><div class="rank-card skeleton"></div>
+            <div class="rank-card cta" id="ctaDestaque">
+              <div class="cta-top"><span class="badge premium">PREMIUM</span><strong>Destaque seu servidor</strong></div>
+              <p>Fique no topo da página inicial e receba mais visualizações.</p>
+              <button class="cta-btn" type="button" id="btnDestaqueAgora"><i class="fas fa-bolt"></i> Quero destaque</button>
+              <small class="cta-note">Planos semanais e mensais acessíveis.</small>
+            </div>
+          </div>
+          <div class="ranking-foot" id="rankingFoot" hidden><span class="foot-muted">Atualiza automaticamente.</span></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="services">
+      <div class="wrap">
+        <div class="services-head"><span class="section-kicker">Tudo em um só lugar</span><h2>Serviços SiqueiraX</h2><p>Acesse rapidamente as áreas mais utilizadas do portal.</p></div>
+        <div class="service-grid">
+          <a class="service-card" href="registro.html"><i class="fa fa-registered"></i><h3>Registro</h3><p>Crie e gerencie seu acesso aos sistemas da comunidade.</p></a>
+          <a class="service-card" href="hosting.html"><i class="fas fa-cloud"></i><h3>Hosting SX</h3><p>Conheça as opções de hospedagem disponíveis.</p></a>
+          <a class="service-card" href="servidores.html"><i class="fas fa-server"></i><h3>Lista de servidores</h3><p>Explore os servidores cadastrados no portal.</p></a>
         </div>
       </div>
+    </section>
   </main>
 
-  <!-- MENU ESQUERDO -->
-  <nav class="side-menu side-left" aria-label="Menu esquerdo">
-    <a href="registro.html" class="menu-btn">
-      <i class="fa fa-registered"></i> Registro
-    </a>
-
-    <a href="#" class="menu-btn" id="gmBtn">
-    <i class="fas fa-cart-shopping"></i> Comprar GM
-  </a>
-
-   <a href="hosting.html" class="menu-btn" id="gmBtn">
-    <i class="fas fa-cart-shopping"></i> Hosting SX
-  </a>
-
-
-
-    <!-- PRINCIPAL -->
-    <a href="loginpainel.html" class="menu-btn primary" aria-label="Painel (principal)">
-      <i class="fas fa-gamepad"></i> Painel
-      <span class="tag">PRINCIPAL</span>
-    </a>
-
-    <!-- DESBAN -->
-    <a href="desban.html" class="menu-btn" id="desbanBtn">
-      <i class="fas fa-unlock"></i> Desban
-    </a>
-
-    <a href="servidores.html" class="menu-btn">
-      <i class="fas fa-server"></i> Servidores
-    </a>
-  </nav>
-
-  <!-- MENU DIREITO -->
-  <nav class="side-menu side-right" aria-label="Menu direito">
-    <a href="menuvip.html" class="menu-btn" id="vipBtn">
-      <i class="fas fa-crown"></i> Benefícios VIP
-    </a>
-
-    <!-- REMOVIDO: Profissionais -->
-
-    <a href="https://discord.gg/HSd3YcWryb" target="_blank" rel="noopener noreferrer" class="menu-btn">
-      <i class="fab fa-discord"></i> Discord
-    </a>
-  </nav>
-
-
-  <!-- MODAL COMPRAR GM -->
-<div class="modal" id="gmModal" aria-hidden="true">
-  <div class="modal-content" role="dialog" aria-modal="true" aria-label="Comprar GM">
-    <h2>🛒 Comprar GM</h2>
-    <ul>
-      <li>✅ <span>Quer comprar uma GM disponível?</span></li>
-      <li>📲 <span>Fale no WhatsApp e eu te envio as opções e valores.</span></li>
-      <li>⚡ <span>Atendimento rápido e direto.</span></li>
-    </ul>
-
-    <div class="btn-row">
-      <a class="action" id="whatsGM" target="_blank" rel="noopener noreferrer" href="#">
-        <i class="fab fa-whatsapp"></i> Chamar no WhatsApp
-      </a>
-      <button type="button" id="closeGM">Fechar</button>
+  <div class="modal" id="gmModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-label="Comprar GM">
+      <h2>🛒 Comprar GM</h2>
+      <ul><li>✅ <span>Quer comprar uma GM disponível?</span></li><li>📲 <span>Fale no WhatsApp e receba as opções e valores.</span></li><li>⚡ <span>Atendimento rápido e direto.</span></li></ul>
+      <div class="btn-row"><a class="action" id="whatsGM" target="_blank" rel="noopener noreferrer" href="#"><i class="fab fa-whatsapp"></i> Chamar no WhatsApp</a><button type="button" id="closeGM">Fechar</button></div>
     </div>
   </div>
-</div>
 
-
-  <!-- MODAL VIP -->
   <div class="modal" id="vipModal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-label="Benefícios VIP">
       <h2>✨ Benefícios VIP ✨</h2>
-      <ul>
-        <li>📢 <span>Marcação @everyone no canal de divulgação</span></li>
-        <li>🌐 <span>Acesso VIP ao site com todas as GMs</span></li>
-        <li>⏳ <span>GMs liberadas 1–2 meses antes</span></li>
-        <li>🚀 <span>Acesso antecipado com link direto</span></li>
-        <li>🏷️ <span>Tag exclusiva no Discord</span></li>
-        <li>🛠️ <span>Suporte priorizado</span></li>
-      </ul>
+      <ul><li>📢 <span>Marcação @everyone no canal de divulgação</span></li><li>🌐 <span>Acesso VIP ao site com todas as GMs</span></li><li>⏳ <span>GMs liberadas 1–2 meses antes</span></li><li>🚀 <span>Acesso antecipado com link direto</span></li><li>🏷️ <span>Tag exclusiva no Discord</span></li><li>🛠️ <span>Suporte priorizado</span></li></ul>
       <button type="button" id="closeVip">Fechar</button>
     </div>
   </div>
 
-  <!-- MODAL DESBAN -->
   <div class="modal" id="desbanModal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-label="Desban SiqueiraX">
       <h2>Banimento SiqueiraX Community</h2>
-      <ul>
-        <li>🚫 <span>Usuários que foram banidos da comunidade</span></li>
-        <li>💰 <span>Valor desban: <strong>R$ 50,00</strong></span></li>
-        <li>📲 <span>Caso tenha interesse, entre em contato via WhatsApp com SiqueiraX</span></li>
-      </ul>
-
-      <div class="btn-row">
-        <a class="action" id="whatsDesban" target="_blank" rel="noopener noreferrer" href="#">
-          <i class="fab fa-whatsapp"></i> Falar no WhatsApp
-        </a>
-        <button type="button" id="closeDesban">Fechar</button>
-      </div>
+      <ul><li>🚫 <span>Usuários que foram banidos da comunidade</span></li><li>💰 <span>Valor desban: <strong>R$ 50,00</strong></span></li><li>📲 <span>Caso tenha interesse, entre em contato via WhatsApp com SiqueiraX</span></li></ul>
+      <div class="btn-row"><a class="action" id="whatsDesban" target="_blank" rel="noopener noreferrer" href="#"><i class="fab fa-whatsapp"></i> Falar no WhatsApp</a><button type="button" id="closeDesban">Fechar</button></div>
     </div>
   </div>
 
-  <footer>
-    © SiqueiraX
-  </footer>
+  <footer>© SiqueiraX — Portal oficial da comunidade.</footer>
 
 <script>
 /* =========================

@@ -1,423 +1,727 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Painel • Portal SiqueiraX</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1524">
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Painel • Portal SiqueiraX</title>
 
-<style>
-:root{
-  --red:#ff002b;
-  --red-dark:#b0001c;
-  --glass:rgba(15,15,15,.78);
-  --transition:.35s ease;
-}
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
 
-*{margin:0;padding:0;box-sizing:border-box}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
-body{
-  font-family:'Inter',sans-serif;
-  min-height:100vh;
-  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  color:#fff;
-  padding:1.25rem 1rem;
-}
+  <style>
+    :root {
+      --bg: #08111d;
+      --bg-soft: #0c1726;
+      --panel: #0f1d2f;
+      --panel-2: #13253b;
+      --panel-3: #0b1625;
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(18px);
-  z-index:-1;
-}
+      --blue: #2b82d4;
+      --blue-light: #79b9ef;
+      --blue-dark: #1d5c97;
 
-.panel{
-  width:100%;
-  max-width:1100px;
-  background:var(--glass);
-  border-radius:26px;
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:0 0 55px rgba(255,0,43,.45);
-  padding:1.35rem;
-  margin-top:.5rem;
-}
+      --red: #d63d55;
+      --red-dark: #9d293d;
 
-.topbar{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:1rem;
-  margin-bottom:1rem;
-}
+      --green: #4bd29a;
+      --text: #f4f7fb;
+      --muted: #98aabd;
+      --line: #223750;
 
-.brand{
-  display:flex;
-  flex-direction:column;
-  gap:.35rem;
-}
-.brand h1{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.6rem;
-  color:var(--red);
-  text-shadow:0 0 25px rgba(255,0,43,.7);
-  line-height:1.1;
-}
-.brand p{
-  opacity:.92;
-  font-size:1rem;
-  line-height:1.35;
-}
+      --radius: 15px;
+      --radius-small: 10px;
+      --shadow: 0 14px 34px rgba(0, 0, 0, .28);
+    }
 
-.userline{
-  display:flex;
-  align-items:center;
-  gap:.7rem;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.userpill{
-  padding:.55rem .85rem;
-  border-radius:999px;
-  background:rgba(0,0,0,.35);
-  border:1px solid rgba(255,255,255,.12);
-  font-weight:800;
-  letter-spacing:.3px;
-  box-shadow:0 0 18px rgba(255,0,43,.15);
-  display:flex;
-  align-items:center;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-.btn{
-  border:none;
-  border-radius:16px;
-  padding:.78rem .95rem;
-  font-weight:900;
-  letter-spacing:.6px;
-  cursor:pointer;
-  transition:var(--transition);
-  color:#fff;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
-}
-.btn:hover{transform:translateY(-2px); background:rgba(255,255,255,.12)}
+    body {
+      min-height: 100vh;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(8, 17, 29, .93), rgba(8, 17, 29, .98)),
+        url("https://i.imgur.com/eKjFtd1.png") center/cover fixed no-repeat;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap:1rem;
-  align-items:stretch;
-}
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(90deg, rgba(43, 130, 212, .045) 1px, transparent 1px),
+        linear-gradient(rgba(43, 130, 212, .045) 1px, transparent 1px);
+      background-size: 38px 38px;
+      pointer-events: none;
+    }
 
-.card{
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(0,0,0,.32);
-  padding:1.15rem;
-  position:relative;
-  overflow:hidden;
-  min-height: 210px;
-  display:flex;
-  flex-direction:column;
-}
+    button,
+    a {
+      font: inherit;
+    }
 
-.card h2{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.18rem;
-  margin-bottom:.6rem;
-  letter-spacing:.2px;
-  text-shadow:0 0 18px rgba(255,0,43,.25);
+    a {
+      color: inherit;
+    }
 
-  /* ✅ evita o badge ficar “colado” no título */
-  padding-right:96px;
-  line-height:1.2;
-}
+    .container {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+    }
 
-.card p{
-  opacity:.98;
-  line-height:1.6;
-  font-size:1rem;
-  margin-bottom:1rem;
-  color:rgba(255,255,255,.92);
-}
-.card p b{ color:#fff; font-weight:800; }
+    /* LOADING */
+    .loading {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(6, 13, 23, .94);
+    }
 
-.card .cta{
-  width:100%;
-  border:none;
-  border-radius:16px;
-  padding:.92rem;
-  font-weight:900;
-  letter-spacing:1px;
-  cursor:pointer;
-  transition:var(--transition);
-  color:#fff;
-  margin-top:auto;
-}
+    .loading-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      color: #d8e4ef;
+      font-size: .84rem;
+      font-weight: 700;
+    }
 
-/* Normal */
-.cta-normal{
-  background:linear-gradient(135deg,var(--red),var(--red-dark));
-  box-shadow:0 0 30px rgba(255,0,43,.55);
-}
-.cta-normal:hover{
-  transform:scale(1.03);
-  box-shadow:0 0 45px rgba(255,0,43,.85);
-}
+    .loading-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,.1);
+    }
 
-/* Premium */
-.premium-badge{
-  position:absolute;
-  top:14px;
-  right:14px;
-  font-family:'Orbitron',sans-serif;
-  font-size:.75rem;
-  letter-spacing:1px;
-  padding:.45rem .65rem;
-  border-radius:999px;
-  background:rgba(255,0,43,.18);
-  border:1px solid rgba(255,0,43,.45);
-  box-shadow:0 0 22px rgba(255,0,43,.35);
-}
+    .loading-dots {
+      display: inline-flex;
+      gap: 4px;
+      margin-left: 3px;
+    }
 
-/* ✅ mais respiro no topo do card premium (badge não “espreme” nada) */
-.card-premium{
-  box-shadow: inset 0 0 0 1px rgba(255,0,43,.18);
-  padding-top:1.5rem;
-}
-.card-premium::before{
-  content:"";
-  position:absolute;
-  inset:-120px -120px auto auto;
-  width:260px;height:260px;
-  background:radial-gradient(circle at center, rgba(255,0,43,.40), transparent 62%);
-  transform:rotate(25deg);
-  pointer-events:none;
-}
-.cta-premium{
-  background:linear-gradient(135deg,#ff1a3d,#7a0014);
-  box-shadow:0 0 40px rgba(255,0,43,.70);
-  text-transform:uppercase;
-}
-.cta-premium:hover{
-  transform:scale(1.04);
-  box-shadow:0 0 60px rgba(255,0,43,.95);
-}
+    .loading-dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      animation: loadingPulse 1s infinite ease-in-out;
+    }
 
-/* Loading overlay */
-.loading{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(10px);
-  z-index:999;
-}
-.loading .box{
-  background:rgba(15,15,15,.82);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:18px;
-  padding:1.1rem 1.3rem;
-  box-shadow:0 0 40px rgba(255,0,43,.35);
-  font-weight:800;
-  letter-spacing:.4px;
-}
-.loading .dot{
-  display:inline-block;
-  width:8px;height:8px;
-  border-radius:50%;
-  background:var(--red);
-  margin-left:.35rem;
-  box-shadow:0 0 18px rgba(255,0,43,.9);
-  animation:pulse .9s infinite ease-in-out;
-}
-@keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.6)} }
+    .loading-dots span:nth-child(2) {
+      animation-delay: .15s;
+    }
 
-/* ✅ Mobile: tudo legível e 1 coluna */
-@media (max-width:900px){
-  body{ padding:1rem .9rem; }
-  .panel{ padding:1.05rem; border-radius:22px; }
+    .loading-dots span:nth-child(3) {
+      animation-delay: .3s;
+    }
 
-  .topbar{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:.85rem;
-  }
+    @keyframes loadingPulse {
+      0%, 100% {
+        opacity: .3;
+        transform: translateY(0);
+      }
 
-  .brand h1{ font-size:1.4rem; }
+      50% {
+        opacity: 1;
+        transform: translateY(-3px);
+      }
+    }
 
-  .userline{
-    width:100%;
-    justify-content:space-between;
-  }
+    /* HEADER */
+    .site-header {
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: rgba(7, 14, 24, .92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
 
-  .grid{
-    grid-template-columns: 1fr;
-    gap:.9rem;
-  }
+    .header-inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
 
-  .card{ min-height:auto; padding:1rem; border-radius:20px; }
-  .card h2{ padding-right:88px; font-size:1.12rem; }
-  .card p{ font-size:1rem; }
-  .card .cta{ padding:1rem; }
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
 
-@media (max-width:420px){
-  .btn{ width:100%; }
-  .userline{ width:100%; flex-direction:column; align-items:stretch; }
-  .userpill{ width:100%; justify-content:center; }
-}
-</style>
+    .brand-logo {
+      width: 54px;
+      height: 54px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,.12);
+      background: #08111d;
+      box-shadow: 0 0 0 4px rgba(43, 130, 212, .08);
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--blue-light);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy h1 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: clamp(1.35rem, 3vw, 1.8rem);
+      line-height: 1;
+      letter-spacing: .02em;
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-pill,
+    .logout-btn {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-small);
+      background: rgba(255,255,255,.035);
+    }
+
+    .user-pill {
+      padding: 0 13px;
+      color: var(--muted);
+      font-size: .79rem;
+      font-weight: 700;
+    }
+
+    .user-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .logout-btn {
+      padding: 0 14px;
+      cursor: pointer;
+      color: #fff;
+      font-size: .76rem;
+      font-weight: 800;
+      transition: background .18s ease, border-color .18s ease;
+    }
+
+    .logout-btn:hover {
+      border-color: rgba(214, 61, 85, .5);
+      background: rgba(214, 61, 85, .10);
+    }
+
+    /* CONTEÚDO */
+    .dashboard {
+      display: none;
+      padding: 34px 0 40px;
+    }
+
+    .welcome-box {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 22px;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(115deg, rgba(20, 43, 70, .97), rgba(13, 29, 48, .97));
+      box-shadow: var(--shadow);
+    }
+
+    .welcome-box::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 7px;
+      height: 100%;
+      background: linear-gradient(var(--blue), var(--red));
+    }
+
+    .welcome-line {
+      width: 54px;
+      height: 4px;
+      margin-bottom: 17px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--blue), var(--red));
+    }
+
+    .welcome-box h2 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1;
+    }
+
+    .welcome-box p {
+      max-width: 650px;
+      margin-top: 11px;
+      color: var(--muted);
+      font-size: .93rem;
+      line-height: 1.65;
+    }
+
+    .section-head {
+      margin-bottom: 15px;
+    }
+
+    .section-head h2 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 1.65rem;
+      line-height: 1;
+    }
+
+    .section-head p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    /* GRID */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .dashboard-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 245px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 9px 22px rgba(0,0,0,.18);
+      transition: transform .18s ease, border-color .18s ease;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(121, 185, 239, .42);
+    }
+
+    .dashboard-card.featured {
+      background:
+        linear-gradient(140deg, rgba(22, 47, 75, .97), rgba(15, 29, 47, .98));
+    }
+
+    .dashboard-card.featured::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 90px;
+      height: 6px;
+      background: linear-gradient(90deg, var(--blue), var(--red));
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 11px;
+      background: rgba(255,255,255,.035);
+      font-size: 1.1rem;
+    }
+
+    .card-badge {
+      padding: 5px 8px;
+      border: 1px solid rgba(214, 61, 85, .35);
+      border-radius: 7px;
+      background: rgba(214, 61, 85, .10);
+      color: #ff91a2;
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-card h3 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 1.38rem;
+      line-height: 1;
+    }
+
+    .dashboard-card p {
+      margin-top: 10px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.62;
+    }
+
+    .dashboard-card p b {
+      color: #dfe9f3;
+      font-weight: 700;
+    }
+
+    .card-button {
+      width: 100%;
+      min-height: 43px;
+      margin-top: auto;
+      border: 0;
+      border-radius: 9px;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .card-button:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(90deg, var(--blue), var(--red));
+    }
+
+    .card-button.red {
+      background: linear-gradient(90deg, var(--red-dark), var(--red));
+    }
+
+    .card-button.red:hover {
+      background: linear-gradient(90deg, var(--red), var(--blue));
+    }
+
+    /* FOOTER */
+    .site-footer {
+      padding: 5px 0 34px;
+      color: #667a91;
+      font-size: .7rem;
+      text-align: center;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 820px) {
+      .header-inner {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .user-actions {
+        display: grid;
+        grid-template-columns: 1fr auto;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: min(100% - 18px, 1120px);
+      }
+
+      .brand-logo {
+        width: 48px;
+        height: 48px;
+      }
+
+      .user-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .logout-btn,
+      .user-pill {
+        width: 100%;
+      }
+
+      .welcome-box {
+        padding: 23px;
+      }
+
+      .dashboard-card {
+        min-height: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="loading" id="loading">
+    <div class="loading-box">
+      <img
+        class="loading-logo"
+        src="https://i.imgur.com/eKjFtd1.png"
+        alt="Logo do Portal SiqueiraX"
+      >
 
-<div class="loading" id="loading">
-  <div class="box">Validando sessão<span class="dot"></span></div>
-</div>
-
-<div class="panel" style="display:none" id="panel">
-  <div class="topbar">
-    <div class="brand">
-      <h1>Portal SiqueiraX</h1>
-      <p>Selecione o que você quer acessar</p>
-    </div>
-
-    <div class="userline">
-      <div class="userpill" id="userPill">@...</div>
-      <button class="btn" id="logoutBtn">SAIR</button>
+      <div>
+        Validando sessão
+        <span class="loading-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </div>
     </div>
   </div>
 
-  <div class="grid">
+  <header class="site-header" id="siteHeader" style="display:none">
+    <div class="container header-inner">
+      <div class="brand">
+        <img
+          class="brand-logo"
+          src="https://i.imgur.com/eKjFtd1.png"
+          alt="Logo do Portal SiqueiraX"
+        >
 
-    <div class="card">
-      <h2>GameModes</h2>
-      <p>
-        Acesse os <b>GameModes disponíveis</b> no portal.<br>
-        Conteúdo organizado, atualizado e pronto para uso.
-      </p>
-      <button class="cta cta-normal" id="goGamemodes">
-        ACESSAR GAMEMODES
-      </button>
+        <div class="brand-copy">
+          <span>Portal SiqueiraX</span>
+          <h1>Painel principal</h1>
+        </div>
+      </div>
+
+      <div class="user-actions">
+        <div class="user-pill" id="userPill">@...</div>
+        <button class="logout-btn" id="logoutBtn" type="button">
+          Sair
+        </button>
+      </div>
     </div>
+  </header>
 
-    <div class="card card-premium">
-      <div class="premium-badge">PREMIUM</div>
-      <h2>GameModes Premium</h2>
-      <p>
-        Área exclusiva para <b>usuários VIP</b>.<br>
-        Conteúdos premium, links diretos e suporte dedicado.
-      </p>
-      <button class="cta cta-premium" id="goPremium">
-        ENTRAR NO PREMIUM
-      </button>
+  <main class="dashboard" id="panel">
+    <div class="container">
+      <section class="welcome-box">
+        <div class="welcome-line"></div>
+
+        <h2>Bem-vindo ao Portal</h2>
+
+        <p>
+          Escolha uma das áreas abaixo para acessar os conteúdos,
+          serviços e recursos disponíveis na sua conta.
+        </p>
+      </section>
+
+      <div class="section-head">
+        <h2>Áreas disponíveis</h2>
+        <p>Acesse rapidamente o conteúdo que você precisa.</p>
+      </div>
+
+      <section class="dashboard-grid">
+        <article class="dashboard-card">
+          <div class="card-top">
+            <div class="card-icon" aria-hidden="true">🎮</div>
+          </div>
+
+          <h3>GameModes</h3>
+
+          <p>
+            Acesse os <b>GameModes disponíveis</b> no portal,
+            com conteúdo organizado, atualizado e pronto para uso.
+          </p>
+
+          <button class="card-button" id="goGamemodes" type="button">
+            Acessar GameModes
+          </button>
+        </article>
+
+        <article class="dashboard-card featured">
+          <div class="card-top">
+            <div class="card-icon" aria-hidden="true">💎</div>
+            <div class="card-badge">Premium</div>
+          </div>
+
+          <h3>GameModes Premium</h3>
+
+          <p>
+            Área exclusiva para <b>usuários VIP</b>, com conteúdos
+            premium, links diretos e suporte dedicado.
+          </p>
+
+          <button class="card-button red" id="goPremium" type="button">
+            Entrar no Premium
+          </button>
+        </article>
+
+        <article class="dashboard-card featured">
+          <div class="card-top">
+            <div class="card-icon" aria-hidden="true">⭐</div>
+            <div class="card-badge">VIP</div>
+          </div>
+
+          <h3>Comprar VIP</h3>
+
+          <p>
+            Torne-se <b>VIP da comunidade</b> e desbloqueie os
+            GameModes Premium, benefícios especiais e novidades antecipadas.
+          </p>
+
+          <button class="card-button red" id="goVIP" type="button">
+            Comprar VIP
+          </button>
+        </article>
+
+        <article class="dashboard-card featured">
+          <div class="card-top">
+            <div class="card-icon" aria-hidden="true">⌨️</div>
+            <div class="card-badge">Premium</div>
+          </div>
+
+          <h3>Assistente SAMP IA</h3>
+
+          <p>
+            Um assistente para ajudar <b>iniciantes</b> a programar
+            no SA-MP com exemplos, explicações e suporte guiado.
+          </p>
+
+          <button class="card-button" id="goIA" type="button">
+            Acessar Assistente
+          </button>
+        </article>
+      </section>
     </div>
+  </main>
 
-    <!-- ✅ IA removida -> Comprar VIP -->
-    <div class="card card-premium">
-      <div class="premium-badge">VIP</div>
-      <h2>Comprar VIP</h2>
-      <p>
-        Torne-se <b>VIP da comunidade</b> e desbloqueie acesso aos
-        <b>GameModes Premium</b>.<br>
-        Conteúdos exclusivos, atualizações antecipadas e benefícios especiais.
-      </p>
-      <button class="cta cta-premium" id="goVIP">
-        COMPRAR VIP
-      </button>
+  <footer class="site-footer" id="siteFooter" style="display:none">
+    <div class="container">
+      © Portal SiqueiraX • Painel do usuário
     </div>
+  </footer>
 
-    <!-- ✅ Assistente SAMP IA (PREMIUM) -->
-  <div class="card card-premium">
-    <div class="premium-badge">PREMIUM</div>
-    <h2>Assistente SAMP IA</h2>
-    <p>
-      Um assistente para ajudar <b>iniciantes</b> a programar no <b>SA-MP</b>.<br>
-      Dicas, exemplos e suporte guiado para você evoluir mais rápido.
-    </p>
-    <button class="cta cta-premium" id="goIA">
-      ACESSAR IA
-    </button>
-  </div>
+  <script type="module">
+    const loading = document.getElementById("loading");
+    const panel = document.getElementById("panel");
+    const siteHeader = document.getElementById("siteHeader");
+    const siteFooter = document.getElementById("siteFooter");
 
-  </div>
-</div>
+    let me;
 
-<script type="module">
-const loading = document.getElementById('loading')
-const panel = document.getElementById('panel')
+    try {
+      const response = await fetch("/.netlify/functions/me_painel", {
+        credentials: "include",
+        cache: "no-store"
+      });
 
-let me
-try {
-  const r = await fetch("/.netlify/functions/me_painel", {
-    credentials: "include",
-    cache: "no-store"
-  })
+      if (!response.ok) {
+        window.location.href = "loginpainel.html";
+        throw new Error("no-session");
+      }
 
-  if (!r.ok) {
-    window.location.href = "loginpainel.html"
-    throw new Error("no-session")
-  }
-  
+      me = await response.json();
+    } catch {
+      window.location.href = "loginpainel.html";
+      throw new Error("redirect");
+    }
 
-  me = await r.json()
-} catch {
-  window.location.href = "loginpainel.html"
-  throw new Error("redirect")
-}
+    const userPill = document.getElementById("userPill");
 
-// usuário
-const userPill = document.getElementById('userPill')
-if (userPill) {
-  userPill.textContent = ''
-  const userText = document.createElement('span')
-  userText.id = 'userText'
-  userPill.appendChild(userText)
-  userText.textContent = '@' + (me?.username || 'usuario')
-}
+    if (userPill) {
+      userPill.textContent = "@" + (me?.username || "usuario");
+    }
 
-// mostra painel
-if (loading) loading.style.display = 'none'
-if (panel) panel.style.display = 'block'
+    if (loading) {
+      loading.style.display = "none";
+    }
 
-// navegação
-document.getElementById('goGamemodes')?.addEventListener('click', () => {
-  window.location.href = 'gamemodes.html'
-})
+    if (siteHeader) {
+      siteHeader.style.display = "block";
+    }
 
-document.getElementById('goPremium')?.addEventListener('click', () => {
-  window.location.href = 'gamemodesvip.html'
-})
+    if (panel) {
+      panel.style.display = "block";
+    }
 
-// comprar vip (troque pro seu link real)
-document.getElementById('goVIP')?.addEventListener('click', () => {
-  window.location.href = 'planos.html'
-})
-document.getElementById('goIA')?.addEventListener('click', () => {
-  window.location.href = 'ia.html'
-})
+    if (siteFooter) {
+      siteFooter.style.display = "block";
+    }
 
-// logout painel
-document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-  try {
-    await fetch("/.netlify/functions/logout_painel", {
-      credentials: "include",
-      cache: "no-store"
-    })
-  } catch {}
+    document.getElementById("goGamemodes")?.addEventListener("click", () => {
+      window.location.href = "gamemodes.html";
+    });
 
-  window.location.href = "loginpainel.html"
-})
-</script>
+    document.getElementById("goPremium")?.addEventListener("click", () => {
+      window.location.href = "gamemodesvip.html";
+    });
 
+    document.getElementById("goVIP")?.addEventListener("click", () => {
+      window.location.href = "planos.html";
+    });
+
+    document.getElementById("goIA")?.addEventListener("click", () => {
+      window.location.href = "ia.html";
+    });
+
+    document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+      try {
+        await fetch("/.netlify/functions/logout_painel", {
+          credentials: "include",
+          cache: "no-store"
+        });
+      } catch {}
+
+      window.location.href = "loginpainel.html";
+    });
+  </script>
 </body>
 </html>

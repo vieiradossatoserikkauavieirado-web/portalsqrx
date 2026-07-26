@@ -1,468 +1,1271 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Gamemodes VIP • Portal SiqueiraX</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
 
-<link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+  <title>Gamemodes VIP • Portal SiqueiraX</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
 
-<style>
-:root{
- --red:#ff002b;
- --red-dark:#b0001c;
- --bg:#0b0b0b;
- --glass:rgba(15,15,15,.78);
- --vip1:#ff1a3d;
- --vip2:#7a0014;
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
 
-*{margin:0;padding:0;box-sizing:border-box}
+  <style>
+    :root {
+      --bg: #050914;
+      --bg-soft: #081323;
+      --surface: rgba(9, 20, 37, .78);
+      --surface-strong: rgba(10, 23, 42, .94);
+      --surface-light: rgba(255, 255, 255, .055);
 
-body{
- font-family:'Inter',sans-serif;
- background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
- min-height:100vh;
- color:#fff;
-}
+      --blue: #1688ff;
+      --blue-light: #61b4ff;
+      --blue-dark: #064ba8;
 
-body::before{
- content:"";
- position:fixed;
- inset:0;
- background:rgba(0,0,0,.75);
- backdrop-filter:blur(12px);
- z-index:-1;
-}
+      --red: #ff294d;
+      --red-light: #ff6b82;
+      --red-dark: #a90027;
 
-/* ===== HEADER ===== */
-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- padding:1rem 2rem;
- background:var(--glass);
- border-bottom:1px solid rgba(255,255,255,.08);
-}
+      --text: #f5f9ff;
+      --text-soft: #a9bad0;
+      --line: rgba(137, 184, 255, .16);
 
-header h1{
- font-family:'Orbitron',sans-serif;
- font-size:1.6rem;
- background:linear-gradient(90deg,var(--vip1),#ff6b6b);
- -webkit-background-clip:text;
- -webkit-text-fill-color:transparent;
-}
+      --success: #38e6a0;
+      --danger: #ff667f;
+      --warning: #ffc857;
 
-.user{
- display:flex;
- align-items:center;
- gap:.55rem;
- background:rgba(0,0,0,.35);
- padding:.45rem 1rem;
- border-radius:30px;
- font-weight:700;
- border:1px solid rgba(255,255,255,.10);
- box-shadow:0 0 18px rgba(255,0,43,.18);
-}
-.user .diamond{
- display:inline-block;
- filter:drop-shadow(0 0 14px rgba(255,0,43,.65));
-}
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 15px;
 
-/* ===== SEARCH ===== */
-.search-box{
- max-width:360px;
- margin:1.5rem auto;
- padding:0 1rem;
-}
+      --shadow: 0 24px 70px rgba(0, 0, 0, .38);
+      --blue-glow: 0 0 35px rgba(22, 136, 255, .24);
+      --red-glow: 0 0 35px rgba(255, 41, 77, .20);
+    }
 
-.search-box input{
- width:100%;
- padding:.8rem 1rem;
- border-radius:14px;
- border:1px solid rgba(255,255,255,.15);
- background:rgba(0,0,0,.4);
- color:#fff;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.search-box input:focus{
- outline:none;
- border-color:var(--red);
- box-shadow:0 0 15px rgba(255,0,43,.6);
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* ===== GRID ===== */
-.gm-container{
-  max-width:1200px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-  gap:16px;
-  padding:0 1rem 2.5rem;
-}
+    body {
+      min-height: 100vh;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(22, 136, 255, .17), transparent 30%),
+        radial-gradient(circle at 88% 14%, rgba(255, 41, 77, .13), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(22, 136, 255, .08), transparent 38%),
+        linear-gradient(145deg, #030711 0%, #07101d 46%, #050913 100%);
+      overflow-x: hidden;
+    }
 
-/* ===== CARD ===== */
-.gm-card{
- background:var(--glass);
- border-radius:22px;
- overflow:hidden;
- box-shadow:0 0 16px rgba(0,0,0,.6);
- transition:.25s ease;
- border:1px solid rgba(255,255,255,.08);
- position:relative;
-}
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+      pointer-events: none;
+    }
 
-.gm-card:hover{
- transform:translateY(-5px) scale(1.03);
- box-shadow:0 0 35px rgba(255,0,43,.55);
- border-color:rgba(255,0,43,.25);
-}
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      left: -180px;
+      bottom: -160px;
+      z-index: -1;
+      border-radius: 50%;
+      background: rgba(22, 136, 255, .18);
+      filter: blur(110px);
+      pointer-events: none;
+    }
 
-.gm-card img{
- width:100%;
- height:110px;
- object-fit:cover;
-}
+    button,
+    input,
+    a {
+      font: inherit;
+    }
 
-/* VIP ribbon */
-.ribbon{
- position:absolute;
- top:12px;
- right:-44px;
- transform:rotate(35deg);
- background:linear-gradient(135deg,var(--vip1),var(--vip2));
- color:#fff;
- font-weight:900;
- font-size:.72rem;
- letter-spacing:1px;
- padding:.35rem 3rem;
- box-shadow:0 0 22px rgba(255,0,43,.55);
- border:1px solid rgba(255,255,255,.10);
-}
+    a {
+      color: inherit;
+    }
 
-.gm-card.vip{
- box-shadow:0 0 22px rgba(255,0,43,.35);
- border-color:rgba(255,0,43,.18);
-}
+    .page-shell {
+      width: min(1380px, calc(100% - 32px));
+      margin: 0 auto;
+    }
 
-.gm-card.vip::before{
- content:"";
- position:absolute;
- inset:-120px -120px auto auto;
- width:250px;
- height:250px;
- background:radial-gradient(circle at center, rgba(255,0,43,.35), transparent 62%);
- transform:rotate(25deg);
- pointer-events:none;
-}
+    /* HEADER */
+    .topbar-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding-top: 14px;
+    }
 
-/* TÍTULO */
-.gm-card h3{
- font-size:.9rem;
- padding:10px 12px 6px;
- text-align:center;
- min-height:48px;
-}
+    .topbar {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 13px 16px 13px 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(5, 13, 26, .76);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+    }
 
-/* INFO */
-.gm-info{
- padding:0 12px;
- font-size:.75rem;
- line-height:1.35;
- opacity:.95;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
 
-.gm-info div{
- display:flex;
- justify-content:space-between;
-}
+    .brand-mark {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background:
+        linear-gradient(145deg, rgba(22, 136, 255, .28), rgba(255, 41, 77, .20)),
+        rgba(255, 255, 255, .04);
+      border: 1px solid rgba(120, 190, 255, .26);
+      box-shadow: var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.12);
+      overflow: hidden;
+    }
 
-/* STATUS */
-.status.sim{color:#2dff9c}
-.status.nao{color:#ff5c5c}
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border: 2px solid rgba(255,255,255,.15);
+      border-radius: 12px;
+      transform: rotate(45deg);
+    }
 
-/* BOTÃO */
-.gm-card a{
- display:block;
- margin:10px 12px 14px;
- padding:.55rem;
- text-align:center;
- border-radius:14px;
- font-size:.82rem;
- font-weight:900;
- color:#fff;
- text-decoration:none;
- background:linear-gradient(135deg,var(--vip1),var(--vip2));
- box-shadow:0 0 20px rgba(255,0,43,.6);
- transition:.25s ease;
-}
+    .brand-mark span {
+      position: relative;
+      font-size: 1.24rem;
+      filter: drop-shadow(0 0 12px rgba(97, 180, 255, .65));
+    }
 
-.gm-card a:hover{
- transform:scale(1.05);
- box-shadow:0 0 34px rgba(255,0,43,.85);
-}
+    .brand-copy {
+      min-width: 0;
+    }
 
-/* ===== FOOTER ===== */
-.footer{
- text-align:center;
- padding-bottom:2rem;
-}
+    .brand-eyebrow {
+      margin-bottom: 3px;
+      color: var(--blue-light);
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
 
-.footer a{
- color:#fff;
- text-decoration:none;
- background:linear-gradient(135deg,#ff002b,#b0001c);
- padding:.8rem 2.2rem;
- border-radius:14px;
- font-weight:900;
- box-shadow:0 0 22px rgba(255,0,43,.6);
-}
-/* ===== BOTÃO HEADER (Senhas GM) ===== */
-.vip-actions{
-  display:flex;
-  align-items:center;
-  gap:.6rem;
-}
+    .brand h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(1rem, 2vw, 1.42rem);
+      line-height: 1.1;
+      white-space: nowrap;
+      background: linear-gradient(90deg, #ffffff 0%, var(--blue-light) 58%, var(--red-light) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
-.vip-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:.45rem;
-  padding:.55rem .95rem;
-  border-radius:16px;
-  font-size:.85rem;
-  font-weight:900;
-  letter-spacing:.5px;
-  color:#fff;
-  text-decoration:none;
-  background:linear-gradient(135deg,var(--vip1),var(--vip2));
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 0 22px rgba(255,0,43,.55);
-  transition:.25s ease;
-  white-space:nowrap;
-}
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.vip-btn:hover{
-  transform:translateY(-2px) scale(1.03);
-  box-shadow:0 0 34px rgba(255,0,43,.85);
-}
+    .header-btn,
+    .user-chip {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      white-space: nowrap;
+    }
 
-.vip-btn .icon{
-  filter:drop-shadow(0 0 12px rgba(255,0,43,.65));
-}
+    .header-btn {
+      padding: 0 16px;
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, rgba(22, 136, 255, .25), rgba(255, 41, 77, .20));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
 
-/* ===== MOBILE HEADER ===== */
-@media(max-width:600px){
-  .vip-actions{
-    width:100%;
-    justify-content:center;
-    flex-wrap:wrap;
-  }
-  .vip-btn{
-    width:100%;
-    max-width:360px;
-  }
-}
+    .header-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(97, 180, 255, .48);
+      box-shadow: var(--blue-glow);
+    }
 
-</style>
+    .user-chip {
+      padding: 0 15px;
+      background: rgba(255,255,255,.045);
+      color: var(--text-soft);
+      font-size: .8rem;
+    }
+
+    .user-chip strong {
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+
+    .vip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 14px rgba(56, 230, 160, .8);
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-top: 28px;
+      padding: clamp(28px, 5vw, 58px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 90% 20%, rgba(255, 41, 77, .16), transparent 28%),
+        radial-gradient(circle at 70% 100%, rgba(22, 136, 255, .19), transparent 40%),
+        linear-gradient(135deg, rgba(8, 21, 40, .94), rgba(7, 14, 28, .86));
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(110deg, transparent 0 54%, rgba(255,255,255,.025) 54% 55%, transparent 55% 100%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 780px;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 12px;
+      border: 1px solid rgba(97, 180, 255, .24);
+      border-radius: 999px;
+      background: rgba(22, 136, 255, .09);
+      color: #b9ddff;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .hero h2 {
+      max-width: 760px;
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(2rem, 5vw, 4.25rem);
+      line-height: 1.04;
+      letter-spacing: -.04em;
+    }
+
+    .hero h2 span {
+      background: linear-gradient(90deg, var(--blue-light), #ffffff 50%, var(--red-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin-top: 18px;
+      color: var(--text-soft);
+      font-size: clamp(.92rem, 1.6vw, 1.06rem);
+      line-height: 1.75;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 14px;
+      border-radius: 13px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.075);
+      color: var(--text-soft);
+      font-size: .77rem;
+      font-weight: 700;
+    }
+
+    .stat-pill b {
+      color: #fff;
+    }
+
+    .hero-orb {
+      position: absolute;
+      right: clamp(-100px, -4vw, -24px);
+      top: 50%;
+      width: clamp(260px, 36vw, 490px);
+      aspect-ratio: 1;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 40% 35%, rgba(255,255,255,.19), transparent 10%),
+        radial-gradient(circle at 40% 40%, rgba(22,136,255,.44), transparent 38%),
+        radial-gradient(circle at 62% 62%, rgba(255,41,77,.32), transparent 42%),
+        rgba(10,22,42,.55);
+      border: 1px solid rgba(137,184,255,.18);
+      filter: saturate(1.15);
+      opacity: .72;
+      box-shadow:
+        inset 0 0 80px rgba(255,255,255,.04),
+        0 0 100px rgba(22,136,255,.12);
+    }
+
+    .hero-orb::before,
+    .hero-orb::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.12);
+      transform: rotate(-18deg) scaleY(.38);
+    }
+
+    .hero-orb::after {
+      inset: 24%;
+      border-color: rgba(255,41,77,.22);
+      transform: rotate(38deg) scaleY(.55);
+    }
+
+    /* TOOLBAR */
+    .content-section {
+      padding: 26px 0 42px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section-heading h2 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+    }
+
+    .section-heading p {
+      margin-top: 7px;
+      color: var(--text-soft);
+      font-size: .86rem;
+    }
+
+    .search-box {
+      position: relative;
+      width: min(100%, 430px);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      width: 19px;
+      transform: translateY(-50%);
+      color: var(--blue-light);
+      pointer-events: none;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 50px;
+      padding: 0 45px 0 47px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      outline: none;
+      background: rgba(8, 20, 37, .72);
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .search-box input::placeholder {
+      color: #71849d;
+    }
+
+    .search-box input:focus {
+      background: rgba(9, 24, 45, .92);
+      border-color: rgba(97, 180, 255, .54);
+      box-shadow: 0 0 0 4px rgba(22, 136, 255, .10), var(--blue-glow);
+    }
+
+    .search-kbd {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 4px 7px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 7px;
+      color: #7d91aa;
+      background: rgba(255,255,255,.035);
+      font-size: .66rem;
+      font-weight: 700;
+    }
+
+    /* GRID E CARDS */
+    .gm-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+      gap: 18px;
+    }
+
+    .gm-card {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(12, 27, 49, .92), rgba(6, 15, 29, .94));
+      box-shadow: 0 16px 45px rgba(0,0,0,.22);
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .gm-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(97, 180, 255, .42);
+      box-shadow: 0 24px 70px rgba(0,0,0,.38), var(--blue-glow), var(--red-glow);
+    }
+
+    .gm-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: inherit;
+      background: linear-gradient(120deg, rgba(22,136,255,.07), transparent 45%, rgba(255,41,77,.065));
+      pointer-events: none;
+    }
+
+    .gm-cover {
+      position: relative;
+      height: 154px;
+      overflow: hidden;
+      background: #07111f;
+    }
+
+    .gm-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(7, 16, 30, .94), transparent 54%),
+        linear-gradient(120deg, rgba(22,136,255,.12), rgba(255,41,77,.08));
+    }
+
+    .gm-cover img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform .45s ease, filter .45s ease;
+    }
+
+    .gm-card:hover .gm-cover img {
+      transform: scale(1.065);
+      filter: saturate(1.08) contrast(1.03);
+    }
+
+    .vip-badge {
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(22,136,255,.9), rgba(255,41,77,.88));
+      color: #fff;
+      box-shadow: 0 8px 22px rgba(0,0,0,.24);
+      font-size: .66rem;
+      font-weight: 900;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .card-body {
+      position: relative;
+      z-index: 2;
+      padding: 17px;
+    }
+
+    .gm-card h3 {
+      min-height: 46px;
+      margin-bottom: 13px;
+      font-size: .96rem;
+      line-height: 1.42;
+      letter-spacing: -.01em;
+    }
+
+    .compatibility {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .compat-item {
+      min-width: 0;
+      padding: 9px 10px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 11px;
+      background: rgba(255,255,255,.033);
+    }
+
+    .compat-label {
+      display: block;
+      margin-bottom: 5px;
+      overflow: hidden;
+      color: #8498b2;
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .73rem;
+      font-weight: 800;
+    }
+
+    .status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+    }
+
+    .status.sim {
+      color: var(--success);
+    }
+
+    .status.sim::before {
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(56,230,160,.65);
+    }
+
+    .status.nao {
+      color: var(--danger);
+    }
+
+    .status.nao::before {
+      background: var(--danger);
+      box-shadow: 0 0 10px rgba(255,102,127,.55);
+    }
+
+    .download-btn {
+      width: 100%;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 13px;
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue) 50%, var(--red));
+      box-shadow: 0 12px 26px rgba(10, 96, 205, .20);
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .035em;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.12);
+      box-shadow: 0 15px 34px rgba(22,136,255,.28), 0 0 24px rgba(255,41,77,.13);
+    }
+
+    /* ESTADOS */
+    .state-card {
+      grid-column: 1 / -1;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      color: var(--text-soft);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .state-card strong {
+      color: #fff;
+    }
+
+    /* FOOTER */
+    .footer {
+      padding: 8px 0 38px;
+      text-align: center;
+    }
+
+    .back-btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 22px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(8, 20, 37, .72);
+      font-size: .83rem;
+      font-weight: 800;
+      box-shadow: 0 12px 32px rgba(0,0,0,.22);
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(97,180,255,.42);
+      background: rgba(12, 30, 54, .95);
+    }
+
+    .copyright {
+      margin-top: 18px;
+      color: #5f728a;
+      font-size: .72rem;
+    }
+
+    /* MODAL / BLOQUEIO VIP */
+    .access-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .access-card {
+      position: relative;
+      width: min(100%, 760px);
+      overflow: hidden;
+      padding: clamp(26px, 5vw, 44px);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(22,136,255,.18), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(255,41,77,.15), transparent 36%),
+        linear-gradient(145deg, rgba(10,24,44,.96), rgba(5,13,26,.97));
+      box-shadow: 0 35px 100px rgba(0,0,0,.48), var(--blue-glow), var(--red-glow);
+    }
+
+    .access-icon {
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 20px;
+      border: 1px solid rgba(97,180,255,.25);
+      border-radius: 21px;
+      background: linear-gradient(145deg, rgba(22,136,255,.22), rgba(255,41,77,.17));
+      font-size: 1.75rem;
+      box-shadow: var(--blue-glow);
+    }
+
+    .access-card h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(1.55rem, 4vw, 2.55rem);
+      line-height: 1.16;
+      text-align: center;
+      background: linear-gradient(90deg, var(--blue-light), #fff 48%, var(--red-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .access-lead {
+      max-width: 590px;
+      margin: 15px auto 22px;
+      color: var(--text-soft);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .access-info {
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.075);
+      border-radius: 16px;
+      background: rgba(255,255,255,.035);
+      color: var(--text-soft);
+      line-height: 1.65;
+    }
+
+    .access-info b {
+      color: #fff;
+    }
+
+    .access-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .access-actions a,
+    .access-actions button {
+      min-height: 50px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      cursor: pointer;
+      color: #fff;
+      text-decoration: none;
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      transition: transform .2s ease, filter .2s ease, background .2s ease;
+    }
+
+    .access-actions a:hover,
+    .access-actions button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .primary-access {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue) 54%, var(--red));
+      box-shadow: var(--blue-glow);
+    }
+
+    .secondary-access,
+    .retry-access {
+      background: rgba(255,255,255,.045);
+    }
+
+    .retry-access {
+      width: 100%;
+    }
+
+    .access-footer {
+      margin-top: 18px;
+      color: #61758d;
+      font-size: .72rem;
+      text-align: center;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 860px) {
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .top-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .hero-orb {
+        opacity: .38;
+      }
+
+      .section-heading {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell {
+        width: min(100% - 20px, 1380px);
+      }
+
+      .topbar-wrap {
+        padding-top: 10px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 15px;
+        border-radius: 18px;
+      }
+
+      .brand h1 {
+        white-space: normal;
+      }
+
+      .top-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .header-btn,
+      .user-chip {
+        width: 100%;
+      }
+
+      .hero {
+        margin-top: 17px;
+        padding: 28px 22px;
+        border-radius: 22px;
+      }
+
+      .hero p {
+        line-height: 1.62;
+      }
+
+      .hero-orb {
+        right: -170px;
+        opacity: .26;
+      }
+
+      .content-section {
+        padding-top: 20px;
+      }
+
+      .gm-container {
+        grid-template-columns: 1fr;
+      }
+
+      .gm-cover {
+        height: 180px;
+      }
+
+      .access-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .primary-access {
+        grid-column: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="page-shell">
+    <div class="topbar-wrap">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Gamemodes VIP">
+          <div class="brand-mark" aria-hidden="true">
+            <span>◆</span>
+          </div>
 
-<header>
-  <h1>Gamemodes VIP</h1>
+          <div class="brand-copy">
+            <div class="brand-eyebrow">Portal SiqueiraX</div>
+            <h1>Gamemodes VIP</h1>
+          </div>
+        </a>
 
-  <div class="vip-actions">
-    <a class="vip-btn" href="gmvipsenha.html">
-      <span class="icon">🔐</span>
-      <span>Senhas GM</span>
-    </a>
+        <div class="top-actions">
+          <a class="header-btn" href="gmvipsenha.html">
+            <span aria-hidden="true">🔐</span>
+            <span>Senhas GM</span>
+          </a>
 
-    <div class="user">
-      <span class="diamond">💎</span>
-      <span id="userName">Usuário</span>
-      <span style="opacity:.85">• VIP</span>
-    </div>
-  </div>
-</header>
-
-<div class="search-box">
-  <input type="text" id="search" placeholder="🔍 Buscar gamemode VIP...">
-</div>
-
-<div class="gm-container" id="gmContainer"></div>
-
-<div class="footer">
-  <a href="painelsiqueirax.html">Voltar ao Painel</a>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const gmContainer = document.getElementById("gmContainer");
-  const search = document.getElementById("search");
-
-  function renderNoVipBox(reason) {
-    document.body.innerHTML = `
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
-        <div style="max-width:760px;width:100%;background:rgba(15,15,15,.85);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:32px;box-shadow:0 0 65px rgba(255,0,43,.45);color:#fff;position:relative;overflow:hidden;">
-          <div style="position:absolute;inset:-2px;background:radial-gradient(circle at 20% 10%, rgba(255,0,43,.22), transparent 55%),radial-gradient(circle at 80% 80%, rgba(255,0,43,.16), transparent 55%);pointer-events:none;"></div>
-          <div style="position:relative;">
-            <h1 style="font-family:Orbitron,sans-serif;margin:0 0 12px 0;font-size:2.1rem;line-height:1.1;text-align:center;background:linear-gradient(90deg,#ff002b,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 35px rgba(255,0,43,.7);">
-              Área VIP • Acesso restrito
-            </h1>
-
-            <p style="text-align:center;opacity:.9;margin-bottom:18px;line-height:1.6;">
-              Para acessar os <b>GameModes VIP</b>, você precisa possuir o
-              <b>cargo VIP</b> no servidor do Discord do <b>SiqueiraX</b>.
-            </p>
-
-            <div style="background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;margin-bottom:18px;line-height:1.6;">
-              <b>Como liberar agora:</b><br>
-              • Assine o VIP no Discord oficial.<br>
-              • Dúvidas? Fale no WhatsApp: <b>82 9696-3727</b>.
-              ${reason ? `<div style="margin-top:10px;opacity:.85"><b>Detalhe:</b> ${reason}</div>` : ""}
-            </div>
-
-            <div style="display:grid;gap:12px;">
-              <a href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener" style="display:block;text-align:center;padding:1rem;border-radius:18px;font-weight:900;letter-spacing:1px;text-decoration:none;color:#fff;background:linear-gradient(135deg,#ff002b,#b0001c);box-shadow:0 0 30px rgba(255,0,43,.7);text-transform:uppercase;">
-                Entrar no Discord
-              </a>
-
-              <a href="https://wa.me/558296963727" target="_blank" rel="noopener" style="display:block;text-align:center;padding:1rem;border-radius:18px;font-weight:900;letter-spacing:1px;text-decoration:none;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);box-shadow:0 0 22px rgba(0,0,0,.25);text-transform:uppercase;">
-                Falar no WhatsApp
-              </a>
-
-              <button id="tryAgainBtn" style="width:100%;padding:1rem;border-radius:18px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.35);color:#fff;font-weight:900;letter-spacing:1px;cursor:pointer;text-transform:uppercase;">
-                Tentar novamente
-              </button>
-            </div>
-
-            <p style="text-align:center;opacity:.6;margin-top:16px;font-size:.85rem;">
-              © Portal SiqueiraX • Segurança VIP Ativa
-            </p>
+          <div class="user-chip">
+            <span class="vip-dot" aria-hidden="true"></span>
+            <strong id="userName">Usuário</strong>
+            <span>VIP</span>
           </div>
         </div>
+      </header>
+    </div>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span aria-hidden="true">◆</span>
+            Biblioteca exclusiva
+          </div>
+
+          <h2>Escolha seu próximo <span>Gamemode VIP</span></h2>
+
+          <p>
+            Explore os projetos disponíveis, confira a compatibilidade com cada hospedagem
+            e faça o download diretamente pela sua área VIP.
+          </p>
+
+          <div class="hero-stats">
+            <div class="stat-pill"><span>⚡</span><b>Acesso rápido</b></div>
+            <div class="stat-pill"><span>🛡️</span><b>Área protegida</b></div>
+            <div class="stat-pill"><span>🔄</span><b>Catálogo atualizado</b></div>
+          </div>
+        </div>
+
+        <div class="hero-orb" aria-hidden="true"></div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-heading">
+          <div>
+            <h2>Catálogo de Gamemodes</h2>
+            <p>Use a busca para encontrar rapidamente o projeto desejado.</p>
+          </div>
+
+          <label class="search-box" for="search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+
+            <input
+              type="search"
+              id="search"
+              placeholder="Buscar gamemode VIP..."
+              autocomplete="off"
+            >
+
+            <span class="search-kbd">BUSCAR</span>
+          </label>
+        </div>
+
+        <div class="gm-container" id="gmContainer">
+          <div class="state-card">
+            Carregando <strong>gamemodes VIP</strong>...
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a class="back-btn" href="painelsiqueirax.html">
+        <span aria-hidden="true">←</span>
+        Voltar ao Painel
+      </a>
+
+      <div class="copyright">
+        © Portal SiqueiraX • Segurança VIP ativa
       </div>
-    `;
+    </footer>
+  </div>
 
-    document.getElementById("tryAgainBtn").addEventListener("click", () => {
-      window.location.reload();
-    });
-  }
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const gmContainer = document.getElementById("gmContainer");
+      const search = document.getElementById("search");
 
-  try {
-    const r = await fetch("/.netlify/functions/vip-me", {
-      credentials: "include",
-      cache: "no-store"
-    });
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
 
-    if (!r.ok) {
-      const reason = await r.text().catch(() => "");
+      function safeUrl(value, fallback = "#") {
+        try {
+          const url = new URL(String(value ?? ""), window.location.href);
+          return ["http:", "https:"].includes(url.protocol) ? url.href : fallback;
+        } catch {
+          return fallback;
+        }
+      }
 
-      if (
-        reason === "no_session" ||
-        reason === "invalid_session" ||
-        reason === "expired_session"
-      ) {
-        window.location.href = "loginvip.html";
+      function renderNoVipBox(reason) {
+        document.body.innerHTML = `
+          <main class="access-page">
+            <section class="access-card">
+              <div class="access-icon" aria-hidden="true">🔒</div>
+
+              <h1>Área VIP • Acesso restrito</h1>
+
+              <p class="access-lead">
+                Para acessar os <b>Gamemodes VIP</b>, você precisa possuir o
+                <b>cargo VIP</b> no servidor oficial do Discord do <b>SiqueiraX</b>.
+              </p>
+
+              <div class="access-info">
+                <b>Como liberar seu acesso:</b><br>
+                • Assine o VIP no Discord oficial.<br>
+                • Em caso de dúvida, fale no WhatsApp: <b>82 9696-3727</b>.
+                ${
+                  reason
+                    ? `<div style="margin-top:10px"><b>Detalhe:</b> ${escapeHtml(reason)}</div>`
+                    : ""
+                }
+              </div>
+
+              <div class="access-actions">
+                <a
+                  class="primary-access"
+                  href="https://dsc.gg/siqueiraxsamp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Entrar no Discord
+                </a>
+
+                <a
+                  class="secondary-access"
+                  href="https://wa.me/558296963727"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Falar no WhatsApp
+                </a>
+
+                <button class="retry-access" id="tryAgainBtn" type="button">
+                  Tentar novamente
+                </button>
+              </div>
+
+              <p class="access-footer">
+                © Portal SiqueiraX • Segurança VIP ativa
+              </p>
+            </section>
+          </main>
+        `;
+
+        document.getElementById("tryAgainBtn").addEventListener("click", () => {
+          window.location.reload();
+        });
+      }
+
+      try {
+        const r = await fetch("/.netlify/functions/vip-me", {
+          credentials: "include",
+          cache: "no-store"
+        });
+
+        if (!r.ok) {
+          const reason = await r.text().catch(() => "");
+
+          if (
+            reason === "no_session" ||
+            reason === "invalid_session" ||
+            reason === "expired_session"
+          ) {
+            window.location.href = "loginvip.html";
+            return;
+          }
+
+          renderNoVipBox(`Acesso VIP negado • ${reason || "sem_detalhe"}`);
+          return;
+        }
+      } catch {
+        renderNoVipBox("Não foi possível validar seu acesso VIP.");
         return;
       }
 
-      renderNoVipBox(`Acesso VIP negado • ${reason || "sem_detalhe"}`);
-      return;
-    }
-  } catch {
-    renderNoVipBox("Não foi possível validar seu acesso VIP.");
-    return;
-  }
+      function statusSpan(ok) {
+        return `
+          <span class="status ${ok ? "sim" : "nao"}">
+            ${ok ? "Compatível" : "Não"}
+          </span>
+        `;
+      }
 
-  function statusSpan(ok) {
-    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`;
-  }
+      function render(list) {
+        if (!list.length) {
+          gmContainer.innerHTML = `
+            <div class="state-card">
+              Nenhum <strong>gamemode</strong> encontrado para esta busca.
+            </div>
+          `;
+          return;
+        }
 
-  function render(list) {
-    gmContainer.innerHTML = list.map(gm => `
-      <div class="gm-card vip">
-        <img src="${gm.image}" alt="${gm.title}" />
+        gmContainer.innerHTML = list.map(gm => {
+          const title = escapeHtml(gm.title || "Gamemode VIP");
+          const image = safeUrl(gm.image, "https://i.imgur.com/eKjFtd1.png");
+          const link = safeUrl(gm.link, "#");
+          const linkText = escapeHtml(gm.linkText || "Fazer download");
 
-        <h3>${gm.title}</h3>
+          return `
+            <article class="gm-card">
+              <div class="gm-cover">
+                <img
+                  src="${image}"
+                  alt="${title}"
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.src='https://i.imgur.com/eKjFtd1.png'"
+                >
 
-        <div class="gm-info">
-          <div>Gamemode funciona:</div>
-          <div><strong>optlink:</strong> ${statusSpan(!!gm.works?.optlink)}</div>
-          <div><strong>lemehost:</strong> ${statusSpan(!!gm.works?.lemehost)}</div>
-          <div><strong>TCADMIN:</strong> ${statusSpan(!!gm.works?.tcadmin)}</div>
-          <div><strong>VPS:</strong> ${statusSpan(!!gm.works?.vps)}</div>
-        </div>
+                <div class="vip-badge">
+                  <span aria-hidden="true">◆</span>
+                  VIP
+                </div>
+              </div>
 
-        <a href="${gm.link}" target="_blank" rel="noopener noreferrer">
-          ${gm.linkText || "Download"}
-        </a>
-      </div>
-    `).join("");
-  }
+              <div class="card-body">
+                <h3>${title}</h3>
 
-  try {
-    const res = await fetch(`/.netlify/functions/gamemodesvip?t=${Date.now()}`, {
-      method: "GET",
-      credentials: "include",
-      cache: "no-store",
-      headers: {
-        "Accept": "application/json"
+                <div class="compatibility" aria-label="Compatibilidade do gamemode">
+                  <div class="compat-item">
+                    <span class="compat-label">optlink</span>
+                    ${statusSpan(!!gm.works?.optlink)}
+                  </div>
+
+                  <div class="compat-item">
+                    <span class="compat-label">lemehost</span>
+                    ${statusSpan(!!gm.works?.lemehost)}
+                  </div>
+
+                  <div class="compat-item">
+                    <span class="compat-label">TCADMIN</span>
+                    ${statusSpan(!!gm.works?.tcadmin)}
+                  </div>
+
+                  <div class="compat-item">
+                    <span class="compat-label">VPS</span>
+                    ${statusSpan(!!gm.works?.vps)}
+                  </div>
+                </div>
+
+                <a
+                  class="download-btn"
+                  href="${link}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span aria-hidden="true">↓</span>
+                  ${linkText}
+                </a>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      try {
+        const res = await fetch(`/.netlify/functions/gamemodesvip?t=${Date.now()}`, {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (!res.ok) {
+          gmContainer.innerHTML = `
+            <div class="state-card">
+              Erro ao carregar <strong>gamemodes VIP</strong> (HTTP ${res.status}).
+            </div>
+          `;
+          return;
+        }
+
+        const all = await res.json();
+
+        if (!Array.isArray(all)) {
+          gmContainer.innerHTML = `
+            <div class="state-card">
+              Erro: resposta inválida da função <strong>gamemodesvip</strong>.
+            </div>
+          `;
+          return;
+        }
+
+        all.sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+        render(all);
+
+        if (search) {
+          search.addEventListener("input", () => {
+            const value = (search.value || "").trim().toLowerCase();
+
+            const filtered = all
+              .filter(gm => (gm.title || "").toLowerCase().includes(value))
+              .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+
+            render(filtered);
+          });
+        }
+      } catch (err) {
+        gmContainer.innerHTML = `
+          <div class="state-card">
+            Erro ao carregar <strong>gamemodes VIP</strong>.
+            Verifique a função Netlify.
+          </div>
+        `;
+
+        console.error("Erro gamemodesvip:", err);
       }
     });
-
-    if (!res.ok) {
-      gmContainer.innerHTML = `
-        <div style="padding:1rem;opacity:.9">
-          Erro ao carregar <b>gamemodes VIP</b> (HTTP ${res.status}).
-        </div>
-      `;
-      return;
-    }
-
-    const all = await res.json();
-
-    if (!Array.isArray(all)) {
-      gmContainer.innerHTML = `
-        <div style="padding:1rem;opacity:.9">
-          Erro: resposta inválida da função <b>gamemodesvip</b>.
-        </div>
-      `;
-      return;
-    }
-
-    all.sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
-
-    render(all);
-
-    if (search) {
-      search.addEventListener("input", () => {
-        const v = (search.value || "").toLowerCase();
-
-        const filtered = all
-          .filter(gm => (gm.title || "").toLowerCase().includes(v))
-          .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
-
-        render(filtered);
-      });
-    }
-  } catch (err) {
-    gmContainer.innerHTML = `
-      <div style="padding:1rem;opacity:.9">
-        Erro ao carregar <b>gamemodes VIP</b>. Verifique a função Netlify.
-      </div>
-    `;
-
-    console.error("Erro gamemodesvip:", err);
-  }
-});
-</script>
-
-
+  </script>
 </body>
 </html>

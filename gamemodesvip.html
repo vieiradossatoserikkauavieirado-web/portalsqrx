@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#07111f">
+  <meta name="theme-color" content="#0c1626">
 
   <title>Gamemodes VIP • Portal SiqueiraX</title>
 
@@ -12,39 +12,34 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #050914;
-      --bg-soft: #081323;
-      --surface: rgba(9, 20, 37, .78);
-      --surface-strong: rgba(10, 23, 42, .94);
-      --surface-light: rgba(255, 255, 255, .055);
+      --bg: #09111d;
+      --bg-2: #0d1828;
+      --panel: #101d2f;
+      --panel-2: #13243a;
+      --panel-3: #0c1726;
 
-      --blue: #1688ff;
-      --blue-light: #61b4ff;
-      --blue-dark: #064ba8;
+      --blue: #2a82d9;
+      --blue-dark: #1d5f9f;
+      --blue-soft: #7bb9f2;
 
-      --red: #ff294d;
-      --red-light: #ff6b82;
-      --red-dark: #a90027;
+      --red: #d93952;
+      --red-dark: #9f2638;
 
-      --text: #f5f9ff;
-      --text-soft: #a9bad0;
-      --line: rgba(137, 184, 255, .16);
+      --text: #f4f7fb;
+      --muted: #9aabbe;
+      --line: #223750;
 
-      --success: #38e6a0;
-      --danger: #ff667f;
-      --warning: #ffc857;
+      --green: #4bd29a;
+      --danger: #ed6c7e;
 
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 15px;
+      --radius: 14px;
+      --radius-small: 10px;
 
-      --shadow: 0 24px 70px rgba(0, 0, 0, .38);
-      --blue-glow: 0 0 35px rgba(22, 136, 255, .24);
-      --red-glow: 0 0 35px rgba(255, 41, 77, .20);
+      --shadow: 0 12px 28px rgba(0, 0, 0, .24);
     }
 
     * {
@@ -62,37 +57,19 @@
       font-family: "Inter", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 12% 10%, rgba(22, 136, 255, .17), transparent 30%),
-        radial-gradient(circle at 88% 14%, rgba(255, 41, 77, .13), transparent 28%),
-        radial-gradient(circle at 50% 100%, rgba(22, 136, 255, .08), transparent 38%),
-        linear-gradient(145deg, #030711 0%, #07101d 46%, #050913 100%);
-      overflow-x: hidden;
+        linear-gradient(rgba(9, 17, 29, .92), rgba(9, 17, 29, .97)),
+        url("https://i.imgur.com/eKjFtd1.png") center/cover fixed no-repeat;
     }
 
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      z-index: -2;
-      background:
-        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: linear-gradient(to bottom, black, transparent 90%);
-      pointer-events: none;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      width: 420px;
-      height: 420px;
-      left: -180px;
-      bottom: -160px;
       z-index: -1;
-      border-radius: 50%;
-      background: rgba(22, 136, 255, .18);
-      filter: blur(110px);
+      background:
+        linear-gradient(90deg, rgba(42, 130, 217, .045) 1px, transparent 1px),
+        linear-gradient(rgba(42, 130, 217, .045) 1px, transparent 1px);
+      background-size: 36px 36px;
       pointer-events: none;
     }
 
@@ -106,32 +83,25 @@
       color: inherit;
     }
 
-    .page-shell {
-      width: min(1380px, calc(100% - 32px));
+    .container {
+      width: min(1180px, calc(100% - 28px));
       margin: 0 auto;
     }
 
     /* HEADER */
-    .topbar-wrap {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding-top: 14px;
+    .site-header {
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: rgba(7, 14, 24, .92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    .topbar {
-      min-height: 76px;
+    .header-inner {
+      min-height: 82px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      padding: 13px 16px 13px 20px;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: rgba(5, 13, 26, .76);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      box-shadow: var(--shadow);
     }
 
     .brand {
@@ -139,376 +109,247 @@
       align-items: center;
       gap: 13px;
       min-width: 0;
+      text-decoration: none;
     }
 
-    .brand-mark {
-      position: relative;
-      width: 46px;
-      height: 46px;
+    .brand-logo {
+      width: 54px;
+      height: 54px;
       flex: 0 0 auto;
-      display: grid;
-      place-items: center;
-      border-radius: 15px;
-      background:
-        linear-gradient(145deg, rgba(22, 136, 255, .28), rgba(255, 41, 77, .20)),
-        rgba(255, 255, 255, .04);
-      border: 1px solid rgba(120, 190, 255, .26);
-      box-shadow: var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.12);
-      overflow: hidden;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,.12);
+      background: #08111d;
+      box-shadow: 0 0 0 4px rgba(42, 130, 217, .08);
     }
 
-    .brand-mark::before {
-      content: "";
-      position: absolute;
-      width: 34px;
-      height: 34px;
-      border: 2px solid rgba(255,255,255,.15);
-      border-radius: 12px;
-      transform: rotate(45deg);
-    }
-
-    .brand-mark span {
-      position: relative;
-      font-size: 1.24rem;
-      filter: drop-shadow(0 0 12px rgba(97, 180, 255, .65));
-    }
-
-    .brand-copy {
+    .brand-text {
       min-width: 0;
     }
 
-    .brand-eyebrow {
-      margin-bottom: 3px;
-      color: var(--blue-light);
-      font-size: .68rem;
-      font-weight: 800;
-      letter-spacing: .18em;
+    .brand-text span {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--blue-soft);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
       text-transform: uppercase;
     }
 
-    .brand h1 {
-      font-family: "Orbitron", sans-serif;
-      font-size: clamp(1rem, 2vw, 1.42rem);
-      line-height: 1.1;
-      white-space: nowrap;
-      background: linear-gradient(90deg, #ffffff 0%, var(--blue-light) 58%, var(--red-light) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+    .brand-text h1 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: clamp(1.25rem, 3vw, 1.72rem);
+      line-height: 1;
+      letter-spacing: .02em;
     }
 
-    .top-actions {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .header-btn,
-    .user-chip {
-      min-height: 46px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      border-radius: 15px;
-      border: 1px solid var(--line);
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .header-btn {
-      padding: 0 16px;
-      color: #fff;
-      font-size: .82rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, rgba(22, 136, 255, .25), rgba(255, 41, 77, .20));
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
-
-    .header-btn:hover {
-      transform: translateY(-2px);
-      border-color: rgba(97, 180, 255, .48);
-      box-shadow: var(--blue-glow);
-    }
-
-    .user-chip {
-      padding: 0 15px;
-      background: rgba(255,255,255,.045);
-      color: var(--text-soft);
-      font-size: .8rem;
-    }
-
-    .user-chip strong {
-      max-width: 150px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: #fff;
-    }
-
-    .vip-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 14px rgba(56, 230, 160, .8);
-    }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      overflow: hidden;
-      margin-top: 28px;
-      padding: clamp(28px, 5vw, 58px);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
-      background:
-        radial-gradient(circle at 90% 20%, rgba(255, 41, 77, .16), transparent 28%),
-        radial-gradient(circle at 70% 100%, rgba(22, 136, 255, .19), transparent 40%),
-        linear-gradient(135deg, rgba(8, 21, 40, .94), rgba(7, 14, 28, .86));
-      box-shadow: var(--shadow);
-    }
-
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(110deg, transparent 0 54%, rgba(255,255,255,.025) 54% 55%, transparent 55% 100%);
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      max-width: 780px;
-      z-index: 2;
-    }
-
-    .hero-badge {
-      width: fit-content;
+    .header-link,
+    .user-box {
+      min-height: 42px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 18px;
-      padding: 8px 12px;
-      border: 1px solid rgba(97, 180, 255, .24);
-      border-radius: 999px;
-      background: rgba(22, 136, 255, .09);
-      color: #b9ddff;
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-small);
+      background: rgba(255,255,255,.035);
     }
 
-    .hero h2 {
-      max-width: 760px;
-      font-family: "Orbitron", sans-serif;
-      font-size: clamp(2rem, 5vw, 4.25rem);
-      line-height: 1.04;
-      letter-spacing: -.04em;
-    }
-
-    .hero h2 span {
-      background: linear-gradient(90deg, var(--blue-light), #ffffff 50%, var(--red-light));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero p {
-      max-width: 680px;
-      margin-top: 18px;
-      color: var(--text-soft);
-      font-size: clamp(.92rem, 1.6vw, 1.06rem);
-      line-height: 1.75;
-    }
-
-    .hero-stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 28px;
-    }
-
-    .stat-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 11px 14px;
-      border-radius: 13px;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.075);
-      color: var(--text-soft);
-      font-size: .77rem;
+    .header-link {
+      padding: 0 14px;
+      text-decoration: none;
+      font-size: .8rem;
       font-weight: 700;
+      transition: background .18s ease, border-color .18s ease;
     }
 
-    .stat-pill b {
+    .header-link:hover {
+      background: rgba(42, 130, 217, .10);
+      border-color: rgba(123, 185, 242, .35);
+    }
+
+    .user-box {
+      padding: 0 13px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .user-box strong {
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       color: #fff;
+      white-space: nowrap;
     }
 
-    .hero-orb {
-      position: absolute;
-      right: clamp(-100px, -4vw, -24px);
-      top: 50%;
-      width: clamp(260px, 36vw, 490px);
-      aspect-ratio: 1;
-      transform: translateY(-50%);
+    .vip-mark {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 auto;
       border-radius: 50%;
-      background:
-        radial-gradient(circle at 40% 35%, rgba(255,255,255,.19), transparent 10%),
-        radial-gradient(circle at 40% 40%, rgba(22,136,255,.44), transparent 38%),
-        radial-gradient(circle at 62% 62%, rgba(255,41,77,.32), transparent 42%),
-        rgba(10,22,42,.55);
-      border: 1px solid rgba(137,184,255,.18);
-      filter: saturate(1.15);
-      opacity: .72;
-      box-shadow:
-        inset 0 0 80px rgba(255,255,255,.04),
-        0 0 100px rgba(22,136,255,.12);
+      background: var(--green);
     }
 
-    .hero-orb::before,
-    .hero-orb::after {
+    /* INTRO */
+    .page-intro {
+      padding: 34px 0 24px;
+    }
+
+    .intro-card {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(110deg, rgba(20, 44, 72, .96), rgba(13, 29, 48, .96));
+      box-shadow: var(--shadow);
+    }
+
+    .intro-card::after {
       content: "";
       position: absolute;
-      inset: 12%;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.12);
-      transform: rotate(-18deg) scaleY(.38);
+      top: 0;
+      right: 0;
+      width: 8px;
+      height: 100%;
+      background: linear-gradient(var(--blue), var(--red));
     }
 
-    .hero-orb::after {
-      inset: 24%;
-      border-color: rgba(255,41,77,.22);
-      transform: rotate(38deg) scaleY(.55);
+    .intro-topline {
+      width: 56px;
+      height: 4px;
+      margin-bottom: 18px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--blue), var(--red));
     }
 
-    /* TOOLBAR */
-    .content-section {
-      padding: 26px 0 42px;
+    .intro-card h2 {
+      max-width: 700px;
+      font-family: "Rajdhani", sans-serif;
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      line-height: 1;
+      letter-spacing: -.02em;
     }
 
-    .section-heading {
+    .intro-card p {
+      max-width: 690px;
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: .94rem;
+    }
+
+    .intro-meta {
       display: flex;
-      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 22px;
+      color: #bfd0e2;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+
+    .intro-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* BARRA DE BUSCA */
+    .catalog-section {
+      padding-bottom: 42px;
+    }
+
+    .catalog-head {
+      display: flex;
+      align-items: end;
       justify-content: space-between;
       gap: 18px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    .section-heading h2 {
-      font-family: "Orbitron", sans-serif;
-      font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+    .catalog-title h2 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 1.7rem;
+      line-height: 1;
     }
 
-    .section-heading p {
-      margin-top: 7px;
-      color: var(--text-soft);
-      font-size: .86rem;
+    .catalog-title p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: .8rem;
     }
 
     .search-box {
       position: relative;
-      width: min(100%, 430px);
-    }
-
-    .search-box svg {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      width: 19px;
-      transform: translateY(-50%);
-      color: var(--blue-light);
-      pointer-events: none;
+      width: min(100%, 370px);
     }
 
     .search-box input {
       width: 100%;
-      height: 50px;
-      padding: 0 45px 0 47px;
+      height: 45px;
+      padding: 0 15px 0 41px;
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: var(--radius-small);
       outline: none;
-      background: rgba(8, 20, 37, .72);
+      background: var(--panel-3);
       color: #fff;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
-      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      transition: border-color .18s ease, background .18s ease;
     }
 
     .search-box input::placeholder {
-      color: #71849d;
+      color: #6f839a;
     }
 
     .search-box input:focus {
-      background: rgba(9, 24, 45, .92);
-      border-color: rgba(97, 180, 255, .54);
-      box-shadow: 0 0 0 4px rgba(22, 136, 255, .10), var(--blue-glow);
+      border-color: var(--blue);
+      background: #0f1d2f;
     }
 
-    .search-kbd {
+    .search-icon {
       position: absolute;
-      right: 13px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      padding: 4px 7px;
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: 7px;
-      color: #7d91aa;
-      background: rgba(255,255,255,.035);
-      font-size: .66rem;
-      font-weight: 700;
+      color: var(--blue-soft);
+      font-size: .95rem;
+      pointer-events: none;
     }
 
-    /* GRID E CARDS */
+    /* GRID */
     .gm-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 16px;
     }
 
     .gm-card {
-      position: relative;
-      min-width: 0;
       overflow: hidden;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: linear-gradient(180deg, rgba(12, 27, 49, .92), rgba(6, 15, 29, .94));
-      box-shadow: 0 16px 45px rgba(0,0,0,.22);
-      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 8px 20px rgba(0,0,0,.18);
+      transition: transform .18s ease, border-color .18s ease;
     }
 
     .gm-card:hover {
-      transform: translateY(-7px);
-      border-color: rgba(97, 180, 255, .42);
-      box-shadow: 0 24px 70px rgba(0,0,0,.38), var(--blue-glow), var(--red-glow);
-    }
-
-    .gm-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      border-radius: inherit;
-      background: linear-gradient(120deg, rgba(22,136,255,.07), transparent 45%, rgba(255,41,77,.065));
-      pointer-events: none;
+      transform: translateY(-3px);
+      border-color: rgba(123, 185, 242, .45);
     }
 
     .gm-cover {
       position: relative;
-      height: 154px;
+      height: 136px;
       overflow: hidden;
-      background: #07111f;
-    }
-
-    .gm-cover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to top, rgba(7, 16, 30, .94), transparent 54%),
-        linear-gradient(120deg, rgba(22,136,255,.12), rgba(255,41,77,.08));
+      background: #08111d;
+      border-bottom: 1px solid var(--line);
     }
 
     .gm-cover img {
@@ -516,99 +357,109 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      transition: transform .45s ease, filter .45s ease;
+      transition: transform .25s ease;
     }
 
     .gm-card:hover .gm-cover img {
-      transform: scale(1.065);
-      filter: saturate(1.08) contrast(1.03);
+      transform: scale(1.035);
     }
 
-    .vip-badge {
+    .gm-cover::after {
+      content: "";
       position: absolute;
-      top: 13px;
-      left: 13px;
+      inset: 0;
+      background: linear-gradient(to top, rgba(8,17,29,.68), transparent 62%);
+      pointer-events: none;
+    }
+
+    .vip-label {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
       z-index: 2;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 10px;
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(22,136,255,.9), rgba(255,41,77,.88));
+      padding: 5px 8px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 7px;
+      background: rgba(11, 24, 40, .88);
       color: #fff;
-      box-shadow: 0 8px 22px rgba(0,0,0,.24);
-      font-size: .66rem;
-      font-weight: 900;
-      letter-spacing: .09em;
+      font-size: .64rem;
+      font-weight: 800;
+      letter-spacing: .08em;
       text-transform: uppercase;
     }
 
-    .card-body {
-      position: relative;
-      z-index: 2;
-      padding: 17px;
+    .vip-label::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .card-content {
+      padding: 15px;
     }
 
     .gm-card h3 {
-      min-height: 46px;
-      margin-bottom: 13px;
-      font-size: .96rem;
-      line-height: 1.42;
-      letter-spacing: -.01em;
+      min-height: 42px;
+      margin-bottom: 12px;
+      font-size: .93rem;
+      line-height: 1.4;
     }
 
-    .compatibility {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-
-    .compat-item {
-      min-width: 0;
-      padding: 9px 10px;
-      border: 1px solid rgba(255,255,255,.065);
-      border-radius: 11px;
-      background: rgba(255,255,255,.033);
-    }
-
-    .compat-label {
-      display: block;
-      margin-bottom: 5px;
-      overflow: hidden;
-      color: #8498b2;
-      font-size: .62rem;
+    .compatibility-title {
+      margin-bottom: 8px;
+      color: #7f93aa;
+      font-size: .66rem;
       font-weight: 800;
-      letter-spacing: .06em;
-      text-overflow: ellipsis;
+      letter-spacing: .08em;
       text-transform: uppercase;
-      white-space: nowrap;
+    }
+
+    .compatibility-list {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .compatibility-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 9px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+      font-size: .73rem;
+    }
+
+    .compatibility-row strong {
+      color: #c3d0de;
+      font-weight: 600;
     }
 
     .status {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: .73rem;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .status::before {
       content: "";
       width: 7px;
       height: 7px;
-      flex: 0 0 auto;
       border-radius: 50%;
     }
 
     .status.sim {
-      color: var(--success);
+      color: var(--green);
     }
 
     .status.sim::before {
-      background: var(--success);
-      box-shadow: 0 0 10px rgba(56,230,160,.65);
+      background: var(--green);
     }
 
     .status.nao {
@@ -617,45 +468,38 @@
 
     .status.nao::before {
       background: var(--danger);
-      box-shadow: 0 0 10px rgba(255,102,127,.55);
     }
 
     .download-btn {
-      width: 100%;
-      min-height: 44px;
-      display: inline-flex;
+      min-height: 41px;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 9px;
-      padding: 0 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 13px;
+      gap: 8px;
+      border: 0;
+      border-radius: 9px;
       color: #fff;
       text-decoration: none;
-      background: linear-gradient(135deg, var(--blue-dark), var(--blue) 50%, var(--red));
-      box-shadow: 0 12px 26px rgba(10, 96, 205, .20);
-      font-size: .78rem;
-      font-weight: 900;
-      letter-spacing: .035em;
-      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+      font-size: .77rem;
+      font-weight: 800;
+      transition: background .18s ease, transform .18s ease;
     }
 
     .download-btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.12);
-      box-shadow: 0 15px 34px rgba(22,136,255,.28), 0 0 24px rgba(255,41,77,.13);
+      transform: translateY(-1px);
+      background: linear-gradient(90deg, var(--blue), var(--red));
     }
 
     /* ESTADOS */
     .state-card {
       grid-column: 1 / -1;
-      padding: 26px;
+      padding: 24px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: var(--surface);
-      color: var(--text-soft);
+      border-radius: var(--radius);
+      background: var(--panel);
+      color: var(--muted);
       text-align: center;
-      box-shadow: var(--shadow);
     }
 
     .state-card strong {
@@ -663,103 +507,105 @@
     }
 
     /* FOOTER */
-    .footer {
-      padding: 8px 0 38px;
+    .site-footer {
+      padding: 10px 0 34px;
       text-align: center;
     }
 
     .back-btn {
-      min-height: 48px;
+      min-height: 43px;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 0 22px;
+      gap: 8px;
+      padding: 0 17px;
       border: 1px solid var(--line);
-      border-radius: 15px;
+      border-radius: var(--radius-small);
       color: #fff;
       text-decoration: none;
-      background: rgba(8, 20, 37, .72);
-      font-size: .83rem;
-      font-weight: 800;
-      box-shadow: 0 12px 32px rgba(0,0,0,.22);
-      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+      background: var(--panel-3);
+      font-size: .78rem;
+      font-weight: 700;
+      transition: background .18s ease, border-color .18s ease;
     }
 
     .back-btn:hover {
-      transform: translateY(-2px);
-      border-color: rgba(97,180,255,.42);
-      background: rgba(12, 30, 54, .95);
+      background: var(--panel-2);
+      border-color: rgba(123,185,242,.36);
     }
 
-    .copyright {
-      margin-top: 18px;
-      color: #5f728a;
-      font-size: .72rem;
+    .footer-text {
+      margin-top: 14px;
+      color: #667a91;
+      font-size: .7rem;
     }
 
-    /* MODAL / BLOQUEIO VIP */
+    /* TELA SEM VIP */
     .access-page {
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: 22px;
     }
 
     .access-card {
-      position: relative;
-      width: min(100%, 760px);
-      overflow: hidden;
-      padding: clamp(26px, 5vw, 44px);
+      width: min(100%, 670px);
+      padding: 30px;
       border: 1px solid var(--line);
-      border-radius: 30px;
-      background:
-        radial-gradient(circle at 12% 0%, rgba(22,136,255,.18), transparent 34%),
-        radial-gradient(circle at 100% 100%, rgba(255,41,77,.15), transparent 36%),
-        linear-gradient(145deg, rgba(10,24,44,.96), rgba(5,13,26,.97));
-      box-shadow: 0 35px 100px rgba(0,0,0,.48), var(--blue-glow), var(--red-glow);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
     }
 
-    .access-icon {
-      width: 68px;
-      height: 68px;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 20px;
-      border: 1px solid rgba(97,180,255,.25);
-      border-radius: 21px;
-      background: linear-gradient(145deg, rgba(22,136,255,.22), rgba(255,41,77,.17));
-      font-size: 1.75rem;
-      box-shadow: var(--blue-glow);
+    .access-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
-    .access-card h1 {
-      font-family: "Orbitron", sans-serif;
-      font-size: clamp(1.55rem, 4vw, 2.55rem);
-      line-height: 1.16;
-      text-align: center;
-      background: linear-gradient(90deg, var(--blue-light), #fff 48%, var(--red-light));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+    .access-brand img {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,.12);
     }
 
-    .access-lead {
-      max-width: 590px;
-      margin: 15px auto 22px;
-      color: var(--text-soft);
-      line-height: 1.7;
-      text-align: center;
+    .access-brand div span {
+      display: block;
+      color: var(--blue-soft);
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .access-brand div strong {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 1.35rem;
+    }
+
+    .access-card h2 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      line-height: 1;
+    }
+
+    .access-card > p {
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.65;
     }
 
     .access-info {
-      margin-bottom: 18px;
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,.075);
-      border-radius: 16px;
-      background: rgba(255,255,255,.035);
-      color: var(--text-soft);
-      line-height: 1.65;
+      margin: 20px 0;
+      padding: 15px;
+      border-left: 4px solid var(--red);
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: .86rem;
     }
 
     .access-info b {
@@ -769,72 +615,63 @@
     .access-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 11px;
+      gap: 10px;
     }
 
     .access-actions a,
     .access-actions button {
-      min-height: 50px;
+      min-height: 44px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0 18px;
+      padding: 0 14px;
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 9px;
       cursor: pointer;
       color: #fff;
       text-decoration: none;
-      font-size: .78rem;
-      font-weight: 900;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      transition: transform .2s ease, filter .2s ease, background .2s ease;
+      font-size: .76rem;
+      font-weight: 800;
     }
 
-    .access-actions a:hover,
-    .access-actions button:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-
-    .primary-access {
+    .discord-btn {
       grid-column: 1 / -1;
-      background: linear-gradient(135deg, var(--blue-dark), var(--blue) 54%, var(--red));
-      box-shadow: var(--blue-glow);
+      border-color: transparent !important;
+      background: var(--blue);
     }
 
-    .secondary-access,
-    .retry-access {
-      background: rgba(255,255,255,.045);
+    .whatsapp-btn,
+    .retry-btn {
+      background: rgba(255,255,255,.035);
     }
 
-    .retry-access {
-      width: 100%;
-    }
-
-    .access-footer {
+    .access-bottom {
       margin-top: 18px;
-      color: #61758d;
-      font-size: .72rem;
+      color: #667a91;
+      font-size: .7rem;
       text-align: center;
     }
 
-    /* RESPONSIVO */
-    @media (max-width: 860px) {
-      .topbar {
-        align-items: flex-start;
+    /* MOBILE */
+    @media (max-width: 760px) {
+      .header-inner {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 14px 0;
       }
 
-      .top-actions {
-        flex-wrap: wrap;
-        justify-content: flex-end;
+      .header-actions {
+        display: grid;
+        grid-template-columns: 1fr;
       }
 
-      .hero-orb {
-        opacity: .38;
+      .header-link,
+      .user-box {
+        width: 100%;
+        justify-content: center;
       }
 
-      .section-heading {
+      .catalog-head {
         align-items: stretch;
         flex-direction: column;
       }
@@ -844,53 +681,18 @@
       }
     }
 
-    @media (max-width: 640px) {
-      .page-shell {
-        width: min(100% - 20px, 1380px);
+    @media (max-width: 560px) {
+      .container {
+        width: min(100% - 18px, 1180px);
       }
 
-      .topbar-wrap {
-        padding-top: 10px;
+      .brand-logo {
+        width: 48px;
+        height: 48px;
       }
 
-      .topbar {
-        align-items: stretch;
-        flex-direction: column;
-        padding: 15px;
-        border-radius: 18px;
-      }
-
-      .brand h1 {
-        white-space: normal;
-      }
-
-      .top-actions {
-        display: grid;
-        grid-template-columns: 1fr;
-      }
-
-      .header-btn,
-      .user-chip {
-        width: 100%;
-      }
-
-      .hero {
-        margin-top: 17px;
-        padding: 28px 22px;
-        border-radius: 22px;
-      }
-
-      .hero p {
-        line-height: 1.62;
-      }
-
-      .hero-orb {
-        right: -170px;
-        opacity: .26;
-      }
-
-      .content-section {
-        padding-top: 20px;
+      .intro-card {
+        padding: 23px;
       }
 
       .gm-container {
@@ -898,14 +700,14 @@
       }
 
       .gm-cover {
-        height: 180px;
+        height: 170px;
       }
 
       .access-actions {
         grid-template-columns: 1fr;
       }
 
-      .primary-access {
+      .discord-btn {
         grid-column: auto;
       }
     }
@@ -916,88 +718,81 @@
       *::after {
         scroll-behavior: auto !important;
         transition: none !important;
-        animation: none !important;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="page-shell">
-    <div class="topbar-wrap">
-      <header class="topbar">
-        <a class="brand" href="#" aria-label="Gamemodes VIP">
-          <div class="brand-mark" aria-hidden="true">
-            <span>◆</span>
-          </div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#" aria-label="Portal SiqueiraX">
+        <img
+          class="brand-logo"
+          src="https://i.imgur.com/eKjFtd1.png"
+          alt="Logo do Portal SiqueiraX"
+        >
 
-          <div class="brand-copy">
-            <div class="brand-eyebrow">Portal SiqueiraX</div>
-            <h1>Gamemodes VIP</h1>
-          </div>
+        <div class="brand-text">
+          <span>Portal SiqueiraX</span>
+          <h1>Gamemodes VIP</h1>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a class="header-link" href="gmvipsenha.html">
+          <span aria-hidden="true">🔐</span>
+          Senhas GM
         </a>
 
-        <div class="top-actions">
-          <a class="header-btn" href="gmvipsenha.html">
-            <span aria-hidden="true">🔐</span>
-            <span>Senhas GM</span>
-          </a>
-
-          <div class="user-chip">
-            <span class="vip-dot" aria-hidden="true"></span>
-            <strong id="userName">Usuário</strong>
-            <span>VIP</span>
-          </div>
+        <div class="user-box">
+          <span class="vip-mark" aria-hidden="true"></span>
+          <strong id="userName">Usuário</strong>
+          <span>VIP</span>
         </div>
-      </header>
+      </div>
     </div>
+  </header>
 
-    <main>
-      <section class="hero">
-        <div class="hero-content">
-          <div class="hero-badge">
-            <span aria-hidden="true">◆</span>
-            Biblioteca exclusiva
-          </div>
+  <main>
+    <section class="page-intro">
+      <div class="container">
+        <div class="intro-card">
+          <div class="intro-topline"></div>
 
-          <h2>Escolha seu próximo <span>Gamemode VIP</span></h2>
+          <h2>Biblioteca de Gamemodes VIP</h2>
 
           <p>
-            Explore os projetos disponíveis, confira a compatibilidade com cada hospedagem
-            e faça o download diretamente pela sua área VIP.
+            Confira os projetos disponíveis, veja em quais hospedagens cada
+            gamemode funciona e acesse o download pela sua conta VIP.
           </p>
 
-          <div class="hero-stats">
-            <div class="stat-pill"><span>⚡</span><b>Acesso rápido</b></div>
-            <div class="stat-pill"><span>🛡️</span><b>Área protegida</b></div>
-            <div class="stat-pill"><span>🔄</span><b>Catálogo atualizado</b></div>
+          <div class="intro-meta">
+            <span>● Acesso protegido</span>
+            <span>● Lista atualizada</span>
+            <span>● Downloads externos</span>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="hero-orb" aria-hidden="true"></div>
-      </section>
-
-      <section class="content-section">
-        <div class="section-heading">
-          <div>
-            <h2>Catálogo de Gamemodes</h2>
-            <p>Use a busca para encontrar rapidamente o projeto desejado.</p>
+    <section class="catalog-section">
+      <div class="container">
+        <div class="catalog-head">
+          <div class="catalog-title">
+            <h2>Gamemodes disponíveis</h2>
+            <p>Pesquise pelo nome do projeto.</p>
           </div>
 
           <label class="search-box" for="search">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <span class="search-icon" aria-hidden="true">⌕</span>
 
             <input
               type="search"
               id="search"
-              placeholder="Buscar gamemode VIP..."
+              placeholder="Buscar gamemode..."
               autocomplete="off"
             >
-
-            <span class="search-kbd">BUSCAR</span>
           </label>
         </div>
 
@@ -1006,20 +801,22 @@
             Carregando <strong>gamemodes VIP</strong>...
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <footer class="footer">
+  <footer class="site-footer">
+    <div class="container">
       <a class="back-btn" href="painelsiqueirax.html">
         <span aria-hidden="true">←</span>
         Voltar ao Painel
       </a>
 
-      <div class="copyright">
-        © Portal SiqueiraX • Segurança VIP ativa
+      <div class="footer-text">
+        © Portal SiqueiraX • Área VIP
       </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
@@ -1038,7 +835,10 @@
       function safeUrl(value, fallback = "#") {
         try {
           const url = new URL(String(value ?? ""), window.location.href);
-          return ["http:", "https:"].includes(url.protocol) ? url.href : fallback;
+
+          return ["http:", "https:"].includes(url.protocol)
+            ? url.href
+            : fallback;
         } catch {
           return fallback;
         }
@@ -1048,19 +848,29 @@
         document.body.innerHTML = `
           <main class="access-page">
             <section class="access-card">
-              <div class="access-icon" aria-hidden="true">🔒</div>
+              <div class="access-brand">
+                <img
+                  src="https://i.imgur.com/eKjFtd1.png"
+                  alt="Logo do Portal SiqueiraX"
+                >
 
-              <h1>Área VIP • Acesso restrito</h1>
+                <div>
+                  <span>Portal SiqueiraX</span>
+                  <strong>Gamemodes VIP</strong>
+                </div>
+              </div>
 
-              <p class="access-lead">
-                Para acessar os <b>Gamemodes VIP</b>, você precisa possuir o
-                <b>cargo VIP</b> no servidor oficial do Discord do <b>SiqueiraX</b>.
+              <h2>Acesso VIP necessário</h2>
+
+              <p>
+                Para acessar os Gamemodes VIP, sua conta precisa possuir
+                o cargo VIP no servidor oficial do Discord do SiqueiraX.
               </p>
 
               <div class="access-info">
                 <b>Como liberar seu acesso:</b><br>
-                • Assine o VIP no Discord oficial.<br>
-                • Em caso de dúvida, fale no WhatsApp: <b>82 9696-3727</b>.
+                • Assine o VIP pelo Discord oficial.<br>
+                • Para dúvidas, fale no WhatsApp: <b>82 9696-3727</b>.
                 ${
                   reason
                     ? `<div style="margin-top:10px"><b>Detalhe:</b> ${escapeHtml(reason)}</div>`
@@ -1070,7 +880,7 @@
 
               <div class="access-actions">
                 <a
-                  class="primary-access"
+                  class="discord-btn"
                   href="https://dsc.gg/siqueiraxsamp"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1079,7 +889,7 @@
                 </a>
 
                 <a
-                  class="secondary-access"
+                  class="whatsapp-btn"
                   href="https://wa.me/558296963727"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1087,14 +897,14 @@
                   Falar no WhatsApp
                 </a>
 
-                <button class="retry-access" id="tryAgainBtn" type="button">
+                <button class="retry-btn" id="tryAgainBtn" type="button">
                   Tentar novamente
                 </button>
               </div>
 
-              <p class="access-footer">
+              <div class="access-bottom">
                 © Portal SiqueiraX • Segurança VIP ativa
-              </p>
+              </div>
             </section>
           </main>
         `;
@@ -1133,7 +943,7 @@
       function statusSpan(ok) {
         return `
           <span class="status ${ok ? "sim" : "nao"}">
-            ${ok ? "Compatível" : "Não"}
+            ${ok ? "Sim" : "Não"}
           </span>
         `;
       }
@@ -1142,7 +952,7 @@
         if (!list.length) {
           gmContainer.innerHTML = `
             <div class="state-card">
-              Nenhum <strong>gamemode</strong> encontrado para esta busca.
+              Nenhum <strong>gamemode</strong> encontrado.
             </div>
           `;
           return;
@@ -1152,7 +962,7 @@
           const title = escapeHtml(gm.title || "Gamemode VIP");
           const image = safeUrl(gm.image, "https://i.imgur.com/eKjFtd1.png");
           const link = safeUrl(gm.link, "#");
-          const linkText = escapeHtml(gm.linkText || "Fazer download");
+          const linkText = escapeHtml(gm.linkText || "Download");
 
           return `
             <article class="gm-card">
@@ -1165,33 +975,34 @@
                   onerror="this.src='https://i.imgur.com/eKjFtd1.png'"
                 >
 
-                <div class="vip-badge">
-                  <span aria-hidden="true">◆</span>
-                  VIP
-                </div>
+                <div class="vip-label">VIP</div>
               </div>
 
-              <div class="card-body">
+              <div class="card-content">
                 <h3>${title}</h3>
 
-                <div class="compatibility" aria-label="Compatibilidade do gamemode">
-                  <div class="compat-item">
-                    <span class="compat-label">optlink</span>
+                <div class="compatibility-title">
+                  Compatibilidade
+                </div>
+
+                <div class="compatibility-list">
+                  <div class="compatibility-row">
+                    <strong>optlink</strong>
                     ${statusSpan(!!gm.works?.optlink)}
                   </div>
 
-                  <div class="compat-item">
-                    <span class="compat-label">lemehost</span>
+                  <div class="compatibility-row">
+                    <strong>lemehost</strong>
                     ${statusSpan(!!gm.works?.lemehost)}
                   </div>
 
-                  <div class="compat-item">
-                    <span class="compat-label">TCADMIN</span>
+                  <div class="compatibility-row">
+                    <strong>TCADMIN</strong>
                     ${statusSpan(!!gm.works?.tcadmin)}
                   </div>
 
-                  <div class="compat-item">
-                    <span class="compat-label">VPS</span>
+                  <div class="compatibility-row">
+                    <strong>VPS</strong>
                     ${statusSpan(!!gm.works?.vps)}
                   </div>
                 </div>
@@ -1224,7 +1035,8 @@
         if (!res.ok) {
           gmContainer.innerHTML = `
             <div class="state-card">
-              Erro ao carregar <strong>gamemodes VIP</strong> (HTTP ${res.status}).
+              Erro ao carregar <strong>gamemodes VIP</strong>
+              (HTTP ${res.status}).
             </div>
           `;
           return;
@@ -1235,7 +1047,8 @@
         if (!Array.isArray(all)) {
           gmContainer.innerHTML = `
             <div class="state-card">
-              Erro: resposta inválida da função <strong>gamemodesvip</strong>.
+              Erro: resposta inválida da função
+              <strong>gamemodesvip</strong>.
             </div>
           `;
           return;

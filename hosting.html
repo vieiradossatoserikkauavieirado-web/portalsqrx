@@ -1,729 +1,687 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1524">
+
   <title>Hosting SX | Hospedagem SAMP / MTA</title>
+
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #0b0b0d;
-      --bg-soft: #121216;
-      --card: rgba(255, 255, 255, 0.04);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --text: #f5f5f5;
-      --muted: #b8b8c2;
-      --primary: #e11d2e;
-      --primary-2: #ff394b;
-      --accent: #ff7a85;
-      --success: #67e8a5;
-      --warning: #ffd166;
-      --shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
-      --radius: 22px;
-      --max: 1180px;
+      --bg:#08111d;
+      --bg-soft:#0b1625;
+      --surface:#0f1d2f;
+      --surface-2:#13253b;
+      --surface-3:#172a42;
+      --blue:#2b82d4;
+      --blue-dark:#1e5f9e;
+      --blue-light:#7dbbf0;
+      --red:#d63d55;
+      --red-dark:#9f2a3e;
+      --green:#4bd29a;
+      --yellow:#f5c76a;
+      --text:#f4f7fb;
+      --muted:#98aabd;
+      --line:#223750;
+      --line-soft:rgba(255,255,255,.06);
+      --radius:15px;
+      --radius-small:10px;
+      --shadow:0 14px 34px rgba(0,0,0,.27);
+      --max:1180px;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Inter, Arial, Helvetica, sans-serif;
+    body{
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:"Inter",sans-serif;
+      color:var(--text);
       background:
-        radial-gradient(circle at top, rgba(225, 29, 46, 0.22), transparent 34%),
-        linear-gradient(180deg, #09090b 0%, #0e0e12 45%, #09090b 100%);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    button {
-      font: inherit;
-      border: none;
-      cursor: pointer;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    .container {
-      width: min(calc(100% - 32px), var(--max));
-      margin: 0 auto;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      backdrop-filter: blur(14px);
-      background: rgba(7, 7, 9, 0.72);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 0;
-      gap: 16px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-      font-size: 1.08rem;
-    }
-
-    .brand-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 12px 26px rgba(225, 29, 46, 0.35);
-      font-weight: 900;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .nav-links a:hover {
-      color: #fff;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .user-pill {
-      display: none;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 10px 14px;
-      border-radius: 999px;
-      color: #fff;
-      font-size: 0.95rem;
-    }
-
-    .user-pill.show {
-      display: inline-flex;
-    }
-
-    .user-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: rgba(255,255,255,0.08);
-      display: grid;
-      place-items: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .nav-cta,
-    .primary-btn,
-    .secondary-btn,
-    .plan-btn,
-    .copy-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 14px;
-      font-weight: 700;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-    }
-
-    .nav-cta,
-    .primary-btn,
-    .plan-btn,
-    .copy-btn {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: #fff;
-      box-shadow: 0 14px 30px rgba(225, 29, 46, 0.28);
-    }
-
-    .nav-cta:hover,
-    .primary-btn:hover,
-    .plan-btn:hover,
-    .copy-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 36px rgba(225, 29, 46, 0.35);
-    }
-
-    .secondary-btn {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .secondary-btn:hover {
-      background: rgba(255, 255, 255, 0.06);
-      transform: translateY(-2px);
-    }
-
-    .hero {
-      padding: 86px 0 60px;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 34px;
-      align-items: center;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 999px;
-      color: #ffe2e5;
-      background: rgba(255, 255, 255, 0.03);
-      font-size: 0.9rem;
-      margin-bottom: 18px;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      box-shadow: 0 0 16px rgba(255, 57, 75, 0.8);
-    }
-
-    h1 {
-      font-size: clamp(2.5rem, 5vw, 4.6rem);
-      line-height: 1.02;
-      margin-bottom: 18px;
-      letter-spacing: -1.8px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      max-width: 650px;
-      font-size: 1.08rem;
-      margin-bottom: 28px;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    .status-line {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-height: 24px;
-      color: var(--muted);
-      margin-bottom: 20px;
-      font-size: 0.95rem;
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--warning);
-      box-shadow: 0 0 14px rgba(255, 209, 102, 0.45);
-    }
-
-    .status-dot.online {
-      background: var(--success);
-      box-shadow: 0 0 14px rgba(103, 232, 165, 0.45);
-    }
-
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .stat,
-    .info-card,
-    .plan,
-    .hero-card,
-    .cta-box,
-    .modal-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-    }
-
-    .stat {
-      border-radius: 18px;
-      padding: 18px;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 1.35rem;
-      margin-bottom: 6px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 0.94rem;
-    }
-
-    .hero-card {
-      position: relative;
-      border-radius: 28px;
-      padding: 26px;
-      overflow: hidden;
-      min-height: 440px;
-    }
-
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      inset: auto -60px -70px auto;
-      width: 220px;
-      height: 220px;
-      background: radial-gradient(circle, rgba(225, 29, 46, 0.3), transparent 65%);
-      pointer-events: none;
-    }
-
-    .server-window {
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.08);
-      overflow: hidden;
-      background: #0b0d13;
-    }
-
-    .window-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      background: rgba(255,255,255,0.03);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      color: #d7d7de;
-      font-size: 0.95rem;
-    }
-
-    .window-dots {
-      display: flex;
-      gap: 8px;
-    }
-
-    .window-dots span {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #fff;
-      opacity: 0.25;
-    }
-
-    .window-body {
-      padding: 18px;
-      display: grid;
-      gap: 14px;
-    }
-
-    .server-line,
-    .server-box {
-      border-radius: 16px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .server-line {
-      display: flex;
-      justify-content: space-between;
-      padding: 13px 16px;
-      color: #d3d3da;
-      font-size: 0.95rem;
-      gap: 14px;
-    }
-
-    .server-box {
-      padding: 18px;
-    }
-
-    .status-online {
-      color: #7df7a7;
-      font-weight: 700;
-    }
-
-    .section {
-      padding: 42px 0 80px;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 14px;
-      font-size: clamp(2rem, 4vw, 3rem);
-      letter-spacing: -1px;
-    }
-
-    .section-text {
-      text-align: center;
-      color: var(--muted);
-      max-width: 750px;
-      margin: 0 auto 42px;
-      font-size: 1.02rem;
-    }
-
-    .plans {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 24px;
-    }
-
-    .plan {
-      position: relative;
-      border-radius: 26px;
-      padding: 28px;
-      transition: transform 0.25s ease, border-color 0.25s ease;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .plan:hover {
-      transform: translateY(-6px);
-      border-color: rgba(255, 122, 133, 0.45);
-    }
-
-    .plan.featured {
-      border-color: rgba(255, 57, 75, 0.5);
-      box-shadow: 0 18px 50px rgba(225, 29, 46, 0.22);
-    }
-
-    .tag {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(225, 29, 46, 0.18);
-      color: #ffd6da;
-      border: 1px solid rgba(255, 57, 75, 0.28);
-      font-size: 0.83rem;
-      font-weight: 700;
-    }
-
-    .plan-name {
-      font-size: 1.4rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .price {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .price strong {
-      font-size: 2.5rem;
-      letter-spacing: -1px;
-    }
-
-    .price span,
-    .billing,
-    .plan-note,
-    .pix-note,
-    .modal-subtitle,
-    .info-card p,
-    footer {
-      color: var(--muted);
-    }
-
-    .billing {
-      margin-bottom: 22px;
-    }
-
-    .features {
-      list-style: none;
-      display: grid;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .features li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #ededf2;
-    }
-
-    .features li::before {
-      content: "✓";
-      width: 22px;
-      height: 22px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: rgba(225, 29, 46, 0.18);
-      color: #ffb1b8;
-      font-size: 0.85rem;
-      font-weight: 800;
-      flex-shrink: 0;
-    }
-
-    .plan-note {
-      min-height: 44px;
-      margin-bottom: 20px;
-      font-size: 0.95rem;
-    }
-
-    .plan-btn {
-      width: 100%;
-      margin-top: auto;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 22px;
-      margin-top: 26px;
-    }
-
-    .info-card {
-      border-radius: 22px;
-      padding: 24px;
-    }
-
-    .info-card h3 {
-      margin-bottom: 10px;
-      font-size: 1.12rem;
-    }
-
-    .cta-box {
-      margin-top: 36px;
+        linear-gradient(rgba(8,17,29,.95),rgba(8,17,29,.985)),
+        url("https://i.imgur.com/eKjFtd1.png") center/cover fixed no-repeat;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
       background:
-        linear-gradient(135deg, rgba(225, 29, 46, 0.24), rgba(255, 57, 75, 0.12)),
-        rgba(255,255,255,0.02);
-      border-radius: 28px;
-      padding: 34px;
-      text-align: center;
+        linear-gradient(90deg,rgba(43,130,212,.04) 1px,transparent 1px),
+        linear-gradient(rgba(43,130,212,.04) 1px,transparent 1px);
+      background-size:38px 38px;
     }
 
-    .cta-box h3 {
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      margin-bottom: 10px;
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;border:0;cursor:pointer}
+    img{max-width:100%;display:block}
+    .container{width:min(calc(100% - 28px),var(--max));margin:0 auto}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      border-bottom:1px solid var(--line-soft);
+      background:rgba(7,14,24,.93);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
     }
 
-    .cta-box p {
-      color: #f2d8db;
-      max-width: 700px;
-      margin: 0 auto 20px;
+    .nav{
+      min-height:78px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
     }
 
-    footer {
-      padding: 26px 0 50px;
-      text-align: center;
-      font-size: 0.95rem;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex:0 0 auto;
     }
 
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(3, 3, 5, 0.76);
-      backdrop-filter: blur(10px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 100;
+    .brand-logo{
+      width:50px;
+      height:50px;
+      border-radius:50%;
+      object-fit:cover;
+      border:2px solid rgba(255,255,255,.12);
+      box-shadow:0 0 0 4px rgba(43,130,212,.07);
+      background:var(--bg);
     }
 
-    .modal.show {
-      display: flex;
+    .brand-copy{display:flex;flex-direction:column;line-height:1}
+
+    .brand-copy strong{
+      font-family:"Rajdhani",sans-serif;
+      font-size:1.28rem;
     }
 
-    .modal-card {
-      width: min(100%, 560px);
-      border-radius: 28px;
-      padding: 28px;
-      position: relative;
+    .brand-copy small{
+      margin-top:4px;
+      color:var(--blue-light);
+      font-size:.67rem;
+      font-weight:700;
+      letter-spacing:.1em;
+      text-transform:uppercase;
     }
 
-    .modal-close {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.08);
+    .nav-links{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      flex:1;
     }
 
-    .modal-title {
-      font-size: 1.7rem;
-      font-weight: 800;
-      margin-bottom: 6px;
+    .nav-links a{
+      padding:10px 12px;
+      border-radius:9px;
+      color:#bac7d5;
+      font-size:.79rem;
+      font-weight:700;
+      transition:background .18s ease,color .18s ease;
     }
 
-    .modal-subtitle {
-      margin-bottom: 22px;
+    .nav-links a:hover{color:#fff;background:rgba(255,255,255,.05)}
+
+    .nav-right{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:9px;
+      flex:0 0 auto;
     }
 
-    .pix-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 22px;
-      padding: 20px;
-      display: grid;
-      gap: 16px;
+    .user-pill{
+      display:none;
+      align-items:center;
+      gap:9px;
+      min-height:42px;
+      padding:0 12px;
+      border:1px solid var(--line);
+      border-radius:var(--radius-small);
+      background:rgba(255,255,255,.035);
+      color:#dbe6f0;
+      font-size:.76rem;
+      font-weight:700;
     }
 
-    .qr-wrap {
-      display: flex;
-      justify-content: center;
+    .user-pill.show{display:inline-flex}
+
+    .user-avatar{
+      width:28px;
+      height:28px;
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:rgba(43,130,212,.12);
+      color:var(--blue-light);
+      font-size:.68rem;
+      font-weight:800;
     }
 
-    .qr-wrap img {
-      width: 220px;
-      height: 220px;
-      object-fit: contain;
-      border-radius: 18px;
-      background: #fff;
-      padding: 12px;
+    .nav-cta,.primary-btn,.secondary-btn,.plan-btn,.copy-btn,.ghost-btn{
+      min-height:43px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:0 15px;
+      border-radius:9px;
+      font-weight:800;
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,opacity .18s ease;
     }
 
-    .pix-code {
-      width: 100%;
-      min-height: 120px;
-      resize: vertical;
-      border-radius: 16px;
-      background: rgba(0,0,0,0.24);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #fff;
-      padding: 14px;
-      outline: none;
+    .nav-cta,.primary-btn,.plan-btn,.copy-btn{
+      color:#fff;
+      background:linear-gradient(90deg,var(--blue-dark),var(--blue));
     }
 
-    .pix-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+    .nav-cta:hover,.primary-btn:hover,.plan-btn:hover,.copy-btn:hover{
+      transform:translateY(-2px);
+      background:linear-gradient(90deg,var(--blue),var(--red));
     }
 
-    .copy-btn,
-    .ghost-btn {
-      flex: 1;
-      min-width: 180px;
+    .secondary-btn,.ghost-btn{
+      border:1px solid var(--line);
+      color:#fff;
+      background:rgba(255,255,255,.035);
     }
 
-    .ghost-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 14px;
-      font-weight: 700;
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #fff;
-      background: rgba(255,255,255,0.03);
+    .secondary-btn:hover,.ghost-btn:hover{
+      transform:translateY(-2px);
+      border-color:rgba(125,187,240,.4);
+      background:rgba(43,130,212,.08);
     }
 
-    .pix-note {
-      font-size: 0.95rem;
+    .hero{padding:54px 0 28px}
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);
+      gap:24px;
+      align-items:stretch;
     }
 
-    .hidden {
-      display: none !important;
+    .hero-copy{
+      position:relative;
+      overflow:hidden;
+      min-height:465px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      padding:34px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(120deg,rgba(20,43,70,.97),rgba(13,29,48,.97));
+      box-shadow:var(--shadow);
     }
 
-    @media (max-width: 980px) {
-      .hero-grid,
-      .plans,
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        padding-top: 54px;
-      }
-
-      .nav-links {
-        display: none;
-      }
+    .hero-copy::after{
+      content:"";
+      position:absolute;
+      top:0;
+      right:0;
+      width:7px;
+      height:100%;
+      background:linear-gradient(var(--blue),var(--red));
     }
 
-    @media (max-width: 620px) {
-      .hero-stats {
-        grid-template-columns: 1fr;
-      }
+    .eyebrow{
+      width:fit-content;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      color:var(--blue-light);
+      font-size:.69rem;
+      font-weight:800;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
 
-      .hero-actions,
-      .pix-actions,
-      .nav-right {
-        flex-direction: column;
-        align-items: stretch;
-      }
+    .eyebrow::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--blue);
+    }
 
-      .primary-btn,
-      .secondary-btn,
-      .nav-cta,
-      .plan-btn,
-      .copy-btn,
-      .ghost-btn,
-      .user-pill {
-        width: 100%;
-      }
+    h1{
+      max-width:760px;
+      margin:17px 0 14px;
+      font-family:"Rajdhani",sans-serif;
+      font-size:clamp(2.8rem,6vw,5.1rem);
+      line-height:.93;
+      letter-spacing:-.035em;
+    }
 
-      .plan,
-      .hero-card,
-      .cta-box,
-      .info-card,
-      .modal-card {
-        padding: 22px;
-      }
+    .hero-copy>p{
+      max-width:660px;
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.7;
+    }
 
-      .nav {
-        align-items: flex-start;
-      }
+    .hero-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+
+    .status-line{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-height:22px;
+      margin-top:14px;
+      color:#7d91a6;
+      font-size:.72rem;
+    }
+
+    .status-dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--yellow);
+    }
+
+    .status-dot.online{background:var(--green)}
+
+    .hero-stats{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin-top:24px;
+    }
+
+    .stat{
+      padding:13px;
+      border:1px solid var(--line-soft);
+      border-radius:10px;
+      background:rgba(255,255,255,.025);
+    }
+
+    .stat strong{display:block;margin-bottom:4px;font-size:.82rem}
+    .stat span{color:var(--muted);font-size:.68rem;line-height:1.45}
+
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      min-height:465px;
+      display:flex;
+      align-items:center;
+      padding:24px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:var(--surface);
+      box-shadow:var(--shadow);
+    }
+
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:0;
+      width:100%;
+      height:5px;
+      background:linear-gradient(90deg,var(--blue),var(--red));
+    }
+
+    .server-window{
+      width:100%;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--bg-soft);
+    }
+
+    .window-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:13px 15px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.025);
+      color:#d8e3ed;
+      font-size:.76rem;
+      font-weight:700;
+    }
+
+    .window-dots{display:flex;gap:6px}
+    .window-dots span{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.2}
+
+    .window-body{display:grid;gap:10px;padding:14px}
+
+    .server-line,.server-box{
+      border:1px solid var(--line-soft);
+      border-radius:9px;
+      background:rgba(255,255,255,.025);
+    }
+
+    .server-line{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:11px 12px;
+      color:#c8d4df;
+      font-size:.74rem;
+    }
+
+    .server-box{padding:12px}
+    .status-online{color:var(--green);font-weight:800}
+
+    .section{padding:36px 0 50px}
+    .section-head{margin-bottom:18px}
+    .section-title{
+      font-family:"Rajdhani",sans-serif;
+      font-size:clamp(2rem,4vw,3rem);
+      line-height:1;
+    }
+
+    .section-text{
+      max-width:730px;
+      margin-top:8px;
+      color:var(--muted);
+      font-size:.86rem;
+      line-height:1.6;
+    }
+
+    .plans{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .plan{
+      position:relative;
+      min-height:430px;
+      display:flex;
+      flex-direction:column;
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:var(--surface);
+      box-shadow:0 8px 20px rgba(0,0,0,.17);
+      transition:transform .18s ease,border-color .18s ease;
+    }
+
+    .plan:hover{transform:translateY(-3px);border-color:rgba(125,187,240,.4)}
+    .plan.featured{
+      border-color:rgba(214,61,85,.36);
+      background:linear-gradient(145deg,rgba(22,47,75,.97),rgba(15,29,47,.98));
+    }
+
+    .tag{
+      position:absolute;
+      top:15px;
+      right:15px;
+      padding:5px 8px;
+      border:1px solid rgba(214,61,85,.32);
+      border-radius:7px;
+      color:#ff9daf;
+      background:rgba(214,61,85,.09);
+      font-size:.6rem;
+      font-weight:800;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    .plan-name{
+      padding-right:95px;
+      font-family:"Rajdhani",sans-serif;
+      font-size:1.35rem;
+      font-weight:700;
+    }
+
+    .price{
+      display:flex;
+      align-items:baseline;
+      gap:7px;
+      margin:14px 0 4px;
+    }
+
+    .price strong{
+      font-family:"Rajdhani",sans-serif;
+      font-size:2.5rem;
+      line-height:1;
+    }
+
+    .price span,.billing,.plan-note,.pix-note,.modal-subtitle,.info-card p,footer{
+      color:var(--muted);
+    }
+
+    .billing{margin-bottom:18px;font-size:.73rem}
+    .features{list-style:none;display:grid;gap:10px;margin-bottom:18px}
+
+    .features li{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:#dfe8f1;
+      font-size:.77rem;
+    }
+
+    .features li::before{
+      content:"✓";
+      width:19px;
+      height:19px;
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      color:var(--blue-light);
+      background:rgba(43,130,212,.11);
+      font-size:.65rem;
+      font-weight:800;
+    }
+
+    .plan-note{
+      min-height:45px;
+      margin-bottom:18px;
+      font-size:.74rem;
+      line-height:1.5;
+    }
+
+    .plan-btn{width:100%;margin-top:auto}
+    .plan-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+
+    .info-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      margin-top:20px;
+    }
+
+    .info-card{
+      min-height:170px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:var(--surface);
+    }
+
+    .info-card h3{
+      margin-bottom:8px;
+      font-family:"Rajdhani",sans-serif;
+      font-size:1.22rem;
+    }
+
+    .info-card p{font-size:.78rem;line-height:1.58}
+
+    .cta-box{
+      position:relative;
+      overflow:hidden;
+      margin-top:20px;
+      padding:28px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(120deg,rgba(20,43,70,.97),rgba(13,29,48,.97));
+      text-align:left;
+    }
+
+    .cta-box::after{
+      content:"";
+      position:absolute;
+      top:0;
+      right:0;
+      width:7px;
+      height:100%;
+      background:linear-gradient(var(--blue),var(--red));
+    }
+
+    .cta-box h3{
+      font-family:"Rajdhani",sans-serif;
+      font-size:clamp(1.8rem,3vw,2.5rem);
+      line-height:1;
+    }
+
+    .cta-box p{
+      max-width:700px;
+      margin:9px 0 18px;
+      color:var(--muted);
+      font-size:.82rem;
+      line-height:1.6;
+    }
+
+    footer{padding:22px 0 32px;text-align:center;font-size:.7rem}
+
+    .modal{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      background:rgba(5,11,19,.84);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+    }
+
+    .modal.show{display:flex}
+
+    .modal-card{
+      position:relative;
+      width:min(100%,560px);
+      padding:22px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:var(--surface);
+      box-shadow:var(--shadow);
+    }
+
+    .modal-close{
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:36px;
+      height:36px;
+      border:1px solid var(--line);
+      border-radius:9px;
+      color:#fff;
+      background:rgba(255,255,255,.035);
+    }
+
+    .modal-title{
+      padding-right:45px;
+      font-family:"Rajdhani",sans-serif;
+      font-size:1.7rem;
+      font-weight:700;
+    }
+
+    .modal-subtitle{margin-top:5px;margin-bottom:17px;font-size:.78rem;line-height:1.5}
+
+    .pix-box{
+      display:grid;
+      gap:14px;
+      padding:15px;
+      border:1px solid var(--line-soft);
+      border-radius:10px;
+      background:rgba(255,255,255,.02);
+    }
+
+    .qr-wrap{display:flex;justify-content:center}
+    .qr-wrap img{
+      width:210px;
+      height:210px;
+      object-fit:contain;
+      padding:10px;
+      border-radius:10px;
+      background:#fff;
+    }
+
+    .pix-code{
+      width:100%;
+      min-height:115px;
+      resize:vertical;
+      padding:12px;
+      outline:none;
+      border:1px solid var(--line);
+      border-radius:9px;
+      color:#fff;
+      background:rgba(0,0,0,.2);
+      font:inherit;
+      font-size:.75rem;
+    }
+
+    .pix-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .copy-btn,.ghost-btn{flex:1;min-width:170px}
+    .pix-note{font-size:.72rem;line-height:1.5}
+    .hidden{display:none!important}
+
+    @media(max-width:980px){
+      .nav-links{display:none}
+      .hero-grid,.plans,.info-grid{grid-template-columns:1fr}
+      .hero-copy,.hero-card{min-height:auto}
+      .hero-card{align-items:stretch}
+    }
+
+    @media(max-width:620px){
+      .container{width:min(calc(100% - 18px),var(--max))}
+      .nav{align-items:stretch;flex-direction:column;padding:14px 0}
+      .nav-right{width:100%;display:grid;grid-template-columns:1fr}
+      .nav-cta,.user-pill{width:100%}
+      .hero{padding-top:24px}
+      .hero-copy,.hero-card,.plan,.info-card,.cta-box,.modal-card{padding:20px}
+      .hero h1{font-size:clamp(2.6rem,14vw,4rem)}
+      .hero-actions,.pix-actions{flex-direction:column}
+      .hero-actions a,.copy-btn,.ghost-btn{width:100%}
+      .hero-stats{grid-template-columns:1fr}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
     }
   </style>
 </head>
+
 <body>
   <header class="topbar">
     <div class="container nav">
       <a href="#inicio" class="brand">
-        <span class="brand-badge">SX</span>
-        <span>Hosting SX</span>
+        <img class="brand-logo" src="https://i.imgur.com/eKjFtd1.png" alt="Logo Hosting SX">
+
+        <span class="brand-copy">
+          <strong>Hosting SX</strong>
+          <small>Hospedagem SA:MP / MTA</small>
+        </span>
       </a>
 
-      <nav class="nav-links">
+      <nav class="nav-links" aria-label="Navegação principal">
         <a href="#planos">Planos</a>
         <a href="#vantagens">Vantagens</a>
         <a href="#contato">Contato</a>
@@ -734,7 +692,10 @@
           <div id="userAvatar" class="user-avatar">SX</div>
           <span id="userName">Conectado</span>
         </div>
-        <a id="navLoginBtn" href="/.netlify/functions/discord-login-hosting" class="nav-cta">Entrar com Discord</a>
+
+        <a id="navLoginBtn" href="/.netlify/functions/discord-login-hosting" class="nav-cta">
+          Entrar com Discord
+        </a>
       </div>
     </div>
   </header>
@@ -742,16 +703,24 @@
   <main>
     <section class="hero" id="inicio">
       <div class="container hero-grid">
-        <div>
-          <div class="eyebrow">Hospedagem premium para SAMP e MTA</div>
-          <h1>Hospedagem profissional para sua comunidade crescer sem limite.</h1>
+        <div class="hero-copy">
+          <div class="eyebrow">Hospedagem para SA:MP e MTA</div>
+
+          <h1>Seu servidor online com estrutura profissional.</h1>
+
           <p>
-            Estrutura estável, painel TCAdmin, banco MySQL, proteção Anti-DDoS e planos pensados para servidores SAMP/MTA com desempenho profissional.
+            Painel TCAdmin, banco MySQL, proteção Anti-DDoS e planos preparados
+            para comunidades que precisam de estabilidade, controle e bom desempenho.
           </p>
 
           <div class="hero-actions">
-            <a id="heroMainBtn" href="/.netlify/functions/discord-login-hosting" class="primary-btn">Entrar com Discord</a>
-            <a href="#vantagens" class="secondary-btn">Conhecer vantagens</a>
+            <a id="heroMainBtn" href="/.netlify/functions/discord-login-hosting" class="primary-btn">
+              Entrar com Discord
+            </a>
+
+            <a href="#vantagens" class="secondary-btn">
+              Conhecer vantagens
+            </a>
           </div>
 
           <div class="status-line">
@@ -761,16 +730,18 @@
 
           <div class="hero-stats">
             <div class="stat">
-              <strong>SAMP / MTA</strong>
-              <span>Planos focados em performance para servidores multiplayer.</span>
+              <strong>SA:MP / MTA</strong>
+              <span>Planos focados em servidores multiplayer.</span>
             </div>
+
             <div class="stat">
               <strong>TCAdmin</strong>
-              <span>Controle completo do host com painel profissional.</span>
+              <span>Controle completo do host pelo painel.</span>
             </div>
+
             <div class="stat">
               <strong>Anti-DDoS</strong>
-              <span>Mais segurança e estabilidade para seu projeto.</span>
+              <span>Mais segurança para manter o projeto online.</span>
             </div>
           </div>
         </div>
@@ -779,40 +750,50 @@
           <div class="server-window">
             <div class="window-top">
               <span>Hosting SX • Painel do servidor</span>
+
               <div class="window-dots">
-                <span></span><span></span><span></span>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
+
             <div class="window-body">
               <div class="server-line">
                 <span>Servidor principal</span>
                 <span class="status-online">Online</span>
               </div>
+
               <div class="server-box">
-                <div class="server-line" style="margin-bottom: 12px;">
+                <div class="server-line" style="margin-bottom:10px">
                   <span>Game</span>
-                  <span>SAMP / MTA</span>
+                  <span>SA:MP / MTA</span>
                 </div>
-                <div class="server-line" style="margin-bottom: 12px;">
+
+                <div class="server-line" style="margin-bottom:10px">
                   <span>Painel</span>
                   <span>TCAdmin</span>
                 </div>
+
                 <div class="server-line">
                   <span>Banco de dados</span>
                   <span>MySQL</span>
                 </div>
               </div>
+
               <div class="server-line">
                 <span>Armazenamento</span>
                 <span>Ilimitado</span>
               </div>
+
               <div class="server-line">
                 <span>Proteção</span>
                 <span>Anti-DDoS</span>
               </div>
+
               <div class="server-line">
                 <span>Entrega</span>
-                <span>Imediata após pagamento</span>
+                <span>Após pagamento</span>
               </div>
             </div>
           </div>
@@ -822,66 +803,99 @@
 
     <section class="section" id="planos">
       <div class="container">
-        <h2 class="section-title">Escolha o plano ideal para seu servidor</h2>
-        <p class="section-text">
-          Planos mensais com estrutura profissional para quem quer iniciar, expandir ou manter uma comunidade forte com qualidade e estabilidade.
-        </p>
+        <div class="section-head">
+          <h2 class="section-title">Escolha seu plano</h2>
+
+          <p class="section-text">
+            Planos mensais para projetos pequenos, comunidades em crescimento
+            e servidores com maior capacidade.
+          </p>
+        </div>
 
         <div class="plans">
           <article class="plan">
             <div class="plan-name">Plano Barato</div>
+
             <div class="price">
-              <strong>R$8,59</strong>
+              <strong>R$ 8,59</strong>
               <span>/mês</span>
             </div>
+
             <div class="billing">Cobrança mensal</div>
+
             <ul class="features">
               <li>50 Slots</li>
-              <li>Painel Tcadmin</li>
+              <li>Painel TCAdmin</li>
               <li>Banco de Dados MySQL</li>
               <li>Armazenamento Ilimitado</li>
               <li>Proteção Anti-DDoS</li>
             </ul>
-            <div class="plan-note">Perfeito para começar sua comunidade com custo baixo e estrutura estável.</div>
-            <button class="plan-btn" onclick="handlePlanAction('barato')">Entrar para comprar</button>
+
+            <div class="plan-note">
+              Uma opção econômica para iniciar sua comunidade com uma estrutura estável.
+            </div>
+
+            <button class="plan-btn" data-plan="barato" onclick="handlePlanAction('barato')">
+              Entrar para comprar
+            </button>
           </article>
 
           <article class="plan featured">
             <span class="tag">Mais escolhido</span>
+
             <div class="plan-name">Plano Bom</div>
+
             <div class="price">
-              <strong>R$16,00</strong>
+              <strong>R$ 16,00</strong>
               <span>/mês</span>
             </div>
+
             <div class="billing">Cobrança mensal</div>
+
             <ul class="features">
               <li>100 Slots</li>
-              <li>Painel Tcadmin</li>
+              <li>Painel TCAdmin</li>
               <li>Banco de Dados MySQL</li>
               <li>Armazenamento Ilimitado</li>
               <li>Proteção Anti-DDoS</li>
             </ul>
-            <div class="plan-note">Equilíbrio ideal entre preço, capacidade e crescimento da comunidade.</div>
-            <button class="plan-btn" onclick="handlePlanAction('bom')">Entrar para comprar</button>
+
+            <div class="plan-note">
+              Equilíbrio entre preço, capacidade e espaço para sua comunidade crescer.
+            </div>
+
+            <button class="plan-btn" data-plan="bom" onclick="handlePlanAction('bom')">
+              Entrar para comprar
+            </button>
           </article>
 
           <article class="plan">
             <span class="tag">Alta capacidade</span>
+
             <div class="plan-name">Plano Ótimo</div>
+
             <div class="price">
-              <strong>R$33,00</strong>
+              <strong>R$ 33,00</strong>
               <span>/mês</span>
             </div>
+
             <div class="billing">Cobrança mensal</div>
+
             <ul class="features">
               <li>200 Slots</li>
-              <li>Painel Tcadmin</li>
+              <li>Painel TCAdmin</li>
               <li>Banco de Dados MySQL</li>
               <li>Armazenamento Ilimitado</li>
               <li>Proteção Anti-DDoS</li>
             </ul>
-            <div class="plan-note">Mais espaço e desempenho para projetos maiores e comunidades ativas.</div>
-            <button class="plan-btn" onclick="handlePlanAction('otimo')">Entrar para comprar</button>
+
+            <div class="plan-note">
+              Mais capacidade para projetos maiores e comunidades com bastante movimento.
+            </div>
+
+            <button class="plan-btn" data-plan="otimo" onclick="handlePlanAction('otimo')">
+              Entrar para comprar
+            </button>
           </article>
         </div>
       </div>
@@ -889,34 +903,51 @@
 
     <section class="section" id="vantagens">
       <div class="container">
-        <h2 class="section-title">Por que escolher a Hosting SX</h2>
-        <p class="section-text">
-          Tudo que sua comunidade precisa para manter um servidor SAMP ou MTA estável, com gerenciamento simples e visual profissional.
-        </p>
+        <div class="section-head">
+          <h2 class="section-title">Por que escolher a Hosting SX</h2>
+
+          <p class="section-text">
+            Recursos essenciais para manter seu servidor organizado, protegido e disponível.
+          </p>
+        </div>
 
         <div class="info-grid">
           <div class="info-card">
             <h3>Painel profissional</h3>
-            <p>Gerencie seu servidor com TCAdmin, reinicie, acompanhe recursos e mantenha o controle total do ambiente.</p>
+            <p>
+              Gerencie o servidor com TCAdmin, acompanhe recursos
+              e mantenha o controle do ambiente.
+            </p>
           </div>
 
           <div class="info-card">
             <h3>Estrutura otimizada</h3>
-            <p>Planos preparados para entregar desempenho, estabilidade e boa experiência para sua base de jogadores.</p>
+            <p>
+              Planos preparados para oferecer desempenho e estabilidade
+              para servidores SA:MP e MTA.
+            </p>
           </div>
 
           <div class="info-card">
             <h3>Proteção Anti-DDoS</h3>
-            <p>Mais segurança para evitar instabilidade e manter seu projeto online com mais confiança.</p>
+            <p>
+              Mais segurança contra ataques e instabilidades
+              que podem prejudicar sua comunidade.
+            </p>
           </div>
         </div>
 
         <div class="cta-box" id="contato">
           <h3>Pronto para colocar sua comunidade online?</h3>
+
           <p>
-            Escolha um plano da Hosting SX e entregue uma experiência profissional para sua comunidade SAMP/MTA com performance, controle e estabilidade.
+            Entre com sua conta do Discord, escolha o plano e continue
+            para o pagamento de forma rápida.
           </p>
-          <a id="ctaBottomBtn" href="/.netlify/functions/discord-login-hosting" class="primary-btn">Entrar com Discord</a>
+
+          <a id="ctaBottomBtn" href="/.netlify/functions/discord-login-hosting" class="primary-btn">
+            Entrar com Discord
+          </a>
         </div>
       </div>
     </section>
@@ -924,34 +955,45 @@
 
   <footer>
     <div class="container">
-      © 2026 Hosting SX • Hospedagem profissional para SAMP / MTA
+      © 2026 Hosting SX • Hospedagem profissional para SA:MP / MTA
     </div>
   </footer>
 
   <div id="pixModal" class="modal" aria-hidden="true">
     <div class="modal-card">
       <button class="modal-close" onclick="closePixModal()" aria-label="Fechar">×</button>
+
       <div class="modal-title" id="modalTitle">Pagamento via Pix</div>
-      <div class="modal-subtitle" id="modalSubtitle">Finalize seu pedido copiando o código ou escaneando o QR Code.</div>
+
+      <div class="modal-subtitle" id="modalSubtitle">
+        Finalize seu pedido copiando o código ou escaneando o QR Code.
+      </div>
 
       <div class="pix-box">
         <div class="qr-wrap">
-          <img id="pixQrImage" alt="QR Code Pix" class="hidden" />
+          <img id="pixQrImage" alt="QR Code Pix" class="hidden">
         </div>
 
-        <textarea id="pixCode" class="pix-code" readonly placeholder="O código Pix aparecerá aqui."></textarea>
+        <textarea
+          id="pixCode"
+          class="pix-code"
+          readonly
+          placeholder="O código Pix aparecerá aqui."
+        ></textarea>
 
         <div class="pix-actions">
           <button class="copy-btn" onclick="copyPixCode()">Copiar código Pix</button>
           <button class="ghost-btn" onclick="closePixModal()">Fechar</button>
         </div>
 
-        <div id="pixNote" class="pix-note">Depois do pagamento, sua entrega será processada automaticamente.</div>
+        <div id="pixNote" class="pix-note">
+          Depois do pagamento, sua entrega será processada automaticamente.
+        </div>
       </div>
     </div>
   </div>
 
-<script>
+  <script>
 /*
   hosting.html - script completo para login/UX e redirecionamento para checkout
   - Usa /.netlify/functions/me-hosting para checar sessão (cookie HttpOnly)

@@ -1,143 +1,714 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Hosting SX | Pagamento</title>
-<style>
-  body{margin:0;font-family:Arial;background:#0b0b0d;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh}
-  .box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:40px;border-radius:20px;text-align:center;max-width:600px}
-  h1{color:#ff394b;margin-bottom:8px} p{color:#ccc}
-  .status{margin:20px 0;padding:12px;border-radius:10px;background:rgba(255,255,255,0.05)}
-  .btn{display:inline-block;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,#e11d2e,#ff394b);color:#fff;text-decoration:none;font-weight:bold}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1524">
+
+  <title>Hosting SX | Pagamento</title>
+
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #08111d;
+      --bg-soft: #0b1625;
+      --surface: #0f1d2f;
+      --surface-2: #13253b;
+      --blue: #2b82d4;
+      --blue-dark: #1e5f9e;
+      --blue-light: #7dbbf0;
+      --red: #d63d55;
+      --green: #4bd29a;
+      --yellow: #f5c76a;
+      --text: #f4f7fb;
+      --muted: #98aabd;
+      --line: #223750;
+      --line-soft: rgba(255, 255, 255, .06);
+      --radius: 15px;
+      --radius-small: 10px;
+      --shadow: 0 16px 38px rgba(0, 0, 0, .3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(8, 17, 29, .95), rgba(8, 17, 29, .985)),
+        url("https://i.imgur.com/eKjFtd1.png") center/cover fixed no-repeat;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(43, 130, 212, .04) 1px, transparent 1px),
+        linear-gradient(rgba(43, 130, 212, .04) 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+
+    a,
+    button {
+      font: inherit;
+    }
+
+    .payment-shell {
+      width: min(100%, 880px);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .payment-aside {
+      position: relative;
+      overflow: hidden;
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      border-right: 1px solid var(--line);
+      background:
+        linear-gradient(145deg, rgba(19, 45, 72, .97), rgba(10, 24, 40, .98));
+    }
+
+    .payment-aside::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--blue), var(--red));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .brand-logo {
+      width: 55px;
+      height: 55px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, .12);
+      background: var(--bg);
+      box-shadow: 0 0 0 4px rgba(43, 130, 212, .07);
+    }
+
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .brand-copy strong {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 1.4rem;
+    }
+
+    .brand-copy small {
+      margin-top: 4px;
+      color: var(--blue-light);
+      font-size: .66rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .aside-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .aside-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--blue-light);
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .aside-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .aside-copy h1 {
+      margin-top: 14px;
+      font-family: "Rajdhani", sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      line-height: .94;
+    }
+
+    .aside-copy p {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .84rem;
+      line-height: 1.65;
+    }
+
+    .aside-footer {
+      color: #70859a;
+      font-size: .68rem;
+    }
+
+    .payment-main {
+      display: flex;
+      align-items: center;
+      padding: 32px;
+    }
+
+    .payment-content {
+      width: 100%;
+    }
+
+    .success-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 15px;
+      border-radius: 14px;
+      color: var(--green);
+      background: rgba(75, 210, 154, .09);
+      border: 1px solid rgba(75, 210, 154, .18);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .payment-content h2 {
+      font-family: "Rajdhani", sans-serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      line-height: 1;
+    }
+
+    .payment-content > p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.6;
+    }
+
+    .status {
+      margin: 20px 0;
+      padding: 13px 14px;
+      border: 1px solid rgba(75, 210, 154, .28);
+      border-left: 4px solid var(--green);
+      border-radius: var(--radius-small);
+      color: #d6f8e9;
+      background: rgba(75, 210, 154, .07);
+      font-size: .78rem;
+      line-height: 1.55;
+    }
+
+    .status.loading {
+      border-color: rgba(43, 130, 212, .28);
+      border-left-color: var(--blue);
+      color: #d9ecfb;
+      background: rgba(43, 130, 212, .07);
+    }
+
+    .status.warn {
+      border-color: rgba(245, 199, 106, .3);
+      border-left-color: var(--yellow);
+      color: #f8ebca;
+      background: rgba(245, 199, 106, .07);
+    }
+
+    .details {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 20px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 11px 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, .025);
+      font-size: .75rem;
+    }
+
+    .detail-row span {
+      color: var(--muted);
+    }
+
+    .detail-row strong {
+      max-width: 62%;
+      overflow-wrap: anywhere;
+      text-align: right;
+      color: #e7eff7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn {
+      min-height: 43px;
+      flex: 1 1 180px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 15px;
+      border-radius: 9px;
+      color: #fff;
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+      text-decoration: none;
+      font-size: .75rem;
+      font-weight: 800;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(90deg, var(--blue), var(--red));
+    }
+
+    .btn.secondary {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .btn.secondary:hover {
+      background: rgba(43, 130, 212, .08);
+    }
+
+    .debug {
+      display: none;
+      width: 100%;
+      max-height: 190px;
+      overflow: auto;
+      margin-top: 15px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: #8da4ba;
+      background: rgba(0, 0, 0, .16);
+      font-family: monospace;
+      font-size: .65rem;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 740px) {
+      body {
+        display: block;
+        padding: 14px;
+      }
+
+      .payment-shell {
+        grid-template-columns: 1fr;
+        margin: 0 auto;
+      }
+
+      .payment-aside {
+        min-height: auto;
+        padding: 24px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .aside-copy {
+        padding: 38px 0 24px;
+      }
+
+      .payment-main {
+        padding: 25px 22px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .brand-logo {
+        width: 49px;
+        height: 49px;
+      }
+
+      .detail-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .detail-row strong {
+        max-width: 100%;
+        text-align: left;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <div class="box">
-    <h1>Pagamento recebido</h1>
-    <p>Seu pedido foi enviado com sucesso.</p>
+  <main class="payment-shell">
+    <section class="payment-aside">
+      <div class="brand">
+        <img
+          class="brand-logo"
+          src="https://i.imgur.com/eKjFtd1.png"
+          alt="Logo Hosting SX"
+        >
 
-    <div class="status" id="statusBox">Verificando informações...</div>
+        <span class="brand-copy">
+          <strong>Hosting SX</strong>
+          <small>Confirmação de pagamento</small>
+        </span>
+      </div>
 
-    <p>Após a confirmação do pagamento, sua hosting será entregue.</p>
-    <a href="/hosting.html" class="btn">Voltar para o site</a>
-  </div>
+      <div class="aside-copy">
+        <div class="aside-label">Pedido recebido</div>
 
- <script>
-const PENDING_KEY = "sx_pending_checkout";
-const LOCK_KEY = "sx_notify_sent";
-const ME_URL = "/.netlify/functions/me-hosting";
-const NOTIFY_URL = "/.netlify/functions/notify-purchase";
+        <h1>Pagamento registrado</h1>
 
-function getParam(name) {
-  try { return new URL(window.location.href).searchParams.get(name); } catch { return null; }
-}
+        <p>
+          Estamos conferindo os dados da sua renovação e notificando
+          o sistema da Hosting SX automaticamente.
+        </p>
+      </div>
 
-async function fetchMeHosting() {
-  try {
-    const r = await fetch(ME_URL, { credentials: 'same-origin', cache: 'no-store' });
-    if (!r.ok) return null;
-    const j = await r.json().catch(()=>null);
-    return j && j.ok ? j : null;
-  } catch (e) { return null; }
-}
+      <div class="aside-footer">
+        © 2026 Hosting SX • Processamento protegido
+      </div>
+    </section>
 
-async function notifyPurchase(discordId, plan) {
-  try {
-    const payload = {
-      discord_id: String(discordId),
-      plan: plan || "barato"
-    };
+    <section class="payment-main">
+      <div class="payment-content">
+        <div class="success-icon" aria-hidden="true">✓</div>
 
-    const resp = await fetch(NOTIFY_URL, {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+        <h2>Pagamento recebido</h2>
 
-    const body = await resp.json().catch(()=>({}));
-    return { ok: resp.ok, status: resp.status, body };
-  } catch (err) {
-    return { ok: false, error: String(err) };
-  }
-}
+        <p>
+          Seu pedido foi enviado com sucesso. Aguarde enquanto verificamos
+          as informações da renovação.
+        </p>
 
-(async function main() {
-  const statusBox = document.getElementById("statusBox");
+        <div class="status loading" id="status">
+          Verificando informações...
+        </div>
 
-  if (sessionStorage.getItem(LOCK_KEY)) {
-    if (statusBox) statusBox.innerHTML = "✔️ Pedido já processado.";
-    return;
-  }
+        <div class="details" aria-label="Detalhes da renovação">
+          <div class="detail-row">
+            <span>Host</span>
+            <strong id="hostName">Identificando...</strong>
+          </div>
 
-  if (statusBox) statusBox.innerHTML = "Verificando informações...";
+          <div class="detail-row">
+            <span>Plano</span>
+            <strong id="planName">Identificando...</strong>
+          </div>
 
-  // 1) localStorage
-  let pending = null;
-  try {
-    pending = JSON.parse(localStorage.getItem(PENDING_KEY) || "null");
-  } catch(e) { pending = null; }
+          <div class="detail-row">
+            <span>Discord ID</span>
+            <strong id="discordId">Identificando...</strong>
+          </div>
 
-  // 2) pegar dados (compatível com tudo)
-  let discordId =
-    pending?.discord_id ||
-    pending?.discordId ||
-    getParam("ref") ||
-    getParam("discord_id") ||
-    null;
+          <div class="detail-row">
+            <span>Novo vencimento</span>
+            <strong id="newDue">Aguardando confirmação</strong>
+          </div>
+        </div>
 
-  let plan =
-    pending?.plan ||
-    pending?.plano ||
-    getParam("plan") ||
-    getParam("plano") ||
-    "barato";
+        <p>
+          Após a confirmação, sua hospedagem será renovada
+          e a equipe responsável será notificada.
+        </p>
 
-  // 3) fallback me-hosting
-  if (!discordId) {
-    const me = await fetchMeHosting();
-    if (me && me.discord_id) {
-      discordId = me.discord_id;
-    }
-  }
+        <div class="actions">
+          <a href="/hosting.html" class="btn">Voltar para a Hosting SX</a>
+          <a href="/renovar-hosting.html" class="btn secondary">Menu do cliente</a>
+        </div>
 
-  if (!discordId) {
-    if (statusBox) statusBox.innerHTML = "⚠️ Não foi possível identificar o cliente.";
-    return;
-  }
+        <pre id="debug" class="debug" aria-hidden="true"></pre>
+      </div>
+    </section>
+  </main>
 
-  if (statusBox) {
-    statusBox.innerHTML =
-      `✔️ Cliente identificado<br>ID: <b>${discordId}</b><br><br>Registrando pedido...`;
-  }
+  <!-- hosting-renovado-sucesso.html -->
+  <script>
+    (async function () {
+      const PENDING_RENEW_KEY = "sx_pending_renewal";
 
-  // 4) notify
-  const res = await notifyPurchase(discordId, plan);
+      function getParam(n) {
+        try {
+          return new URL(location.href).searchParams.get(n);
+        } catch {
+          return null;
+        }
+      }
 
-  if (res.ok) {
-    sessionStorage.setItem(LOCK_KEY, "1");
-    try { localStorage.removeItem(PENDING_KEY); } catch(e){}
+      function loadPending() {
+        try {
+          const raw =
+            localStorage.getItem(PENDING_RENEW_KEY) ||
+            sessionStorage.getItem(PENDING_RENEW_KEY);
 
-    if (statusBox) {
-      statusBox.innerHTML +=
-        `<br><br>✅ ${res.body?.message || "Pedido registrado com sucesso."}<br>` +
-        `Sua hosting será entregue automaticamente em instantes.`;
-    }
-  } else {
-    const msg =
-      res.body?.message ||
-      res.body?.error ||
-      res.error ||
-      `HTTP ${res.status}`;
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      }
 
-    if (statusBox) {
-      statusBox.innerHTML += `<br><br>⚠️ Problema ao registrar pedido: ${msg}`;
-    }
+      async function fetchMeHosting() {
+        try {
+          const r = await fetch("/.netlify/functions/me-hosting", {
+            credentials: "same-origin",
+            cache: "no-store"
+          });
 
-    console.error("notify-purchase error:", res);
-  }
-})();
-</script>
+          if (!r.ok) return null;
+
+          const j = await r.json().catch(() => null);
+          return j && j.ok ? j : null;
+        } catch {
+          return null;
+        }
+      }
+
+      async function fetchRenewInfoByDiscord(discordId) {
+        try {
+          const r = await fetch("/.netlify/functions/renew-info", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              discord_id: String(discordId)
+            })
+          });
+
+          const j = await r.json().catch(() => null);
+
+          return {
+            ok: r.ok,
+            status: r.status,
+            body: j
+          };
+        } catch (e) {
+          return {
+            ok: false,
+            error: String(e)
+          };
+        }
+      }
+
+      async function callNotify(payload) {
+        try {
+          const res = await fetch("/.netlify/functions/notify-renewal", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const body = await res.json().catch(() => ({}));
+
+          return {
+            ok: res.ok,
+            status: res.status,
+            body
+          };
+        } catch (err) {
+          return {
+            ok: false,
+            error: String(err)
+          };
+        }
+      }
+
+      const statusEl = document.getElementById("status");
+      const debugEl = document.getElementById("debug");
+      const hostEl = document.getElementById("hostName");
+      const planEl = document.getElementById("planName");
+      const discordEl = document.getElementById("discordId");
+      const dueEl = document.getElementById("newDue");
+
+      const pending = loadPending();
+
+      let host = getParam("host") || pending?.host || "";
+      let plan = getParam("plan") || pending?.plan || "barato";
+      let discordId =
+        getParam("discord_id") ||
+        getParam("ref") ||
+        pending?.discord_id ||
+        "";
+      let tx = getParam("tx") || pending?.tx || "";
+      let state = getParam("state") || pending?.state || "";
+
+      if (!discordId) {
+        const me = await fetchMeHosting();
+
+        if (me && me.ok && me.discord_id) {
+          discordId = me.discord_id;
+        }
+      }
+
+      if ((!host || !discordId) && discordId) {
+        const info = await fetchRenewInfoByDiscord(discordId);
+
+        if (info.ok && info.body && info.body.ok) {
+          const hosts =
+            info.body.hosts ||
+            (info.body.host ? [info.body.host] : []);
+
+          if (!host && hosts.length) {
+            const match = tx
+              ? hosts.find(
+                  h =>
+                    String(h.login_host || h.login || "") ===
+                    String(pending?.host || "")
+                )
+              : null;
+
+            const chosen = match || hosts[0];
+
+            host =
+              chosen?.login_host ||
+              chosen?.login ||
+              "";
+
+            plan = (
+              chosen?.plano ||
+              chosen?.plano_key ||
+              plan ||
+              "barato"
+            ).toLowerCase();
+          }
+        }
+      }
+
+      hostEl.textContent = host || "-";
+      planEl.textContent = plan || "-";
+      discordEl.textContent = discordId || "-";
+
+      if (!host || !discordId) {
+        statusEl.className = "status warn";
+        statusEl.textContent =
+          "⚠️ Não foi possível identificar sua host. Nossa equipe foi avisada.";
+
+        debugEl.textContent = JSON.stringify(
+          {
+            host,
+            plan,
+            discordId,
+            tx,
+            state,
+            pending
+          },
+          null,
+          2
+        );
+
+        return;
+      }
+
+      const payload = {
+        host,
+        plan,
+        discord_id: discordId,
+        tx
+      };
+
+      const res = await callNotify(payload);
+
+      if (res.ok && res.body && res.body.ok) {
+        statusEl.className = "status";
+        statusEl.textContent =
+          "✅ Renovação registrada com sucesso. Sua hospedagem foi renovada e a equipe foi notificada.";
+
+        if (res.body.novo_vencimento) {
+          dueEl.textContent = new Date(
+            res.body.novo_vencimento
+          ).toLocaleString("pt-BR");
+        } else if (res.body.host && res.body.host.data_vencimento) {
+          dueEl.textContent = new Date(
+            res.body.host.data_vencimento
+          ).toLocaleString("pt-BR");
+        }
+
+        debugEl.textContent = JSON.stringify(res.body, null, 2);
+
+        localStorage.removeItem(PENDING_RENEW_KEY);
+        sessionStorage.removeItem(PENDING_RENEW_KEY);
+
+        if (tx) {
+          sessionStorage.removeItem(`renew_state_${tx}`);
+        }
+      } else {
+        statusEl.className = "status warn";
+        statusEl.textContent =
+          "⚠️ Houve um problema ao registrar a renovação. Nossa equipe foi avisada.";
+
+        debugEl.textContent = JSON.stringify(
+          {
+            host,
+            plan,
+            discordId,
+            tx,
+            state,
+            pending,
+            response: res
+          },
+          null,
+          2
+        );
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -177,6 +177,19 @@
       background: rgba(255,255,255,.05);
     }
 
+    .nav-links {
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      flex: 0 0 auto;
+    }
+
+    .nav-actions {
+      flex: 0 0 auto;
+    }
+
+
     .nav-actions {
       display: flex;
       align-items: center;
@@ -632,6 +645,31 @@
       font-size: .84rem;
     }
 
+    .server-name-line {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .server-name-line strong {
+      min-width: 0;
+    }
+
+    .verified-badge {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--blue);
+      font-size: .55rem;
+      box-shadow: 0 0 0 2px rgba(43,130,212,.13);
+    }
+
+
     .rank-title small {
       color: var(--muted);
       font-size: .7rem;
@@ -780,7 +818,7 @@
 
     .service-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 13px;
     }
 
@@ -1053,12 +1091,10 @@
         </a>
 
         <nav class="nav-links" aria-label="Navegação principal">
-          <a href="#inicio">Início</a>
           <a href="#ranking-servidores">Servidores</a>
           <a href="registro.html">Registro</a>
-          <a href="hosting.html">Hosting</a>
-          <a href="menuvip.html" id="vipBtn">VIP</a>
-          <a href="#" id="gmBtn">Comprar GM</a>
+          <a href="hosting.html">Hosting SX</a>
+          <a href="menuvip.html" id="vipBtn">Benefícios VIP</a>
           <a href="desban.html" id="desbanBtn">Desban</a>
         </nav>
 
@@ -1088,7 +1124,10 @@
         <a href="hosting.html">Hosting SX</a>
         <a href="menuvip.html">Benefícios VIP</a>
         <a href="desban.html">Desban</a>
-        <a href="https://discord.gg/HSd3YcWryb" target="_blank" rel="noopener noreferrer">Discord</a>
+        <a href="https://discord.gg/HSd3YcWryb" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-discord"></i>
+          Discord
+        </a>
       </nav>
     </div>
   </header>
@@ -1260,6 +1299,12 @@
             <i class="fas fa-server"></i>
             <h3>Lista de servidores</h3>
             <p>Explore os servidores cadastrados no portal.</p>
+          </a>
+
+          <a class="service-card" href="#" id="gmBtn">
+            <i class="fas fa-cart-shopping"></i>
+            <h3>Comprar GM</h3>
+            <p>Consulte as gamemodes disponíveis, opções e valores pelo atendimento.</p>
           </a>
         </div>
       </div>
@@ -1591,7 +1636,12 @@ if(!premiumItems.length){
           src="${escapeHtml(it.logoUrl || "https://i.imgur.com/eKjFtd1.png")}"
           loading="lazy" />
         <div class="rank-title">
-          <strong>${escapeHtml(it.name || "")}</strong>
+          <div class="server-name-line">
+            <strong>${escapeHtml(it.name || "")}</strong>
+            <span class="verified-badge" title="Servidor verificado" aria-label="Servidor verificado">
+              <i class="fas fa-check"></i>
+            </span>
+          </div>
           <small class="ip-line">${escapeHtml(it.ip || "")}</small>
         </div>
         <span class="badge pos">${escapeHtml(String(it.position || ""))}</span>

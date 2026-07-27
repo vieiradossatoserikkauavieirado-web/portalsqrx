@@ -1,279 +1,273 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Painel • Portal SiqueiraX</title>
-
-<link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
-  --red:#ff002b;
-  --red-dark:#b0001c;
-  --glass:rgba(15,15,15,.82);
-  --transition:.35s ease;
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  font-family:'Inter',sans-serif;
-  min-height:100vh;
-  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
-  padding:1.25rem;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.78);
-  backdrop-filter:blur(18px);
-  z-index:-1;
-}
-
-/* ===== CARD PRINCIPAL ===== */
-.painel-card{
-  width:100%;
-  max-width:520px;
-  background:var(--glass);
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:28px;
-  padding:2.8rem 2.4rem;
-  box-shadow:0 0 70px rgba(255,0,43,.55);
-  animation:fadeUp .8s ease;
-  position:relative;
-  overflow:hidden;
-}
-
-.painel-card::before{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  background:radial-gradient(circle at 30% 10%, rgba(255,0,43,.22), transparent 55%),
-             radial-gradient(circle at 80% 80%, rgba(255,0,43,.18), transparent 55%);
-  pointer-events:none;
-}
-
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(30px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.brand{
-  display:flex;
-  flex-direction:column;
-  gap:.5rem;
-  margin-bottom:1.35rem;
-  text-align:center;
-  position:relative;
-}
-
-.brand .badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:.5rem;
-  margin:0 auto;
-  padding:.45rem .85rem;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(0,0,0,.35);
-  font-weight:800;
-  letter-spacing:.6px;
-  font-size:.78rem;
-  opacity:.92;
-}
-
-.brand h1{
-  font-family:'Orbitron',sans-serif;
-  font-size:2.25rem;
-  line-height:1.05;
-  background:linear-gradient(90deg,#ff002b,#ff5c5c);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 34px rgba(255,0,43,.7);
-  margin-top:.25rem;
-}
-
-.brand .subtitle{
-  font-size:.98rem;
-  opacity:.88;
-}
-
-/* ===== INFO BOX ===== */
-.info{
-  font-size:.9rem;
-  line-height:1.55;
-  background:rgba(0,0,0,.40);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:16px;
-  padding:1.05rem 1rem;
-  margin:1.2rem 0 1.35rem;
-  position:relative;
-}
-
-.info b{color:#ff4d4d}
-
-.alert{
-  display:none;
-  font-size:.9rem;
-  line-height:1.55;
-  background:rgba(255,0,43,.10);
-  border:1px solid rgba(255,0,43,.35);
-  border-radius:16px;
-  padding:1rem;
-  margin-bottom:1.2rem;
-  box-shadow:0 0 25px rgba(255,0,43,.22);
-}
-.alert b{color:#ff4d4d}
-
-/* ===== BUTTON ===== */
-button{
-  width:100%;
-  padding:1.05rem 1rem;
-  border:none;
-  border-radius:16px;
-  font-size:1rem;
-  font-weight:900;
-  letter-spacing:1px;
-  cursor:pointer;
-  color:#fff;
-  background:linear-gradient(135deg,var(--red),var(--red-dark));
-  box-shadow:0 0 34px rgba(255,0,43,.72);
-  transition:var(--transition);
-  text-transform:uppercase;
-}
-
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 50px rgba(255,0,43,.92);
-}
-
-button:disabled{
-  opacity:.65;
-  cursor:not-allowed;
-  transform:none;
-}
-
-/* ===== ERROR ===== */
-.error-message{
-  margin-top:1rem;
-  color:#ff6b6b;
-  font-size:.9rem;
-  text-align:center;
-  font-weight:800;
-}
-
-/* ===== FOOTER ===== */
-.footer{
-  margin-top:1.2rem;
-  text-align:center;
-  opacity:.7;
-  font-size:.82rem;
-}
-
-/* ===== MOBILE ===== */
-@media(max-width:520px){
-  .painel-card{padding:2.2rem 1.6rem}
-  .brand h1{font-size:1.95rem}
-}
-</style>
-</head>
-
-<body>
-
-<div class="painel-card">
-  <div class="brand">
-    <div class="badge">PORTAL SIQUEIRAX • PAINEL</div>
-    <h1>Login do Painel</h1>
-    <div class="subtitle">Acesso restrito • Autenticação via Discord</div>
-  </div>
-
-  <div id="painelAlert" class="alert"></div>
-
-  <div class="info">
-    Clique em <b>Entrar com Discord</b> para autorizar o acesso ao <b>Painel SiqueiraX</b>.<br><br>
-    O sistema verifica automaticamente se você possui o <b>cargo necessário</b> no servidor.<br><br>
-    Se você não estiver logado no site, vamos te mandar para o <b>login</b> primeiro.
-  </div>
-
-  <form id="loginPainelForm">
-    <button id="btnPainel" type="submit">ENTRAR COM DISCORD</button>
-  </form>
-
-  <p id="painelErrorMessage" class="error-message"></p>
-
-  <div class="footer">© Portal SiqueiraX • Segurança ativa</div>
-</div>
-
-<script type="module">
-  const form = document.getElementById("loginPainelForm");
-  const errEl = document.getElementById("painelErrorMessage");
-  const alertEl = document.getElementById("painelAlert");
-  const btn = document.getElementById("btnPainel");
-
-  function qs(name){
-    const u = new URL(window.location.href);
-    return u.searchParams.get(name);
-  }
-
-  function showAlert(html){
-    alertEl.innerHTML = html;
-    alertEl.style.display = "block";
-  }
-
-  function mapErr(code){
-    if (code === "missing_env") return "Configuração faltando no servidor (env vars).";
-    if (code === "dc_code") return "Discord não retornou o código de login. Tente novamente.";
-    if (code === "dc_fail") return "Falha ao autenticar com Discord. Tente novamente.";
-    if (code === "not_in_guild") return "Você não está no servidor do Discord necessário.";
-    if (code === "no_role") return "Você não tem o cargo necessário para acessar o painel.";
-    if (code === "sess") return "Erro ao criar sessão do painel. Tente novamente.";
-    return "Falha no login do painel. Tente novamente.";
-  }
-
-  // 1) Se já tiver sessão do painel, nem mostra login: vai direto
-  try {
-    const r = await fetch("/.netlify/functions/me_painel", {
-      credentials: "include",
-      cache: "no-store"
-    });
-    if (r.ok) {
-      window.location.href = "painelsiqueirax.html";
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1524">
+  <title>Login do Painel • Portal SiqueiraX</title>
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#08111d;--panel:#0f1d2f;--panel-2:#13253b;--blue:#2b82d4;
+      --blue-light:#79b9ef;--blue-dark:#1d5c97;--red:#d63d55;
+      --text:#f4f7fb;--muted:#98aabd;--line:#223750;--danger:#ff7187;
+      --radius:16px;--radius-small:10px;--shadow:0 16px 38px rgba(0,0,0,.32)
     }
-  } catch {}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      min-height:100vh;display:grid;place-items:center;padding:22px;
+      font-family:"Inter",sans-serif;color:var(--text);
+      background:
+        linear-gradient(rgba(8,17,29,.93),rgba(8,17,29,.98)),
+        url("https://i.imgur.com/eKjFtd1.png") center/cover fixed no-repeat
+    }
+    body::before{
+      content:"";position:fixed;inset:0;z-index:-1;
+      background:
+        linear-gradient(90deg,rgba(43,130,212,.045) 1px,transparent 1px),
+        linear-gradient(rgba(43,130,212,.045) 1px,transparent 1px);
+      background-size:38px 38px;pointer-events:none
+    }
+    button{font:inherit}
+    .login-shell{
+      width:min(100%,940px);display:grid;
+      grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+      overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);
+      background:var(--panel);box-shadow:var(--shadow)
+    }
+    .login-aside{
+      position:relative;overflow:hidden;min-height:570px;display:flex;
+      flex-direction:column;justify-content:space-between;padding:34px;
+      background:linear-gradient(145deg,rgba(19,45,72,.97),rgba(10,24,40,.98));
+      border-right:1px solid var(--line)
+    }
+    .login-aside::after{
+      content:"";position:absolute;inset:auto -70px -70px auto;width:220px;height:220px;
+      border:1px solid rgba(121,185,239,.10);border-radius:50%;
+      box-shadow:0 0 0 32px rgba(121,185,239,.025),0 0 0 68px rgba(214,61,85,.018);
+      pointer-events:none
+    }
+    .brand{position:relative;z-index:1;display:flex;align-items:center;gap:14px}
+    .brand-logo{
+      width:58px;height:58px;flex:0 0 auto;border-radius:50%;object-fit:cover;
+      border:2px solid rgba(255,255,255,.12);background:#08111d;
+      box-shadow:0 0 0 4px rgba(43,130,212,.08)
+    }
+    .brand-copy span{
+      display:block;margin-bottom:3px;color:var(--blue-light);font-size:.72rem;
+      font-weight:700;letter-spacing:.12em;text-transform:uppercase
+    }
+    .brand-copy strong{font-family:"Rajdhani",sans-serif;font-size:1.55rem;line-height:1}
+    .aside-content{position:relative;z-index:1;max-width:330px;margin:auto 0;padding:38px 0}
+    .aside-line{
+      width:54px;height:4px;margin-bottom:18px;border-radius:99px;
+      background:linear-gradient(90deg,var(--blue),var(--red))
+    }
+    .aside-content h1{
+      font-family:"Rajdhani",sans-serif;font-size:clamp(2.4rem,6vw,4rem);
+      line-height:.95;letter-spacing:-.02em
+    }
+    .aside-content p{margin-top:16px;color:var(--muted);font-size:.91rem;line-height:1.7}
+    .aside-footer{position:relative;z-index:1;color:#72869b;font-size:.7rem}
+    .login-main{display:flex;align-items:center;padding:38px;background:var(--panel)}
+    .login-content{width:100%}
+    .login-label{
+      display:inline-flex;align-items:center;gap:7px;margin-bottom:12px;
+      color:var(--blue-light);font-size:.68rem;font-weight:800;
+      letter-spacing:.1em;text-transform:uppercase
+    }
+    .login-label::before{
+      content:"";width:8px;height:8px;border-radius:50%;background:var(--blue)
+    }
+    .login-content h2{
+      font-family:"Rajdhani",sans-serif;font-size:clamp(2rem,5vw,2.8rem);line-height:1
+    }
+    .login-content>p{margin-top:10px;color:var(--muted);font-size:.88rem;line-height:1.65}
+    .info-list{display:grid;gap:10px;margin:24px 0}
+    .info-item{
+      display:flex;align-items:flex-start;gap:11px;padding:12px 13px;
+      border:1px solid rgba(255,255,255,.055);border-radius:var(--radius-small);
+      background:rgba(255,255,255,.025);color:var(--muted);font-size:.8rem;line-height:1.55
+    }
+    .info-number{
+      width:24px;height:24px;flex:0 0 auto;display:grid;place-items:center;
+      border-radius:7px;background:rgba(43,130,212,.12);
+      color:var(--blue-light);font-size:.7rem;font-weight:800
+    }
+    .info-item b{color:#e3ecf5;font-weight:700}
+    .alert{
+      display:none;margin-top:16px;margin-bottom:16px;padding:12px 13px;
+      border:1px solid rgba(214,61,85,.38);border-left:4px solid var(--red);
+      border-radius:var(--radius-small);background:rgba(214,61,85,.08);
+      color:#f1c5cd;font-size:.79rem;line-height:1.55
+    }
+    .alert b{color:#fff}
+    .discord-button{
+      width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;
+      gap:10px;border:0;border-radius:10px;cursor:pointer;color:#fff;
+      background:linear-gradient(90deg,var(--blue-dark),var(--blue));
+      box-shadow:0 8px 20px rgba(29,92,151,.24);
+      font-size:.8rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+      transition:transform .18s ease,background .18s ease,opacity .18s ease
+    }
+    .discord-button:hover{transform:translateY(-2px);background:linear-gradient(90deg,var(--blue),var(--red))}
+    .discord-button:disabled{opacity:.65;cursor:not-allowed;transform:none}
+    .discord-symbol{
+      width:22px;height:22px;display:grid;place-items:center;border-radius:7px;
+      background:rgba(255,255,255,.1);font-size:.85rem
+    }
+    .error-message{
+      min-height:20px;margin-top:12px;color:var(--danger);
+      font-size:.77rem;font-weight:700;text-align:center
+    }
+    .security-note{
+      display:flex;align-items:center;justify-content:center;gap:7px;
+      margin-top:17px;color:#71859a;font-size:.69rem
+    }
+    .security-note::before{
+      content:"";width:7px;height:7px;border-radius:50%;background:#4bd29a
+    }
+    @media(max-width:760px){
+      body{display:block;padding:14px}
+      .login-shell{grid-template-columns:1fr;margin:0 auto}
+      .login-aside{min-height:auto;padding:24px;border-right:0;border-bottom:1px solid var(--line)}
+      .aside-content{padding:42px 0 25px}
+      .aside-content h1{font-size:2.65rem}
+      .login-main{padding:27px 24px}
+    }
+    @media(max-width:430px){
+      .brand-logo{width:50px;height:50px}
+      .login-aside,.login-main{padding-left:19px;padding-right:19px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+    }
+  </style>
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-aside">
+      <div class="brand">
+        <img class="brand-logo" src="https://i.imgur.com/eKjFtd1.png" alt="Logo do Portal SiqueiraX">
+        <div class="brand-copy">
+          <span>Portal SiqueiraX</span>
+          <strong>Painel do usuário</strong>
+        </div>
+      </div>
 
-  // 2) Se voltou com erro, só mostra a mensagem e NÃO redireciona sozinho
-  const err = qs("err");
-  if (err) {
-    const msg = mapErr(err);
-    errEl.textContent = msg;
-    showAlert(`<b>Atenção:</b> ${msg}`);
-  }
+      <div class="aside-content">
+        <div class="aside-line"></div>
+        <h1>Acesso ao Painel</h1>
+        <p>
+          Entre usando sua conta do Discord. O sistema verifica sua sessão
+          e os cargos necessários antes de liberar o acesso ao portal.
+        </p>
+      </div>
 
-  // 3) Só autoriza quando clicar no botão (sem auto)
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+      <div class="aside-footer">© Portal SiqueiraX • Autenticação protegida</div>
+    </section>
 
-    errEl.textContent = "";
-    btn.disabled = true;
-    btn.textContent = "REDIRECIONANDO...";
+    <section class="login-main">
+      <div class="login-content">
+        <div class="login-label">Login seguro</div>
+        <h2>Entrar com Discord</h2>
+        <p>
+          Você será redirecionado para o Discord para autorizar
+          o acesso à sua conta no Portal SiqueiraX.
+        </p>
 
-    const returnTo = qs("return") || "/painelsiqueirax.html";
-    window.location.href =
-      "/.netlify/functions/discordloginpainel?return=" + encodeURIComponent(returnTo);
-  });
-</script>
+        <div id="painelAlert" class="alert"></div>
 
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-number">1</div>
+            <div>Clique no botão abaixo e faça login na sua <b>conta do Discord</b>.</div>
+          </div>
+          <div class="info-item">
+            <div class="info-number">2</div>
+            <div>O sistema verifica se você possui o <b>cargo necessário</b> no servidor.</div>
+          </div>
+          <div class="info-item">
+            <div class="info-number">3</div>
+            <div>Com a autorização concluída, você volta automaticamente para o <b>Painel SiqueiraX</b>.</div>
+          </div>
+        </div>
 
+        <form id="loginPainelForm">
+          <button class="discord-button" id="btnPainel" type="submit">
+            <span class="discord-symbol" aria-hidden="true">◉</span>
+            <span id="btnPainelText">Entrar com Discord</span>
+          </button>
+        </form>
+
+        <p id="painelErrorMessage" class="error-message"></p>
+        <div class="security-note">Sessão protegida e validação automática</div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    const form = document.getElementById("loginPainelForm");
+    const errEl = document.getElementById("painelErrorMessage");
+    const alertEl = document.getElementById("painelAlert");
+    const btn = document.getElementById("btnPainel");
+    const btnText = document.getElementById("btnPainelText");
+
+    function qs(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    function showAlert(html) {
+      alertEl.innerHTML = html;
+      alertEl.style.display = "block";
+    }
+
+    function mapErr(code) {
+      if (code === "missing_env") return "Configuração faltando no servidor (env vars).";
+      if (code === "dc_code") return "O Discord não retornou o código de login. Tente novamente.";
+      if (code === "dc_fail") return "Falha ao autenticar com o Discord. Tente novamente.";
+      if (code === "not_in_guild") return "Você não está no servidor do Discord necessário.";
+      if (code === "no_role") return "Você não possui o cargo necessário para acessar o painel.";
+      if (code === "sess") return "Erro ao criar a sessão do painel. Tente novamente.";
+      return "Falha no login do painel. Tente novamente.";
+    }
+
+    try {
+      const response = await fetch("/.netlify/functions/me_painel", {
+        credentials: "include",
+        cache: "no-store"
+      });
+
+      if (response.ok) {
+        window.location.href = "painelsiqueirax.html";
+      }
+    } catch {}
+
+    const errorCode = qs("err");
+
+    if (errorCode) {
+      const message = mapErr(errorCode);
+      errEl.textContent = message;
+      showAlert(`<b>Atenção:</b> ${message}`);
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      errEl.textContent = "";
+      btn.disabled = true;
+      btnText.textContent = "Redirecionando...";
+
+      const returnTo = qs("return") || "/painelsiqueirax.html";
+
+      window.location.href =
+        "/.netlify/functions/discordloginpainel?return=" +
+        encodeURIComponent(returnTo);
+    });
+  </script>
 </body>
 </html>

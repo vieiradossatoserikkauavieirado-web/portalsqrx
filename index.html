@@ -234,6 +234,16 @@
       background: rgba(88,101,242,.12);
     }
 
+    .menu-btn.whatsapp-buy {
+      border-color: rgba(75,210,154,.30);
+      background: linear-gradient(90deg,#168c58,#25d366);
+    }
+
+    .menu-btn.whatsapp-buy:hover {
+      border-color: rgba(75,210,154,.55);
+      background: linear-gradient(90deg,#25d366,#2b82d4);
+    }
+
     .menu-btn.mini {
       min-height: 40px;
       padding: 0 12px;
@@ -459,6 +469,7 @@
       border-color: transparent;
       background: var(--discord);
     }
+    
 
     /* ESTATÍSTICAS */
     .stats {
@@ -1155,6 +1166,11 @@
               <i class="fas fa-gauge-high"></i>
               Acessar painel
             </a>
+
+            <a class="menu-btn whatsapp-buy" href="https://wa.me/558296963727?text=Ol%C3%A1%21%20Quero%20comprar%20uma%20Gamemode.%20Vim%20pelo%20site." target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-whatsapp"></i>
+              Comprar uma GM
+            </a>
           </div>
 
           <div class="hero-note">
@@ -1301,10 +1317,10 @@
             <p>Explore os servidores cadastrados no portal.</p>
           </a>
 
-          <a class="service-card" href="#" id="gmBtn">
-            <i class="fas fa-cart-shopping"></i>
-            <h3>Comprar GM</h3>
-            <p>Consulte as gamemodes disponíveis, opções e valores pelo atendimento.</p>
+          <a class="service-card" href="https://wa.me/558296963727?text=Ol%C3%A1%21%20Quero%20comprar%20uma%20Gamemode.%20Vim%20pelo%20site." id="gmBtn" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp"></i>
+            <h3>Comprar uma GM</h3>
+            <p>Fale diretamente comigo pelo WhatsApp para consultar gamemodes, valores e opções disponíveis.</p>
           </a>
         </div>
       </div>
@@ -1544,7 +1560,7 @@ function setupModals(){
 
   bindModal("vipBtn","vipModal","closeVip");
   bindModal("desbanBtn","desbanModal","closeDesban");
-  bindModal("gmBtn","gmModal","closeGM");
+  // gmBtn agora abre o WhatsApp diretamente.
 
   document.addEventListener("keydown", e=>{
     if(e.key==="Escape"){

@@ -1,336 +1,250 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Gamemodes • Portal SiqueiraX</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<style>
-:root{
- --red:#ff002b;
- --bg:#0b0b0b;
- --glass:rgba(15,15,15,.78);
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
- font-family:'Inter',sans-serif;
- background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
- min-height:100vh;
- color:#fff;
-}
-
-body::before{
- content:"";
- position:fixed;
- inset:0;
- background:rgba(0,0,0,.75);
- backdrop-filter:blur(12px);
- z-index:-1;
-}
-
-/* ===== HEADER ===== */
-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- padding:1rem 2rem;
- background:var(--glass);
- border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-header h1{
- font-family:'Orbitron',sans-serif;
- font-size:1.6rem;
- background:linear-gradient(90deg,#ff002b,#ff6b6b);
- -webkit-background-clip:text;
- -webkit-text-fill-color:transparent;
-}
-
-.user{
- background:rgba(0,0,0,.35);
- padding:.45rem 1rem;
- border-radius:30px;
- font-weight:600;
-}
-
-/* ===== SEARCH ===== */
-.search-box{
- max-width:360px;
- margin:1.5rem auto;
- padding:0 1rem;
-}
-
-.search-box input{
- width:100%;
- padding:.8rem 1rem;
- border-radius:14px;
- border:1px solid rgba(255,255,255,.15);
- background:rgba(0,0,0,.4);
- color:#fff;
-}
-
-.search-box input:focus{
- outline:none;
- border-color:var(--red);
- box-shadow:0 0 15px rgba(255,0,43,.6);
-}
-
-/* ===== GRID ===== */
-.gm-container{
-  max-width:1200px;      /* <<< CONTROLE DO TAMANHO DA TELA */
-  margin:0 auto;         /* centraliza */
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-  gap:16px;
-  padding:0 1rem 2.5rem;
-}
-
-
-/* ===== CARD ===== */
-.gm-card{
- background:var(--glass);
- border-radius:22px;
- overflow:hidden;
- box-shadow:0 0 16px rgba(0,0,0,.6);
- transition:.25s ease;
-}
-
-.gm-card:hover{
- transform:translateY(-5px) scale(1.03);
- box-shadow:0 0 28px rgba(255,0,43,.6);
-}
-
-.gm-card img{
- width:100%;
- height:110px;
- object-fit:cover;
-}
-
-/* TÍTULO */
-.gm-card h3{
- font-size:.9rem;
- padding:10px 12px 6px;
- text-align:center;
- min-height:48px;
-}
-
-/* INFO */
-.gm-info{
- padding:0 12px;
- font-size:.75rem;
- line-height:1.35;
- opacity:.95;
-}
-
-.gm-info div{
- display:flex;
- justify-content:space-between;
-}
-
-/* STATUS */
-.status.sim{color:#2dff9c}
-.status.nao{color:#ff5c5c}
-
-/* BOTÃO */
-.gm-card a{
- display:block;
- margin:10px 12px 14px;
- padding:.55rem;
- text-align:center;
- border-radius:14px;
- font-size:.82rem;
- font-weight:700;
- color:#fff;
- text-decoration:none;
- background:linear-gradient(135deg,#ff002b,#b0001c);
- box-shadow:0 0 18px rgba(255,0,43,.6);
-}
-
-.gm-card a:hover{
- transform:scale(1.05);
-}
-
-/* ===== FOOTER ===== */
-.footer{
- text-align:center;
- padding-bottom:2rem;
-}
-
-.footer a{
- color:#fff;
- text-decoration:none;
- background:linear-gradient(135deg,#ff002b,#b0001c);
- padding:.8rem 2.2rem;
- border-radius:14px;
- font-weight:700;
- box-shadow:0 0 22px rgba(255,0,43,.6);
-}
-
-/* ===== MOBILE ===== */
-@media(max-width:600px){
- header{
-  flex-direction:column;
-  gap:.6rem;
- }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1524">
+  <title>Gamemodes • Portal SiqueiraX</title>
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#08111d;--bg-soft:#0b1625;--surface:#0f1d2f;--blue:#2b82d4;--blue-dark:#1e5f9e;--blue-light:#7dbbf0;--red:#d63d55;--green:#4bd29a;--muted:#98aabd;--text:#f4f7fb;--line:#223750;--line-soft:rgba(255,255,255,.06);--radius:15px;--shadow:0 14px 34px rgba(0,0,0,.27);--max:1180px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{min-height:100vh;overflow-x:hidden;font-family:"Inter",sans-serif;color:var(--text);background:linear-gradient(rgba(8,17,29,.95),rgba(8,17,29,.985)),url("https://i.imgur.com/eKjFtd1.png") center/cover fixed no-repeat}
+    body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(43,130,212,.04) 1px,transparent 1px),linear-gradient(rgba(43,130,212,.04) 1px,transparent 1px);background-size:38px 38px}
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%}
+    .wrap{width:min(var(--max),calc(100% - 28px));margin-inline:auto}
+    .topbar{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--line-soft);background:rgba(7,14,24,.93);backdrop-filter:blur(10px)}
+    .nav{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12);background:var(--bg);box-shadow:0 0 0 4px rgba(43,130,212,.07)}
+    .brand-copy{display:flex;flex-direction:column;line-height:1}
+    .brand-copy strong{font-family:"Rajdhani",sans-serif;font-size:1.3rem}
+    .brand-copy small{margin-top:4px;color:var(--blue-light);font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+    .user{min-height:42px;display:inline-flex;align-items:center;gap:9px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.035);color:#dfe8f1;font-size:.76rem;font-weight:700}
+    .user-avatar{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:rgba(43,130,212,.11);color:var(--blue-light);font-size:.72rem}
+    .hero{padding:42px 0 22px}
+    .hero-card{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;align-items:end;padding:28px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(120deg,rgba(20,43,70,.97),rgba(13,29,48,.97));box-shadow:var(--shadow)}
+    .hero-card::after{content:"";position:absolute;top:0;right:0;width:7px;height:100%;background:linear-gradient(var(--blue),var(--red))}
+    .eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--blue-light);font-size:.67rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--blue)}
+    h1{margin:12px 0 8px;font-family:"Rajdhani",sans-serif;font-size:clamp(2.4rem,5vw,4rem);line-height:.95}
+    .hero-card p{max-width:680px;color:var(--muted);font-size:.85rem;line-height:1.6}
+    .hero-count{min-width:150px;padding:14px;border:1px solid var(--line-soft);border-radius:10px;background:rgba(255,255,255,.025);text-align:right}
+    .hero-count span{display:block;color:var(--muted);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+    .hero-count strong{display:block;margin-top:3px;font-family:"Rajdhani",sans-serif;font-size:1.6rem}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px auto}
+    .search-box{position:relative;flex:1;max-width:520px}
+    .search-box::before{content:"⌕";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--blue-light);font-size:1.1rem;pointer-events:none}
+    .search-box input{width:100%;min-height:44px;padding:0 14px 0 38px;border:1px solid var(--line);border-radius:10px;outline:none;color:#fff;background:rgba(255,255,255,.035);font:inherit;font-size:.78rem}
+    .search-box input:focus{border-color:rgba(125,187,240,.48);background:rgba(43,130,212,.06)}
+    .toolbar-note{color:#7890a6;font-size:.69rem}
+    .gm-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding-bottom:36px}
+    .gm-card{overflow:hidden;display:flex;flex-direction:column;min-height:330px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:0 8px 20px rgba(0,0,0,.17);transition:transform .18s ease,border-color .18s ease}
+    .gm-card:hover{transform:translateY(-3px);border-color:rgba(125,187,240,.4)}
+    .gm-card img{width:100%;height:130px;object-fit:cover;border-bottom:1px solid var(--line-soft);background:var(--bg-soft)}
+    .gm-card h3{min-height:53px;display:flex;align-items:center;padding:13px 14px 8px;font-family:"Rajdhani",sans-serif;font-size:1.02rem;line-height:1.12}
+    .gm-info{display:grid;gap:6px;padding:0 14px 12px;color:var(--muted);font-size:.7rem;line-height:1.35}
+    .gm-info>div:first-child{margin-bottom:3px;color:#dce6ef;font-weight:700}
+    .gm-info div{display:flex;justify-content:space-between;gap:10px}
+    .gm-info strong{color:#c5d1dc}
+    .status{font-weight:800}.status.sim{color:var(--green)}.status.nao{color:#ff788d}
+    .gm-card a{min-height:40px;display:inline-flex;align-items:center;justify-content:center;margin:auto 14px 14px;padding:0 12px;border-radius:9px;color:#fff;background:linear-gradient(90deg,var(--blue-dark),var(--blue));font-size:.72rem;font-weight:800;transition:transform .18s ease,background .18s ease}
+    .gm-card a:hover{transform:translateY(-1px);background:linear-gradient(90deg,var(--blue),var(--red))}
+    .empty-state{grid-column:1/-1;padding:28px;border:1px solid var(--line);border-radius:var(--radius);color:var(--muted);background:var(--surface);text-align:center;font-size:.82rem}
+    .footer{padding:0 0 34px;text-align:center}
+    .footer a{min-height:43px;display:inline-flex;align-items:center;justify-content:center;padding:0 17px;border:1px solid var(--line);border-radius:9px;color:#fff;background:rgba(255,255,255,.035);font-size:.75rem;font-weight:800}
+    .restricted-shell{min-height:100vh;display:grid;place-items:center;padding:22px}
+    .restricted-card{width:min(100%,560px);overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+    .restricted-top{padding:24px;background:linear-gradient(120deg,rgba(20,43,70,.97),rgba(13,29,48,.97));border-bottom:1px solid var(--line)}
+    .restricted-top h2{font-family:"Rajdhani",sans-serif;font-size:2rem}
+    .restricted-body{padding:24px}
+    .restricted-body p{color:var(--muted);font-size:.82rem;line-height:1.65}
+    .restricted-body a{min-height:43px;display:flex;align-items:center;justify-content:center;margin-top:18px;border-radius:9px;color:#fff;background:linear-gradient(90deg,var(--blue-dark),var(--blue));font-size:.75rem;font-weight:800}
+    @media(max-width:720px){.nav{align-items:stretch;flex-direction:column;padding:14px 0}.user{width:100%}.hero-card{grid-template-columns:1fr}.hero-count{width:100%;text-align:left}.toolbar{align-items:stretch;flex-direction:column}.search-box{max-width:none}}
+    @media(max-width:480px){.wrap{width:min(var(--max),calc(100% - 18px))}.hero{padding-top:24px}.hero-card{padding:22px}.gm-container{grid-template-columns:1fr}}
+  </style>
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a href="index.html" class="brand" aria-label="Voltar ao Portal SiqueiraX">
+        <img class="brand-logo" src="https://i.imgur.com/eKjFtd1.png" alt="Logo SiqueiraX">
+        <span class="brand-copy"><strong>Gamemodes</strong><small>Portal SiqueiraX</small></span>
+      </a>
+      <div class="user"><span class="user-avatar">SX</span><span id="userName">Usuário</span></div>
+    </div>
+  </header>
 
-<header>
-  <h1>Gamemodes</h1>
-  <div class="user">👤 <span id="userName">Usuário</span></div>
-</header>
-
-<div class="search-box">
-  <input type="text" id="search" placeholder="🔍 Buscar gamemode...">
-</div>
-
-<div class="gm-container" id="gmContainer">
-
-</div>
-
-<div class="footer">
-  <a href="index.html">Voltar ao Portal</a>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  // ===== 0) tela de erro nosub =====
-  const err = new URLSearchParams(location.search).get("err");
-  if (err === "nosub") {
-    document.body.innerHTML = `
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
-        <div style="max-width:520px;width:100%;background:rgba(15,15,15,.78);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:24px;box-shadow:0 0 35px rgba(255,0,43,.35);color:#fff;">
-          <h2 style="font-family:Orbitron,sans-serif;margin-bottom:10px;background:linear-gradient(90deg,#ff002b,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-            Acesso restrito
-          </h2>
-          <div style="opacity:.9;line-height:1.5;margin-bottom:16px;">
-            Você precisa estar no Discord com o cargo <b>Inscrito</b>.<br><br>
-            Acesse o Discord e solicite a tag de inscrito:
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-card">
+          <div>
+            <span class="eyebrow">Área para inscritos</span>
+            <h1>Biblioteca de Gamemodes</h1>
+            <p>Pesquise, confira a compatibilidade de cada projeto e acesse os downloads disponíveis para sua conta.</p>
           </div>
-          <a href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener"
-             style="display:block;text-align:center;padding:.8rem;border-radius:14px;font-weight:800;text-decoration:none;color:#fff;background:linear-gradient(135deg,#ff002b,#b0001c);box-shadow:0 0 18px rgba(255,0,43,.6);">
-            Entrar no Discord
-          </a>
+          <div class="hero-count"><span>Itens exibidos</span><strong id="gmCount">0</strong></div>
         </div>
       </div>
-    `;
-    return;
-  }
+    </section>
 
-  // helper: manda pro Discord sub quando precisar (SEM loop)
-  function goDiscordSub() {
-    window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html";
-  }
-
-  // ===== 1) sessão: aceita painel OU normal =====
-  let me = null;
-
-  // 1a) tenta painel
-  try {
-    const rp = await fetch("/.netlify/functions/me_painel", {
-      credentials: "include",
-      cache: "no-store"
-    });
-    if (rp.ok) me = await rp.json();
-  } catch {}
-
-  // 1b) se não tem painel, tenta normal
-  if (!me) {
-    try {
-      const r = await fetch("/.netlify/functions/me", {
-        credentials: "include",
-        cache: "no-store"
-      });
-      if (!r.ok) throw new Error();
-      me = await r.json();
-    } catch {
-      // não tem sessão nenhuma
-      window.location.href = "login.html";
-      return;
-    }
-  }
-
- 
-  const userNameEl = document.getElementById("userName");
-  if (userNameEl) userNameEl.textContent = me?.username ? me.username : "usuario";
-
-
-  try {
-    const r2 = await fetch("/.netlify/functions/sub-me", {
-      credentials: "include",
-      cache: "no-store"
-    });
-    if (!r2.ok) throw new Error();
-  } catch {
-    goDiscordSub();
-    return;
-  }
-
-  // ===== 3) revalida em 5 minutos =====
-  const FIVE_MIN = 5 * 60 * 1000;
-  setTimeout(async () => {
-    try {
-      const r3 = await fetch("/.netlify/functions/sub-me", {
-        credentials: "include",
-        cache: "no-store"
-      });
-      if (!r3.ok) throw new Error();
-    } catch {
-      goDiscordSub();
-      return;
-    }
-  }, FIVE_MIN);
-
-  // ===== 4) render gamemodes =====
-  const gmContainer = document.getElementById("gmContainer");
-  const search = document.getElementById("search");
-
-  function statusSpan(ok){
-    return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`;
-  }
-
-  function render(list){
-    if (!gmContainer) return;
-    gmContainer.innerHTML = list.map(gm => `
-      <div class="gm-card">
-        <img src="${gm.image}" alt="${gm.title}" />
-        <h3>${gm.title}</h3>
-        <div class="gm-info">
-          <div>Gamemode funciona:</div>
-          <div><strong>optlink:</strong> ${statusSpan(!!gm.works?.optlink)}</div>
-          <div><strong>lemehost:</strong> ${statusSpan(!!gm.works?.lemehost)}</div>
-          <div><strong>TCADMIN:</strong> ${statusSpan(!!gm.works?.tcadmin)}</div>
-          <div><strong>VPS:</strong> ${statusSpan(!!gm.works?.vps)}</div>
+    <section class="wrap">
+      <div class="toolbar">
+        <div class="search-box">
+          <input type="text" id="search" placeholder="Buscar gamemode..." autocomplete="off">
         </div>
-        <a href="${gm.link}" target="_blank" rel="noopener noreferrer">${gm.linkText || "Download"}</a>
+        <div class="toolbar-note">Acesso validado pelo Discord</div>
       </div>
-    `).join("");
-  }
+      <div class="gm-container" id="gmContainer"></div>
+    </section>
+  </main>
 
-  const res = await fetch("gamemodes.json", { cache: "no-store" });
-  const all = await res.json();
-  render(all);
+  <div class="footer"><a href="index.html">Voltar ao Portal</a></div>
 
-  if (search) {
-    search.addEventListener("input", () => {
-      const v = (search.value || "").toLowerCase();
-      render(all.filter(gm => (gm.title || "").toLowerCase().includes(v)));
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const err = new URLSearchParams(location.search).get("err");
+
+      if (err === "nosub") {
+        document.body.innerHTML = `
+          <div class="restricted-shell">
+            <div class="restricted-card">
+              <div class="restricted-top">
+                <span class="eyebrow">Acesso restrito</span>
+                <h2>Assinatura necessária</h2>
+              </div>
+              <div class="restricted-body">
+                <p>Você precisa estar no Discord com o cargo <b>Inscrito</b>.<br><br>Acesse o servidor oficial e solicite a tag de inscrito para liberar esta área.</p>
+                <a href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener">Entrar no Discord</a>
+              </div>
+            </div>
+          </div>`;
+        return;
+      }
+
+      function goDiscordSub() {
+        window.location.href = "/.netlify/functions/discord-login-sub?return=/gamemodes.html";
+      }
+
+      let me = null;
+
+      try {
+        const rp = await fetch("/.netlify/functions/me_painel", {
+          credentials: "include",
+          cache: "no-store"
+        });
+        if (rp.ok) me = await rp.json();
+      } catch {}
+
+      if (!me) {
+        try {
+          const r = await fetch("/.netlify/functions/me", {
+            credentials: "include",
+            cache: "no-store"
+          });
+          if (!r.ok) throw new Error();
+          me = await r.json();
+        } catch {
+          window.location.href = "login.html";
+          return;
+        }
+      }
+
+      const userNameEl = document.getElementById("userName");
+      if (userNameEl) userNameEl.textContent = me?.username ? me.username : "usuario";
+
+      try {
+        const r2 = await fetch("/.netlify/functions/sub-me", {
+          credentials: "include",
+          cache: "no-store"
+        });
+        if (!r2.ok) throw new Error();
+      } catch {
+        goDiscordSub();
+        return;
+      }
+
+      const FIVE_MIN = 5 * 60 * 1000;
+      setTimeout(async () => {
+        try {
+          const r3 = await fetch("/.netlify/functions/sub-me", {
+            credentials: "include",
+            cache: "no-store"
+          });
+          if (!r3.ok) throw new Error();
+        } catch {
+          goDiscordSub();
+        }
+      }, FIVE_MIN);
+
+      const gmContainer = document.getElementById("gmContainer");
+      const search = document.getElementById("search");
+      const gmCount = document.getElementById("gmCount");
+
+      function statusSpan(ok) {
+        return `<span class="status ${ok ? "sim" : "nao"}">${ok ? "Sim" : "Não"}</span>`;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function render(list) {
+        if (!gmContainer) return;
+        if (gmCount) gmCount.textContent = String(list.length);
+
+        if (!list.length) {
+          gmContainer.innerHTML = `<div class="empty-state">Nenhuma gamemode encontrada para essa busca.</div>`;
+          return;
+        }
+
+        gmContainer.innerHTML = list.map(gm => `
+          <article class="gm-card">
+            <img src="${escapeHtml(gm.image)}" alt="${escapeHtml(gm.title)}" loading="lazy">
+            <h3>${escapeHtml(gm.title)}</h3>
+            <div class="gm-info">
+              <div>Compatibilidade</div>
+              <div><strong>Optlink</strong>${statusSpan(!!gm.works?.optlink)}</div>
+              <div><strong>Lemehost</strong>${statusSpan(!!gm.works?.lemehost)}</div>
+              <div><strong>TCAdmin</strong>${statusSpan(!!gm.works?.tcadmin)}</div>
+              <div><strong>VPS</strong>${statusSpan(!!gm.works?.vps)}</div>
+            </div>
+            <a href="${escapeHtml(gm.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(gm.linkText || "Download")}</a>
+          </article>
+        `).join("");
+      }
+
+      try {
+        const res = await fetch("gamemodes.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`gamemodes_http_${res.status}`);
+        const all = await res.json();
+        const list = Array.isArray(all) ? all : [];
+        render(list);
+
+        if (search) {
+          search.addEventListener("input", () => {
+            const value = (search.value || "").trim().toLowerCase();
+            render(list.filter(gm => (gm.title || "").toLowerCase().includes(value)));
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao carregar gamemodes:", error);
+        if (gmContainer) gmContainer.innerHTML = `<div class="empty-state">Não foi possível carregar as gamemodes agora.</div>`;
+        if (gmCount) gmCount.textContent = "0";
+      }
     });
-  }
-});
-</script>
-
-
-
+  </script>
 </body>
 </html>

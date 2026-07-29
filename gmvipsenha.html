@@ -1,390 +1,98 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Senhas GM VIP • Portal SiqueiraX</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08111d">
+  <meta name="description" content="Biblioteca VIP de senhas para gamemodes do Portal SiqueiraX.">
+  <title>Senhas GM VIP • Portal SiqueiraX</title>
 
-<link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+  <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#08111d;--bg-soft:#0b1625;--surface:#0f1d2f;--surface-2:#13253b;
+      --blue:#2b82d4;--blue-dark:#1e5f9e;--blue-light:#7dbbf0;
+      --red:#d63d55;--red-dark:#9f2a3e;--red-soft:rgba(214,61,85,.11);
+      --green:#4bd29a;--warn:#f2ba63;--text:#f4f7fb;--muted:#98aabd;
+      --line:#223750;--line-soft:rgba(255,255,255,.06);--radius:15px;
+      --shadow:0 14px 34px rgba(0,0,0,.27);--max:1180px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{min-height:100vh;overflow-x:hidden;font-family:"Inter",sans-serif;color:var(--text);background:linear-gradient(rgba(8,17,29,.95),rgba(8,17,29,.985)),url("https://i.imgur.com/eKjFtd1.png") center/cover fixed no-repeat}
+    body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(43,130,212,.04) 1px,transparent 1px),linear-gradient(rgba(43,130,212,.04) 1px,transparent 1px);background-size:38px 38px}
+    a{text-decoration:none;color:inherit}button,input{font:inherit}.wrap{width:min(var(--max),calc(100% - 28px));margin-inline:auto}
 
-<style>
-:root{
-  --red:#ff002b;
-  --red-dark:#b0001c;
-  --bg:#0b0b0b;
-  --glass:rgba(15,15,15,.78);
-  --vip1:#ff1a3d;
-  --vip2:#7a0014;
-  --ok:#2dff9c;
-  --warn:#ffcc66;
-}
+    .topbar{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--line-soft);background:rgba(7,14,24,.94);backdrop-filter:blur(10px)}
+    .nav{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:12px}.brand img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12);box-shadow:0 0 0 4px rgba(43,130,212,.07)}
+    .brand-copy{display:flex;flex-direction:column;line-height:1}.brand-copy strong{font-family:"Rajdhani",sans-serif;font-size:1.3rem}.brand-copy small{margin-top:4px;color:var(--blue-light);font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .nav-actions{display:flex;align-items:center;gap:9px}.nav-button,.user{min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.035);font-size:.74rem;font-weight:800}
+    .nav-button:hover{background:rgba(43,130,212,.08);border-color:rgba(125,187,240,.35)}.user i{color:#ff8094}.user small{color:var(--muted);font-weight:700}
 
-*{margin:0;padding:0;box-sizing:border-box}
+    .hero{padding:42px 0 18px}.hero-card{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:24px;padding:29px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(120deg,rgba(20,43,70,.97),rgba(13,29,48,.97));box-shadow:var(--shadow)}
+    .hero-card::after{content:"";position:absolute;top:0;right:0;width:7px;height:100%;background:linear-gradient(var(--blue),var(--red))}.eyebrow,.section-label{display:inline-flex;align-items:center;gap:7px;color:var(--blue-light);font-size:.67rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red)}
+    h1{margin:12px 0 9px;font-family:"Rajdhani",sans-serif;font-size:clamp(2.5rem,5vw,4.1rem);line-height:.94}.hero-card p{max-width:700px;color:var(--muted);font-size:.85rem;line-height:1.65}.hero-stat{min-width:170px;padding:15px;border:1px solid var(--line-soft);border-radius:10px;background:rgba(255,255,255,.025)}.hero-stat span{display:block;color:var(--muted);font-size:.65rem;font-weight:700;text-transform:uppercase}.hero-stat strong{display:block;margin-top:4px;font-family:"Rajdhani",sans-serif;font-size:1.65rem}
 
-body{
-  font-family:'Inter',sans-serif;
-  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
-  min-height:100vh;
-  color:#fff;
-}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px auto}.search-box{position:relative;flex:1;max-width:560px}.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--blue-light);font-size:.8rem}.search-box input{width:100%;min-height:45px;padding:0 14px 0 39px;border:1px solid var(--line);border-radius:10px;outline:none;color:#fff;background:rgba(255,255,255,.035);font-size:.78rem}.search-box input:focus{border-color:rgba(125,187,240,.48);background:rgba(43,130,212,.06)}.toolbar-note{color:#7890a6;font-size:.69rem}
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(12px);
-  z-index:-1;
-}
+    .pw-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding-bottom:36px}.pw-card{position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:230px;padding:17px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:0 8px 20px rgba(0,0,0,.17);transition:transform .18s ease,border-color .18s ease}.pw-card:hover{transform:translateY(-3px);border-color:rgba(125,187,240,.4)}.pw-card::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:3px;background:linear-gradient(90deg,var(--blue),var(--red))}
+    .pw-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.pw-title{font-family:"Rajdhani",sans-serif;font-size:1.15rem;font-weight:700;line-height:1.15}.badge{flex:0 0 auto;padding:4px 7px;border:1px solid rgba(214,61,85,.28);border-radius:6px;color:#ff9aaa;background:var(--red-soft);font-size:.58rem;font-weight:800;letter-spacing:.05em}.pw-sub{min-height:52px;margin-top:10px;color:var(--muted);font-size:.73rem;line-height:1.55}
+    .pw-secret{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:auto;padding:10px;border:1px solid var(--line-soft);border-radius:10px;background:var(--bg-soft)}.secret-text{min-width:0;display:flex;flex-direction:column;gap:4px;cursor:pointer}.secret-text .hint{color:#7890a6;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em}.secret-value{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;font-weight:800}.is-blurred .secret-value{filter:blur(8px);opacity:.78}.copy-btn{min-height:36px;padding:0 11px;border:0;border-radius:8px;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--blue-dark),var(--blue));font-size:.67rem;font-weight:800}.copy-btn:hover{background:linear-gradient(90deg,var(--blue),var(--red))}
 
-/* ===== HEADER ===== */
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:1rem 2rem;
-  background:var(--glass);
-  border-bottom:1px solid rgba(255,255,255,.08);
-  gap:1rem;
-}
+    .toast{position:fixed;left:50%;bottom:18px;z-index:9999;display:flex;align-items:center;gap:9px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(12,26,43,.97);box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translate(-50%,12px);transition:.2s ease}.toast.show{opacity:1;transform:translate(-50%,0)}.toast .dot{width:9px;height:9px;border-radius:50%;background:var(--green)}#toastText{font-size:.72rem;font-weight:700}
+    .footer{padding:0 0 34px;text-align:center}.footer a{min-height:43px;display:inline-flex;align-items:center;gap:8px;padding:0 17px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.035);font-size:.74rem;font-weight:800}
 
-header h1{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.6rem;
-  background:linear-gradient(90deg,var(--vip1),#ff6b6b);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
+    .access-shell{min-height:100vh;display:grid;place-items:center;padding:22px}.access-card{width:min(100%,900px);display:grid;grid-template-columns:.9fr 1.1fr;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}.access-visual{display:flex;flex-direction:column;justify-content:center;padding:34px;background:linear-gradient(145deg,rgba(24,53,85,.98),rgba(10,24,40,.98))}.access-visual img{width:76px;height:76px;margin-bottom:24px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)}.access-status{width:fit-content;padding:5px 8px;border:1px solid rgba(214,61,85,.27);border-radius:6px;color:#ff9aaa;background:var(--red-soft);font-size:.62rem;font-weight:800;text-transform:uppercase}.access-visual h1{font-size:clamp(2.1rem,5vw,3.6rem)}.access-visual p{color:var(--muted);font-size:.8rem;line-height:1.65}.access-content{padding:34px}.access-content h2{margin:7px 0 18px;font-family:"Rajdhani",sans-serif;font-size:2rem}.access-steps{display:grid;gap:9px}.access-steps div{display:flex;align-items:center;gap:11px;padding:11px;border:1px solid var(--line-soft);border-radius:9px;background:rgba(255,255,255,.025);color:var(--muted);font-size:.75rem}.access-steps b{color:var(--blue-light)}.access-reason{display:flex;gap:9px;margin-top:13px;padding:10px;border:1px solid rgba(242,186,99,.22);border-radius:9px;color:#e2c48f;background:rgba(242,186,99,.06);font-size:.7rem}.access-actions{display:grid;gap:8px;margin-top:18px}.action-button{min-height:43px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:9px;cursor:pointer;color:#fff;font-size:.72rem;font-weight:800}.action-button.primary{border-color:transparent;background:var(--blue)}.action-button.whatsapp{border-color:rgba(75,210,154,.28);background:rgba(75,210,154,.10);color:#8ce4bd}.action-button.secondary{background:rgba(255,255,255,.035)}
 
-.vip-actions{
-  display:flex;
-  align-items:center;
-  gap:.6rem;
-}
-
-.vip-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:.45rem;
-  padding:.55rem .95rem;
-  border-radius:16px;
-  font-size:.85rem;
-  font-weight:900;
-  letter-spacing:.5px;
-  color:#fff;
-  text-decoration:none;
-  background:linear-gradient(135deg,var(--vip1),var(--vip2));
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 0 22px rgba(255,0,43,.55);
-  transition:.25s ease;
-  white-space:nowrap;
-}
-
-.vip-btn:hover{
-  transform:translateY(-2px) scale(1.03);
-  box-shadow:0 0 34px rgba(255,0,43,.85);
-}
-
-.vip-btn .icon{
-  filter:drop-shadow(0 0 12px rgba(255,0,43,.65));
-}
-
-.user{
-  display:flex;
-  align-items:center;
-  gap:.55rem;
-  background:rgba(0,0,0,.35);
-  padding:.45rem 1rem;
-  border-radius:30px;
-  font-weight:700;
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:0 0 18px rgba(255,0,43,.18);
-}
-.user .diamond{
-  display:inline-block;
-  filter:drop-shadow(0 0 14px rgba(255,0,43,.65));
-}
-
-/* ===== SEARCH ===== */
-.search-box{
-  max-width:520px;
-  margin:1.4rem auto 0;
-  padding:0 1rem;
-}
-
-.search-box input{
-  width:100%;
-  padding:.85rem 1rem;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.15);
-  background:rgba(0,0,0,.4);
-  color:#fff;
-}
-
-.search-box input:focus{
-  outline:none;
-  border-color:var(--red);
-  box-shadow:0 0 15px rgba(255,0,43,.6);
-}
-
-/* ===== GRID ===== */
-.pw-container{
-  max-width:1100px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:16px;
-  padding:1rem 1rem 2.5rem;
-}
-
-/* ===== CARD ===== */
-.pw-card{
-  background:var(--glass);
-  border-radius:22px;
-  overflow:hidden;
-  box-shadow:0 0 16px rgba(0,0,0,.6);
-  transition:.25s ease;
-  border:1px solid rgba(255,255,255,.08);
-  position:relative;
-  padding:16px 16px 14px;
-}
-
-.pw-card:hover{
-  transform:translateY(-5px) scale(1.02);
-  box-shadow:0 0 35px rgba(255,0,43,.55);
-  border-color:rgba(255,0,43,.25);
-}
-
-.pw-card::before{
-  content:"";
-  position:absolute;
-  inset:-120px -120px auto auto;
-  width:250px;
-  height:250px;
-  background:radial-gradient(circle at center, rgba(255,0,43,.28), transparent 62%);
-  transform:rotate(25deg);
-  pointer-events:none;
-}
-
-.pw-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  position:relative;
-}
-
-.pw-title{
-  font-weight:900;
-  font-size:1rem;
-  line-height:1.2;
-  padding-right:10px;
-}
-
-.badge{
-  font-size:.72rem;
-  font-weight:900;
-  letter-spacing:1px;
-  padding:.35rem .6rem;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(0,0,0,.35);
-  box-shadow:0 0 18px rgba(255,0,43,.18);
-  white-space:nowrap;
-}
-
-.pw-sub{
-  margin-top:10px;
-  font-size:.78rem;
-  opacity:.9;
-  line-height:1.5;
-  position:relative;
-}
-
-/* ===== PASSWORD REVEAL ===== */
-.pw-secret{
-  margin-top:12px;
-  position:relative;
-  background:rgba(0,0,0,.35);
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:16px;
-  padding:12px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.secret-text{
-  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size:.92rem;
-  font-weight:800;
-  letter-spacing:.3px;
-  user-select:none;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:.55rem;
-  min-width:0;
-}
-
-.secret-text .hint{
-  font-family:'Inter',sans-serif;
-  font-size:.75rem;
-  font-weight:700;
-  opacity:.8;
-  white-space:nowrap;
-}
-
-.secret-value{
-  display:inline-block;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  max-width:260px;
-}
-
-.is-blurred .secret-value{
-  filter:blur(9px);
-  opacity:.85;
-}
-
-.is-blurred .secret-text:hover .secret-value{
-  filter:blur(7px);
-}
-
-.copy-btn{
-  border:none;
-  cursor:pointer;
-  padding:.55rem .8rem;
-  border-radius:14px;
-  font-weight:900;
-  color:#fff;
-  background:linear-gradient(135deg,var(--vip1),var(--vip2));
-  box-shadow:0 0 20px rgba(255,0,43,.6);
-  transition:.25s ease;
-  white-space:nowrap;
-}
-
-.copy-btn:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 34px rgba(255,0,43,.85);
-}
-
-.copy-btn:active{ transform:scale(.98); }
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:18px;
-  transform:translateX(-50%);
-  background:rgba(15,15,15,.92);
-  border:1px solid rgba(255,255,255,.12);
-  padding:12px 14px;
-  border-radius:16px;
-  box-shadow:0 0 40px rgba(255,0,43,.35);
-  display:flex;
-  align-items:center;
-  gap:10px;
-  z-index:9999;
-  opacity:0;
-  pointer-events:none;
-  transition:.22s ease;
-}
-
-.toast.show{
-  opacity:1;
-  bottom:22px;
-}
-
-.toast .dot{
-  width:10px;height:10px;border-radius:999px;
-  background:var(--ok);
-  box-shadow:0 0 18px rgba(45,255,156,.5);
-}
-
-/* ===== FOOTER ===== */
-.footer{
-  text-align:center;
-  padding-bottom:2rem;
-}
-
-.footer a{
-  color:#fff;
-  text-decoration:none;
-  background:linear-gradient(135deg,#ff002b,#b0001c);
-  padding:.8rem 2.2rem;
-  border-radius:14px;
-  font-weight:900;
-  box-shadow:0 0 22px rgba(255,0,43,.6);
-}
-
-/* ===== MOBILE ===== */
-@media(max-width:600px){
-  header{
-    flex-direction:column;
-    gap:.7rem;
-    padding:1rem 1.2rem;
-  }
-  .vip-actions{
-    width:100%;
-    justify-content:center;
-    flex-wrap:wrap;
-  }
-  .vip-btn{
-    width:100%;
-    max-width:420px;
-  }
-  .user{
-    width:100%;
-    justify-content:center;
-  }
-  .secret-value{
-    max-width:190px;
-  }
-}
-</style>
+    @media(max-width:760px){.nav{align-items:stretch;flex-direction:column;padding:14px 0}.nav-actions{width:100%}.nav-button,.user{flex:1}.hero-card{grid-template-columns:1fr}.hero-stat{width:100%}.toolbar{align-items:stretch;flex-direction:column}.search-box{max-width:none}.access-card{grid-template-columns:1fr}.access-visual,.access-content{padding:25px}}
+    @media(max-width:500px){.wrap{width:min(var(--max),calc(100% - 18px))}.brand-copy small{display:none}.nav-actions{display:grid;grid-template-columns:1fr}.hero{padding-top:24px}.hero-card{padding:22px}.pw-container{grid-template-columns:1fr}.secret-value{max-width:150px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
 </head>
-
 <body>
-
-<header>
-  <h1>Senhas GM VIP</h1>
-
-  <div class="vip-actions">
-    <a class="vip-btn" href="gamemodesvip.html">
-      <span class="icon">🎮</span>
-      <span>Gamemodes VIP</span>
-    </a>
-
-    <div class="user">
-      <span class="diamond">💎</span>
-      <span id="userName">Usuário</span>
-      <span style="opacity:.85">• VIP</span>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="painelsiqueirax.html" aria-label="Voltar ao painel">
+        <img src="https://i.imgur.com/eKjFtd1.png" alt="Logo SiqueiraX">
+        <span class="brand-copy"><strong>Senhas GM VIP</strong><small>Portal SiqueiraX</small></span>
+      </a>
+      <div class="nav-actions">
+        <a class="nav-button" href="gamemodesvip.html"><i class="fas fa-gamepad"></i> Gamemodes VIP</a>
+        <div class="user"><i class="fas fa-gem"></i><span id="userName">Usuário</span><small>VIP</small></div>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<div class="search-box">
-  <input type="text" id="search" placeholder="🔍 Buscar senha por nome do GM...">
-</div>
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-card">
+          <div><span class="eyebrow">Biblioteca protegida</span><h1>Senhas das Gamemodes VIP</h1><p>Encontre rapidamente a senha de cada projeto, revele somente quando necessário e copie com um clique.</p></div>
+          <div class="hero-stat"><span>Acesso da conta</span><strong>VIP ativo</strong></div>
+        </div>
+      </div>
+    </section>
 
-<div class="pw-container" id="pwContainer"></div>
+    <section class="wrap">
+      <div class="toolbar">
+        <div class="search-box"><i class="fas fa-magnifying-glass"></i><input type="text" id="search" placeholder="Buscar senha pelo nome da GM..." autocomplete="off"></div>
+        <div class="toolbar-note">Senhas ocultas por segurança</div>
+      </div>
+      <div class="pw-container" id="pwContainer"></div>
+    </section>
+  </main>
 
-<div class="footer">
-  <a href="painelsiqueirax.html">Voltar ao Painel</a>
-</div>
+  <div class="footer"><a href="painelsiqueirax.html"><i class="fas fa-arrow-left"></i> Voltar ao Painel</a></div>
+  <div class="toast" id="toast"><span class="dot"></span><span id="toastText">Copiado!</span></div>
 
-<div class="toast" id="toast">
-  <span class="dot"></span>
-  <span id="toastText">Copiado!</span>
-</div>
-
-<script>
+  <script>
 document.addEventListener("DOMContentLoaded", async () => {
   const pwContainer = document.getElementById("pwContainer");
   const search = document.getElementById("search");
@@ -396,111 +104,41 @@ document.addEventListener("DOMContentLoaded", async () => {
      =============================== */
   function renderNoVipBox(reason) {
     document.body.innerHTML = `
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;">
-        <div style="
-          max-width:760px;width:100%;
-          background:rgba(15,15,15,.85);
-          border:1px solid rgba(255,255,255,.12);
-          border-radius:28px;
-          padding:32px;
-          box-shadow:0 0 65px rgba(255,0,43,.45);
-          color:#fff;
-          position:relative;
-          overflow:hidden;
-        ">
-          <div style="
-            position:absolute;inset:-2px;
-            background:
-              radial-gradient(circle at 20% 10%, rgba(255,0,43,.22), transparent 55%),
-              radial-gradient(circle at 80% 80%, rgba(255,0,43,.16), transparent 55%);
-            pointer-events:none;
-          "></div>
+      <main class="access-shell">
+        <section class="access-card">
+          <div class="access-visual">
+            <img src="https://i.imgur.com/eKjFtd1.png" alt="Logo SiqueiraX">
+            <span class="access-status"><i class="fas fa-lock"></i> Área VIP protegida</span>
+            <h1>Acesso exclusivo para membros VIP</h1>
+            <p>As senhas desta biblioteca são liberadas somente para usuários com o cargo VIP ativo no Discord do SiqueiraX.</p>
+          </div>
 
-          <div style="position:relative;">
-            <h1 style="
-              font-family:Orbitron,sans-serif;
-              margin:0 0 12px 0;
-              font-size:2.1rem;
-              line-height:1.1;
-              text-align:center;
-              background:linear-gradient(90deg,#ff002b,#ff6b6b);
-              -webkit-background-clip:text;
-              -webkit-text-fill-color:transparent;
-              text-shadow:0 0 35px rgba(255,0,43,.7);
-            ">
-              Área VIP • Acesso restrito
-            </h1>
+          <div class="access-content">
+            <span class="section-label">Como liberar o acesso</span>
+            <h2>Ative seu VIP</h2>
 
-            <p style="text-align:center;opacity:.9;margin-bottom:18px;line-height:1.6;">
-              Para acessar as <b>Senhas GM VIP</b>, você precisa possuir o
-              <b>cargo VIP</b> no servidor do Discord do <b>SiqueiraX</b>.
-            </p>
-
-            <div style="
-              background:rgba(0,0,0,.45);
-              border:1px solid rgba(255,255,255,.08);
-              border-radius:18px;
-              padding:16px;
-              margin-bottom:18px;
-              line-height:1.6;
-            ">
-              <b>Como liberar agora:</b><br>
-              • Assine o VIP no Discord oficial.<br>
-              • Dúvidas? Fale no WhatsApp: <b>82 9696-3727</b>.
-              ${reason ? `<div style="margin-top:10px;opacity:.85"><b>Detalhe:</b> ${reason}</div>` : ""}
+            <div class="access-steps">
+              <div><b>01</b><span>Entre no Discord oficial da comunidade.</span></div>
+              <div><b>02</b><span>Adquira ou renove seu acesso VIP.</span></div>
+              <div><b>03</b><span>Volte à página e tente novamente.</span></div>
             </div>
 
-            <div style="display:grid;gap:12px;">
-              <a href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener"
-                 style="
-                   display:block;text-align:center;padding:1rem;
-                   border-radius:18px;
-                   font-weight:900;letter-spacing:1px;
-                   text-decoration:none;color:#fff;
-                   background:linear-gradient(135deg,#ff002b,#b0001c);
-                   box-shadow:0 0 30px rgba(255,0,43,.7);
-                   text-transform:uppercase;
-                 ">
-                Entrar no Discord
-              </a>
+            ${reason ? `<div class="access-reason"><i class="fas fa-circle-info"></i><span>${escapeHtml(reason)}</span></div>` : ""}
 
-              <a href="https://wa.me/558296963727" target="_blank" rel="noopener"
-                 style="
-                   display:block;text-align:center;padding:1rem;
-                   border-radius:18px;
-                   font-weight:900;letter-spacing:1px;
-                   text-decoration:none;color:#fff;
-                   background:rgba(255,255,255,.08);
-                   border:1px solid rgba(255,255,255,.15);
-                   box-shadow:0 0 22px rgba(0,0,0,.25);
-                   text-transform:uppercase;
-                 ">
-                Falar no WhatsApp
+            <div class="access-actions">
+              <a class="action-button primary" href="https://dsc.gg/siqueiraxsamp" target="_blank" rel="noopener">
+                <i class="fab fa-discord"></i> Entrar no Discord
               </a>
-
-              <button id="tryAgainBtn"
-                 style="
-                   width:100%;padding:1rem;
-                   border-radius:18px;
-                   border:1px solid rgba(255,255,255,.15);
-                   background:rgba(0,0,0,.35);
-                   color:#fff;
-                   font-weight:900;
-                   letter-spacing:1px;
-                   cursor:pointer;
-                   text-transform:uppercase;
-                 ">
-                Tentar novamente
+              <a class="action-button whatsapp" href="https://wa.me/558296963727" target="_blank" rel="noopener">
+                <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+              </a>
+              <button class="action-button secondary" id="tryAgainBtn" type="button">
+                <i class="fas fa-rotate-right"></i> Tentar novamente
               </button>
             </div>
-
-            <p style="text-align:center;opacity:.6;margin-top:16px;font-size:.85rem;">
-              © Portal SiqueiraX • Segurança VIP Ativa
-            </p>
           </div>
-        </div>
-      </div>
-    `;
+        </section>
+      </main>`;
 
     document.getElementById("tryAgainBtn").addEventListener("click", () => {
       window.location.reload();
@@ -665,6 +303,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-
 </body>
 </html>

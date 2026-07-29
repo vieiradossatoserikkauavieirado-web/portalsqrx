@@ -237,6 +237,15 @@ exports.handler = async (event) => {
         "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
         "vip": true
       },
+      {
+        "order": 22,
+        "title": "BRASIL PLAY STARS V3 2026",
+        "image": "https://i.imgur.com/4vnp0JU.png",
+        "link": "https://www.mediafire.com/file/zljas0wkikvtl41/Stars+V3.rar/file",
+        "linkText": "Mediafire",
+        "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+        "vip": true
+      },
     ];
 
     return {

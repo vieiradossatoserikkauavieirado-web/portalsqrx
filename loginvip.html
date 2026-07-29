@@ -3,165 +3,470 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#08111d" />
+<meta name="description" content="Área VIP do Portal SiqueiraX com autenticação via Discord." />
 <title>Área VIP • SiqueiraX</title>
 
 <link rel="icon" href="https://i.imgur.com/eKjFtd1.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="https://i.imgur.com/eKjFtd1.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --red:#ff002b;
-  --red-dark:#b0001c;
-  --glass:rgba(15,15,15,.8);
-  --transition:.35s ease;
+  --bg:#07111d;
+  --bg-soft:#0b1726;
+  --surface:#0f1e31;
+  --surface-2:#132741;
+  --line:#223a57;
+  --line-soft:rgba(255,255,255,.07);
+  --blue:#2c86d9;
+  --blue-dark:#1b5f9f;
+  --blue-light:#8bc7f6;
+  --red:#d93d56;
+  --red-dark:#9f2b3f;
+  --green:#4bd29a;
+  --text:#f5f8fc;
+  --muted:#9fb0c2;
+  --shadow:0 24px 70px rgba(0,0,0,.42);
+  --radius:18px;
+  --transition:.2s ease;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
 
+html{scroll-behavior:smooth}
+
 body{
-  font-family:'Inter',sans-serif;
   min-height:100vh;
-  background:url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
+  overflow-x:hidden;
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  background:
+    linear-gradient(rgba(6,14,24,.94),rgba(6,14,24,.985)),
+    url('https://i.imgur.com/eKjFtd1.png') center/cover fixed no-repeat;
 }
 
 body::before{
   content:"";
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(18px);
+  z-index:-2;
+  background:
+    linear-gradient(90deg,rgba(44,134,217,.045) 1px,transparent 1px),
+    linear-gradient(rgba(44,134,217,.045) 1px,transparent 1px);
+  background-size:42px 42px;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
   z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 15% 15%,rgba(44,134,217,.15),transparent 28%),
+    radial-gradient(circle at 85% 80%,rgba(217,61,86,.08),transparent 25%);
 }
 
-/* ===== CARD ===== */
-.vip-card{
-  width:100%;
-  max-width:440px;
-  background:var(--glass);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:26px;
-  padding:3rem 2.5rem;
-  box-shadow:0 0 55px rgba(255,0,43,.6);
-  animation:fadeUp .8s ease;
+a,button{font:inherit}
+
+.page-shell{
+  width:min(1180px,calc(100% - 30px));
+  min-height:100vh;
+  margin-inline:auto;
+  display:flex;
+  flex-direction:column;
 }
 
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(30px)}
-  to{opacity:1;transform:translateY(0)}
+.topbar{
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  border-bottom:1px solid var(--line-soft);
 }
 
-.vip-card h1{
-  font-family:'Orbitron',sans-serif;
-  text-align:center;
-  font-size:2.2rem;
-  margin-bottom:.8rem;
-  background:linear-gradient(90deg,#ff002b,#ff5c5c);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 30px rgba(255,0,43,.7);
-}
-
-.vip-card .subtitle{
-  text-align:center;
-  font-size:.95rem;
-  opacity:.85;
-  margin-bottom:1.8rem;
-}
-
-/* ===== INFO ===== */
-.vip-info{
-  font-size:.85rem;
-  line-height:1.5;
-  background:rgba(0,0,0,.4);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;
-  padding:1rem;
-  margin-bottom:1.6rem;
-}
-
-.vip-alert{
-  font-size:.88rem;
-  line-height:1.5;
-  background:rgba(255,0,43,.10);
-  border:1px solid rgba(255,0,43,.35);
-  border-radius:14px;
-  padding:1rem;
-  margin-bottom:1.2rem;
-  box-shadow:0 0 25px rgba(255,0,43,.25);
-}
-.vip-alert b{color:#ff4d4d}
-
-
-.vip-info b{color:#ff4d4d}
-
-/* ===== BUTTON ===== */
-button{
-  width:100%;
-  padding:1rem;
-  margin-top:.6rem;
-  border:none;
-  border-radius:16px;
-  font-size:.95rem;
-  font-weight:700;
-  letter-spacing:1px;
-  cursor:pointer;
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
   color:#fff;
-  background:linear-gradient(135deg,var(--red),var(--red-dark));
-  box-shadow:0 0 30px rgba(255,0,43,.7);
+  text-decoration:none;
+}
+
+.brand img{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid rgba(255,255,255,.12);
+  box-shadow:0 0 0 4px rgba(44,134,217,.08);
+}
+
+.brand-copy{display:flex;flex-direction:column;line-height:1}
+.brand-copy strong{font-family:'Rajdhani',sans-serif;font-size:1.3rem;letter-spacing:.02em}
+.brand-copy small{margin-top:5px;color:var(--blue-light);font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+
+.back-link{
+  min-height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:0 14px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  color:#d9e5f2;
+  background:rgba(255,255,255,.035);
+  text-decoration:none;
+  font-size:.78rem;
+  font-weight:800;
   transition:var(--transition);
 }
 
+.back-link:hover{transform:translateY(-1px);border-color:rgba(139,199,246,.4);background:rgba(44,134,217,.08)}
 
-button:hover{
-  transform:scale(1.06);
-  box-shadow:0 0 45px rgba(255,0,43,.9);
+.main-area{
+  flex:1;
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);
+  gap:24px;
+  align-items:center;
+  padding:42px 0;
 }
 
-/* ===== ERROR ===== */
+.hero-panel,
+.vip-card{
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.hero-panel{
+  position:relative;
+  overflow:hidden;
+  min-height:570px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:44px;
+  background:linear-gradient(135deg,rgba(20,43,70,.97),rgba(11,25,42,.97));
+}
+
+.hero-panel::after{
+  content:"";
+  position:absolute;
+  top:0;
+  right:0;
+  width:7px;
+  height:100%;
+  background:linear-gradient(var(--blue),var(--red));
+}
+
+.kicker{
+  width:fit-content;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--blue-light);
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 16px rgba(75,210,154,.5)}
+
+.hero-panel h1{
+  max-width:680px;
+  margin:20px 0 15px;
+  font-family:'Rajdhani',sans-serif;
+  font-size:clamp(3rem,6vw,5.5rem);
+  line-height:.9;
+  letter-spacing:-.045em;
+}
+
+.hero-panel h1 span{color:var(--blue-light)}
+
+.hero-panel>p{
+  max-width:620px;
+  color:var(--muted);
+  font-size:1rem;
+  line-height:1.75;
+}
+
+.feature-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+  margin-top:28px;
+}
+
+.feature{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:14px;
+  border:1px solid var(--line-soft);
+  border-radius:12px;
+  background:rgba(255,255,255,.025);
+}
+
+.feature i{margin-top:2px;color:var(--blue-light)}
+.feature strong{display:block;font-size:.82rem}
+.feature span{display:block;margin-top:3px;color:var(--muted);font-size:.72rem;line-height:1.45}
+
+.vip-card{
+  position:relative;
+  overflow:hidden;
+  padding:28px;
+  background:rgba(15,30,49,.96);
+}
+
+.vip-card::before{
+  content:"VIP ACCESS";
+  position:absolute;
+  top:15px;
+  right:-35px;
+  transform:rotate(35deg);
+  padding:6px 44px;
+  color:rgba(255,255,255,.65);
+  background:rgba(217,61,86,.18);
+  border:1px solid rgba(217,61,86,.25);
+  font-size:.58rem;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+
+.login-head{display:flex;align-items:center;gap:14px;margin-bottom:23px}
+
+.login-icon{
+  width:58px;
+  height:58px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--blue-dark),var(--blue));
+  box-shadow:0 12px 30px rgba(44,134,217,.25);
+  font-size:1.35rem;
+}
+
+.login-title small{display:block;color:var(--blue-light);font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.login-title h2{margin-top:4px;font-family:'Rajdhani',sans-serif;font-size:2rem;line-height:1}
+
+.subtitle{color:var(--muted);font-size:.84rem;line-height:1.65;margin-bottom:18px}
+
+.vip-info{
+  display:grid;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.info-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--line-soft);
+  border-radius:11px;
+  background:rgba(255,255,255,.025);
+}
+
+.info-row i{width:18px;margin-top:2px;color:var(--blue-light);text-align:center}
+.info-row span{color:#c6d3df;font-size:.78rem;line-height:1.55}
+.info-row b{color:#fff}
+
+.vip-alert{
+  display:none;
+  margin-bottom:14px;
+  padding:12px 13px;
+  border:1px solid rgba(217,61,86,.35);
+  border-radius:11px;
+  color:#ffd5dc;
+  background:rgba(217,61,86,.1);
+  font-size:.78rem;
+  line-height:1.5;
+}
+
+.discord-btn{
+  width:100%;
+  min-height:52px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  border:0;
+  border-radius:12px;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(90deg,var(--blue-dark),var(--blue));
+  box-shadow:0 14px 30px rgba(44,134,217,.22);
+  font-size:.8rem;
+  font-weight:800;
+  letter-spacing:.04em;
+  transition:var(--transition);
+}
+
+.discord-btn:hover{transform:translateY(-2px);background:linear-gradient(90deg,var(--blue),var(--red))}
+.discord-btn:disabled{cursor:wait;opacity:.72;transform:none}
+
 .error-message{
-  margin-top:1rem;
-  color:#ff6b6b;
-  font-size:.85rem;
+  min-height:20px;
+  margin-top:13px;
+  color:#ff9aac;
+  font-size:.76rem;
+  font-weight:700;
   text-align:center;
 }
 
-/* ===== MOBILE ===== */
-@media(max-width:480px){
-  .vip-card{padding:2.2rem 1.8rem}
-  .vip-card h1{font-size:1.9rem}
+.secure-note{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin-top:16px;
+  color:#758ba0;
+  font-size:.67rem;
+  text-align:center;
+}
+
+.secure-note i{color:var(--green)}
+
+.footer{
+  padding:18px 0 24px;
+  border-top:1px solid var(--line-soft);
+  color:#647a90;
+  font-size:.68rem;
+  text-align:center;
+}
+
+@media(max-width:900px){
+  .main-area{grid-template-columns:1fr;padding:26px 0}
+  .hero-panel{min-height:auto;padding:34px}
+}
+
+@media(max-width:620px){
+  .page-shell{width:min(100% - 18px,1180px)}
+  .topbar{min-height:68px}
+  .brand-copy small{display:none}
+  .back-link span{display:none}
+  .hero-panel{padding:26px}
+  .hero-panel h1{font-size:clamp(2.8rem,15vw,4rem)}
+  .feature-list{grid-template-columns:1fr}
+  .vip-card{padding:22px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
 </style>
 </head>
 
-
-
 <body>
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Voltar para o Portal SiqueiraX">
+      <img src="https://i.imgur.com/eKjFtd1.png" alt="Logo SiqueiraX">
+      <span class="brand-copy">
+        <strong>Portal SiqueiraX</strong>
+        <small>Comunidade SA:MP</small>
+      </span>
+    </a>
 
-<div class="vip-card">
-  <h1>Área VIP</h1>
-  <div class="subtitle">Acesso restrito • Portal SiqueiraX</div>
+    <a class="back-link" href="index.html">
+      <i class="fas fa-arrow-left"></i>
+      <span>Voltar ao portal</span>
+    </a>
+  </header>
 
-  <div class="vip-info">
-    Faça login com o <b>Discord</b> para acessar <b>todas as GameModes Premium/Link direto</b> do canal SiqueiraX.<br><br>
-    O sistema verifica automaticamente se você possui o <b>cargo VIP</b> no servidor.<br><br>
-    Todo conteúdo é de autoria do <b>SiqueiraX</b>
-  </div>
+  <main class="main-area">
+    <section class="hero-panel" aria-label="Informações da Área VIP">
+      <span class="kicker">Sistema VIP conectado</span>
+      <h1>Conteúdo premium para membros <span>SiqueiraX</span></h1>
+      <p>
+        Entre com sua conta do Discord para acessar GameModes premium, links diretos
+        e conteúdos exclusivos liberados para usuários com o cargo VIP.
+      </p>
 
-  <form id="loginVipForm">
-    <button type="submit">ENTRAR COM DISCORD</button>
-  </form>
+      <div class="feature-list">
+        <div class="feature">
+          <i class="fas fa-shield-halved"></i>
+          <div><strong>Validação automática</strong><span>O sistema confere seu cargo VIP diretamente pelo Discord.</span></div>
+        </div>
 
-  <p id="vipErrorMessage" class="error-message"></p>
+        <div class="feature">
+          <i class="fas fa-bolt"></i>
+          <div><strong>Acesso imediato</strong><span>Usuários já autenticados são encaminhados automaticamente.</span></div>
+        </div>
+
+        <div class="feature">
+          <i class="fas fa-download"></i>
+          <div><strong>Links diretos</strong><span>Acesso rápido aos conteúdos premium disponíveis.</span></div>
+        </div>
+
+        <div class="feature">
+          <i class="fas fa-user-lock"></i>
+          <div><strong>Área protegida</strong><span>Somente membros autorizados conseguem acessar o conteúdo.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vip-card" aria-label="Login da Área VIP">
+      <div class="login-head">
+        <div class="login-icon"><i class="fab fa-discord"></i></div>
+        <div class="login-title">
+          <small>Autenticação segura</small>
+          <h2>Área VIP</h2>
+        </div>
+      </div>
+
+      <p class="subtitle">
+        Use sua conta do Discord para confirmar sua assinatura e continuar para a área exclusiva.
+      </p>
+
+      <div class="vip-info">
+        <div class="info-row">
+          <i class="fas fa-gamepad"></i>
+          <span>Acesso a <b>GameModes Premium</b> e links diretos.</span>
+        </div>
+
+        <div class="info-row">
+          <i class="fas fa-circle-check"></i>
+          <span>Verificação automática do <b>cargo VIP</b> no servidor.</span>
+        </div>
+
+        <div class="info-row">
+          <i class="fas fa-copyright"></i>
+          <span>Conteúdo disponibilizado pelo <b>SiqueiraX</b>.</span>
+        </div>
+      </div>
+
+      <div id="vipAlert" class="vip-alert"></div>
+
+      <form id="loginVipForm">
+        <button class="discord-btn" type="submit">
+          <i class="fab fa-discord"></i>
+          ENTRAR COM DISCORD
+        </button>
+      </form>
+
+      <p id="vipErrorMessage" class="error-message" role="alert" aria-live="polite"></p>
+
+      <div class="secure-note">
+        <i class="fas fa-lock"></i>
+        Sua autenticação é processada pelo sistema oficial do portal.
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© SiqueiraX — Portal oficial da comunidade.</footer>
 </div>
-
-<div id="vipAlert" class="vip-alert" style="display:none"></div>
-
 
 <script type="module">
   const formVip = document.getElementById("loginVipForm");
@@ -215,7 +520,5 @@ button:hover{
     window.location.href = "/.netlify/functions/discord-login";
   });
 </script>
-
-
 </body>
 </html>

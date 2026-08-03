@@ -6,8 +6,8 @@
     "image": "https://i.imgur.com/WNed2Cf.png",
     "link": "https://youtu.be/PwigVKQjHfg?si=6-YhgjUc-chm6qiv",
     "linkText": "Meta 100 likes!",
-    "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
-    "vip": true
+    "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
+    "vip": false
   },
   {
     "title": "BRASIL PLAY SLAYER V2 2026",

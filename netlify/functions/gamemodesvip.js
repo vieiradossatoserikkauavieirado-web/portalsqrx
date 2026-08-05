@@ -246,6 +246,15 @@ exports.handler = async (event) => {
         "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
         "vip": true
       },
+      {
+        "order": 22,
+        "title": "BRASIL PLAY STREET",
+        "image": "https://i.imgur.com/WNed2Cf.png",
+        "link": "https://www.mediafire.com/file/rekm6coxwbv6n5c/BPS.rar/file",
+        "linkText": "Mediafire",
+        "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
+        "vip": true
+      },
     ];
 
     return {

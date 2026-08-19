@@ -247,12 +247,21 @@ exports.handler = async (event) => {
         "vip": true
       },
       {
-        "order": 22,
+        "order": 23,
         "title": "BRASIL PLAY STREET",
         "image": "https://i.imgur.com/WNed2Cf.png",
         "link": "https://www.mediafire.com/file/stb8u62gqqlfhns/BPS.rar/file",
         "linkText": "Mediafire",
         "works": { "optlink": false, "lemehost": false, "tcadmin": false, "vps": true },
+        "vip": true
+      },
+      {
+        "order": 24,
+        "title": "URBAN NATION RPG",
+        "image": "https://i.imgur.com/9TlyJD2.png",
+        "link": "https://www.mediafire.com/file/u3io0c69nfoghyx/from+brazil+gm.rar/file",
+        "linkText": "Mediafire",
+        "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
         "vip": true
       },
     ];

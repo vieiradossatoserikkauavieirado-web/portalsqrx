@@ -264,6 +264,15 @@ exports.handler = async (event) => {
         "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
         "vip": true
       },
+      {
+        "order": 25,
+        "title": "SHOX 2026",
+        "image": "https://i.imgur.com/ND0kzuf.jpeg",
+        "link": "https://www.mediafire.com/file/965ijoi8fcbmy34/shox+2k26.rar/file",
+        "linkText": "Mediafire",
+        "works": { "optlink": true, "lemehost": true, "tcadmin": true, "vps": true },
+        "vip": true
+      },
     ];
 
     return {

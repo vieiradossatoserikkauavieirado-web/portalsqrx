@@ -65,6 +65,12 @@ exports.handler = async (event) => {
         "password": "stars#2k26$A",
         "note": "/stars2026",
         "tag": "VIP"
+      },
+      {
+        "name": "Shox 2026",
+        "password": "shox2026privadasiqueira$#",
+        "note": "/shox2026",
+        "tag": "VIP"
       }
     ];
 
